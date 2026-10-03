@@ -91,6 +91,7 @@ REQUIRED = [
 ]
 # Additional public reference documents are explicit, not a wildcard over docs/.
 OPTIONAL = [
+    ".gitattributes",
     f"{RELEASE}/AuraDesk.ino.map",
     *[f"docs/{name}" for name in (
         "BACKUP.md", "CAPABILITIES.md", "FLASH_LAYOUT.md", "GPIO_MAP.md", "HARDWARE.md", "ISSUE_HISTORY.md", "SCREENSHOTS.md",

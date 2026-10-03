@@ -4,6 +4,7 @@
 
 - Refreshes the front page for the current 1.0.5 interface with a reviewed actual-device Home frame and current-source Your data, Always-on and 500-service companion previews.
 - Adds screenshot provenance and linked GitHub Issues with symptoms, diagnosis, fixes, release commits and validation evidence.
+- Marks the generated browser catalog include for correct GitHub language highlighting and exclusion from language statistics.
 - Clarifies API discovery versus ready templates, pairing/setup and the on-device widget workflow. The verified 1.0.5 firmware release assets retain their original snapshots.
 
 ## 1.0.5 — 500-service browser companion
