@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "licenses": [
+    {
+      "file": "Apache-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "copied_from": ".toolchains/arduino/user/libraries/ESP32_Display_Panel/license.txt"
+    },
+    {
+      "file": "LVGL-MIT.txt",
+      "bytes": 1072,
+      "sha256": "6a916130a36e83a79bb0dca6c6a7bfe60a67af7d118605e2b7b23bd5ad5c4eb0",
+      "copied_from": ".toolchains/arduino/user/libraries/lvgl/LICENCE.txt"
+    },
+    {
+      "file": "ArduinoJson-MIT.txt",
+      "bytes": 1117,
+      "sha256": "ebba0906d6c8b3daa8a1b59acb2d3a416485dd77fc10f6dd4c9ed2cbe467ee2d",
+      "copied_from": ".toolchains/arduino/user/libraries/ArduinoJson/LICENSE.txt"
+    },
+    {
+      "file": "LGPL-2.1.txt",
+      "bytes": 26436,
+      "sha256": "5df07007198989c622f5d41de8d703e7bef3d0e79d62e24332ee739a452af62a",
+      "copied_from": ".toolchains/arduino/data/packages/esp32/tools/esp-x32/2405/share/licenses/crosstool-ng/licenses.d/lgpl.txt"
+    },
+    {
+      "file": "GPL-2.0.txt",
+      "bytes": 18092,
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+      "copied_from": ".venv/lib/python3.11/site-packages/esptool-5.4.0.dist-info/licenses/LICENSE"
+    },
+    {
+      "file": "Montserrat-7.200-OFL.txt",
+      "bytes": 4392,
+      "sha256": "41f82bb4d24b304f30f7136bc47abdd083782e4265c984160f5649d1e78ea49c",
+      "source_url": "https://raw.githubusercontent.com/JulietaUla/Montserrat/711e8ae6b4fa9d33d8482c9ec4871d906a345344/OFL.txt"
+    },
+    {
+      "file": "FontAwesome-5.9.0-LICENSE.txt",
+      "bytes": 1548,
+      "sha256": "e779748dfe75e84f974df3c7bc07f842011a100159158b0f1f49b2f2a5a515cb",
+      "source_url": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/ba907eaec40fab01d410c3023a5572b2cb46cea6/LICENSE.txt"
+    },
+    {
+      "file": "mbedTLS-3.6.2-LICENSE.txt",
+      "bytes": 29852,
+      "sha256": "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b",
+      "source_url": "https://raw.githubusercontent.com/Mbed-TLS/mbedtls/107ea89daaefb9867ea9121002fbbdf926780e98/LICENSE",
+      "sdk_fork_license_matches": "https://raw.githubusercontent.com/espressif/mbedtls/98fcfd6d2cea90d306e8fde8e5bffd6087c9cda8/LICENSE"
+    },
+    {
+      "file": "CC0-1.0.txt",
+      "bytes": 7048,
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+      "source_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt"
+    },
+    {
+      "file": "SIL-OFL-1.1.txt",
+      "bytes": 4129,
+      "sha256": "f05e84c3000faf09cf8e445d35018b01fc0d6026953840e9398aeab501b86da2",
+      "copied_from": "Montserrat-7.200-OFL.txt, full standard OFL text after copyright/preamble attribution"
+    },
+    {
+      "file": "Espressif-radio-binaries-LICENSE.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source_url": "https://raw.githubusercontent.com/espressif/esp32-wifi-lib/8817fc7b73b41c33a391c7c4f6059187938641a5/LICENSE",
+      "also_applies_to": "https://raw.githubusercontent.com/espressif/esp-phy-lib/1f551c5367daa87a29e0c4f724d6cf809a1841ad/LICENSE"
+    },
+    {
+      "file": "FreeRTOS-MIT.txt",
+      "bytes": 1036,
+      "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1",
+      "source_url": "https://raw.githubusercontent.com/espressif/esp-idf/cfea4f7c9894526553c11f42f80c4d894aade2a7/components/freertos/FreeRTOS-Kernel/LICENSE.md"
+    },
+    {
+      "file": "http-parser-MIT.txt",
+      "bytes": 1298,
+      "sha256": "3aced2d086d3f59cafb6589770c30c1e45a5bdf50c1d4375060b81a615db604c",
+      "source_url": "https://raw.githubusercontent.com/espressif/esp-idf/cfea4f7c9894526553c11f42f80c4d894aade2a7/components/http_parser/LICENSE.txt"
+    },
+    {
+      "file": "WPA-supplicant-COPYING.txt",
+      "bytes": 965,
+      "sha256": "a87ac4e333d0f120408a9d814e40c3672cd27f365af89b4f2f6631f7a9338953",
+      "source_url": "https://raw.githubusercontent.com/espressif/esp-idf/cfea4f7c9894526553c11f42f80c4d894aade2a7/components/wpa_supplicant/COPYING"
+    },
+    {
+      "file": "IDF-newlib-COPYING.txt",
+      "bytes": 46295,
+      "sha256": "0681089a556e93791da82718d68011ba452de245f7f59c3846936304756ac0c0",
+      "source_url": "https://raw.githubusercontent.com/espressif/esp-idf/cfea4f7c9894526553c11f42f80c4d894aade2a7/components/newlib/COPYING.NEWLIB"
+    },
+    {
+      "file": "lwIP-COPYING.txt",
+      "bytes": 1611,
+      "sha256": "8fb15ebdb19eb669e1d37fcd8e57a44c477fcc0e93a9ab0d181760965f94d5ed",
+      "source_url": "https://raw.githubusercontent.com/espressif/esp-lwip/392707e5c3a5d8e2531461db77843b9759cd5a43/COPYING"
+    },
+    {
+      "file": "cJSON-MIT.txt",
+      "bytes": 1084,
+      "sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+      "source_url": "https://raw.githubusercontent.com/DaveGamble/cJSON/acc76239bee01d8e9c858ae2cab296704e52d916/LICENSE"
+    },
+    {
+      "file": "esp-littlefs-MIT.txt",
+      "bytes": 1057,
+      "sha256": "b6bbf3bd17c2b5532bc25a7acf1760faac0b995d6e0ad8bec29435166727d4c5",
+      "source_url": "https://raw.githubusercontent.com/joltwallet/esp_littlefs/cdf362e28531b9a0e22fee87aeac7497fab34e1b/LICENSE"
+    },
+    {
+      "file": "littlefs-BSD-3-Clause.txt",
+      "bytes": 1523,
+      "sha256": "0cb4ff1daf5fdc1359c6a6ee3116092f08fc100c9d58b1b77ab17bfd801f856d",
+      "source_url": "https://raw.githubusercontent.com/littlefs-project/littlefs/0494ce7169f06a734a7bd7585f49a9fa91fa7318/LICENSE.md"
+    },
+    {
+      "file": "GCC-GPL-3.0.txt",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "copied_from": ".toolchains/arduino/data/packages/esp32/tools/esp-x32/2405/share/licenses/gcc/COPYING3"
+    },
+    {
+      "file": "GCC-Runtime-Exception-3.1.txt",
+      "bytes": 3324,
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+      "copied_from": ".toolchains/arduino/data/packages/esp32/tools/esp-x32/2405/share/licenses/gcc/COPYING.RUNTIME"
+    },
+    {
+      "file": "toolchain-newlib-COPYING.txt",
+      "bytes": 63318,
+      "sha256": "422aa40293093fb54fc66e692a0d68fd0b24ed5602e5d1d33ad05ba3909057e9",
+      "copied_from": ".toolchains/arduino/data/packages/esp32/tools/esp-x32/2405/share/licenses/newlib/COPYING.NEWLIB"
+    }
+  ]
+}

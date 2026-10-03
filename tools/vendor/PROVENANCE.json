@@ -1,0 +1,7 @@
+{
+  "file": "gen_esp32part.py",
+  "upstream": "https://github.com/espressif/esp-idf/blob/v6.1/components/partition_table/gen_esp32part.py",
+  "release": "v6.1",
+  "license": "Apache-2.0 (upstream SPDX header)",
+  "sha256": "02f6c1c5f012393d47987ee64bc50ba319a2eda48cbcec754d8cfaf780cce529"
+}

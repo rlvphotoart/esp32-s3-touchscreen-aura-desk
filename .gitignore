@@ -1,0 +1,41 @@
+.venv/
+.idf-tools/
+.toolchains/
+build/
+sdkconfig
+sdkconfig.old
+backups/*
+logs/*
+!backups/.gitkeep
+!logs/.gitkeep
+__pycache__/
+.DS_Store
+.env
+.env.*
+*.local.json
+
+# Distribute reviewed firmware packages through GitHub Releases, not Git history.
+/releases/
+*.bin
+*.elf
+*.map
+*.zip
+
+# Captures can reveal local addresses, pairing codes, or network configuration.
+# Only explicitly selected synthetic offline UI previews are public samples.
+*.png
+/artifacts/*
+!/artifacts/ui-preview/
+/artifacts/ui-preview/*
+!/artifacts/ui-preview/home_offline.png
+!/artifacts/ui-preview/settings_offline.png
+!/artifacts/ui-preview/settings_always_on_offline.png
+!/artifacts/ui-preview/weather_offline.png
+!/artifacts/ui-preview/tools_offline.png
+*.raw
+*.partial
+*.pending
+*.pem
+*.key
+*.p12
+*.pfx

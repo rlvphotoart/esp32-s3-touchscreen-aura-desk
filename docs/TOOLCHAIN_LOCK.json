@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "host": {
+    "os": "macOS",
+    "architecture": "arm64"
+  },
+  "arduino_cli": {
+    "version": "1.5.1",
+    "url": "https://github.com/arduino/arduino-cli/releases/download/v1.5.1/arduino-cli_1.5.1_macOS_ARM64.tar.gz",
+    "sha256": "cb952e8c1621c95ef5f1d17831c945e3d0ec5973f89c557a7ec8feb9c4f7d4c9"
+  },
+  "arduino_esp32": {
+    "version": "3.1.1",
+    "url": "https://github.com/espressif/arduino-esp32/releases/download/3.1.1/esp32-3.1.1.zip",
+    "sha256": "e20982b2860eab4900ce16a0f2b7f9fc3ffb205e490dc933f625d53a5c9e8129",
+    "tools": [
+      {
+        "packager": "esp32",
+        "name": "esp32-arduino-libs",
+        "version": "idf-release_v5.3-cfea4f7c-v1"
+      },
+      {
+        "packager": "esp32",
+        "name": "esp-x32",
+        "version": "2405"
+      },
+      {
+        "packager": "esp32",
+        "name": "xtensa-esp-elf-gdb",
+        "version": "14.2_20240403"
+      },
+      {
+        "packager": "esp32",
+        "name": "esp-rv32",
+        "version": "2405"
+      },
+      {
+        "packager": "esp32",
+        "name": "riscv32-esp-elf-gdb",
+        "version": "14.2_20240403"
+      },
+      {
+        "packager": "esp32",
+        "name": "openocd-esp32",
+        "version": "v0.12.0-esp32-20241016"
+      },
+      {
+        "packager": "esp32",
+        "name": "esptool_py",
+        "version": "4.9.dev3"
+      },
+      {
+        "packager": "esp32",
+        "name": "mkspiffs",
+        "version": "0.2.3"
+      },
+      {
+        "packager": "esp32",
+        "name": "mklittlefs",
+        "version": "3.0.0-gnu12-dc7f933"
+      },
+      {
+        "packager": "arduino",
+        "name": "dfu-util",
+        "version": "0.11.0-arduino5"
+      }
+    ]
+  },
+  "sdk_override": {
+    "version": "esp32-3.1.1-h",
+    "url": "https://dl.espressif.com/AE/esp-arduino-libs/esp32-3.1.1-h.zip",
+    "sha256": "49e8a1872beb07d5e7e60aadb79c69ce4bfdf868da61347c6a3be7e547de4ca1",
+    "applies_to": "Only esp32s3 tree under idf-release_v5.3-cfea4f7c-v1; keep original SDK separately",
+    "configuration_verified": [
+      "CONFIG_SPIRAM_XIP_FROM_PSRAM",
+      "CONFIG_SPIRAM_FETCH_INSTRUCTIONS",
+      "CONFIG_SPIRAM_RODATA",
+      "CONFIG_ESP32S3_DATA_CACHE_LINE_64B",
+      "CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE",
+      "CONFIG_ESP_HTTPS_SERVER_ENABLE"
+    ]
+  },
+  "libraries": {
+    "ESP32_Display_Panel": {
+      "version": "1.0.5 metadata, commit pinned; no v1.0.5 tag",
+      "repository": "https://github.com/esp-arduino-libs/ESP32_Display_Panel",
+      "commit": "92b790ed6d24b0678e2f45b1fc85f0abd2d41b33"
+    },
+    "ESP32_IO_Expander": {
+      "version": "1.1.0",
+      "repository": "https://github.com/esp-arduino-libs/ESP32_IO_Expander",
+      "commit": "e79a63876a1d8a834cf8ec8f8b698ff9d9374579"
+    },
+    "esp-lib-utils": {
+      "version": "0.2.0",
+      "repository": "https://github.com/esp-arduino-libs/esp-lib-utils",
+      "commit": "bb9ea3d6d95d4f0ec9ebc9f65659a4b5d2977663"
+    },
+    "lvgl": {
+      "version": "8.4.0",
+      "repository": "https://github.com/lvgl/lvgl",
+      "commit": "4495f428630cc1741bd8bfd977f080e8460e8e8d"
+    },
+    "ArduinoJson": {
+      "version": "7.4.2",
+      "repository": "https://github.com/bblanchon/ArduinoJson",
+      "commit": "733bc4ee82630c88c0a619a883cd3a206efae977"
+    }
+  },
+  "build": {
+    "sketch": "firmware/AuraDesk",
+    "wrapper": "scripts/build.sh",
+    "jobs": 4,
+    "output": "releases/aura-desk-1.0.0",
+    "fqbn": "esp32:esp32:esp32s3:PSRAM=opi,FlashMode=dio,FlashSize=16M,CPUFreq=240,LoopCore=1,EventsCore=1,USBMode=hwcdc,CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PartitionScheme=custom,UploadSpeed=115200,DebugLevel=none,EraseFlash=none",
+    "optimization": "-O2",
+    "defines": [
+      "LV_CONF_INCLUDE_SIMPLE",
+      "LV_LVGL_H_INCLUDE_SIMPLE",
+      "NETWORK_EVENTS_MUTEX"
+    ]
+  },
+  "vendor_source": {
+    "lvgl_port": "ESP32_Display_Panel/examples/arduino/gui/lvgl_v8/simple_port",
+    "port_license": "CC0-1.0",
+    "library_license": "Apache-2.0"
+  }
+}
