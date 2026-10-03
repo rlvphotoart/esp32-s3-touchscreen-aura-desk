@@ -18,6 +18,7 @@ enum Command { C_SCAN=100, C_CONNECT, C_SHOW_PASSWORD, C_REFRESH, C_BRIGHTNESS, 
 UiActionCallback dispatch=nullptr;
 UiSnapshot model{};
 Page page=WELCOME;
+Page api_data_back=SETTINGS;
 bool first_snapshot=true, password_visible=false;
 char chosen_ssid[33]{};
 struct Widgets {
@@ -31,7 +32,9 @@ struct Widgets {
     *brightness_value=nullptr, *always_on=nullptr, *always_on_hint=nullptr,
     *timer_value=nullptr, *timer_state=nullptr,
     *timer_button=nullptr, *connect_button=nullptr, *weather_icon=nullptr,
-    *detail=nullptr, *forecast[3]{}, *metrics[4]{}, *widget_title[2]{},
+    *detail=nullptr, *home_data_prompt=nullptr, *home_data[2]{},
+    *home_data_title[2]{}, *home_data_value[2]{}, *home_data_arrow[2]{}, *home_data_state[2]{},
+    *forecast[3]{}, *metrics[4]{}, *widget_title[2]{},
     *widget_value[2]{}, *widget_age[2]{};
 } w;
 uint32_t network_hash=0;
@@ -173,8 +176,8 @@ void age(char *out,size_t len,int minutes,bool valid=false) {
   else std::snprintf(out,len,"Updated %d h %d min ago",minutes/60,minutes%60);
 }
 lv_obj_t *home_card(int x,int y,const char *title,Page destination) {
-  lv_obj_t *card=panel(lv_scr_act(),x,y,214,96,CARD,20,true);
-  text(card,16,12,182,20,title,&lv_font_montserrat_14,MUTED);
+  lv_obj_t *card=panel(lv_scr_act(),x,y,214,88,CARD,20,true);
+  text(card,16,9,182,20,title,&lv_font_montserrat_14,MUTED);
   clickable(card,destination); return card;
 }
 void build_home() {
@@ -188,20 +191,32 @@ void build_home() {
   clickable(weather,WEATHER); w.weather_icon=panel(weather,88,0,34,34,CANVAS);
   w.temp=text(weather,0,41,134,40,"--",&lv_font_montserrat_32);
   w.condition=text(weather,0,84,134,20,"Weather",&lv_font_montserrat_14,MUTED);
-  lv_obj_t *a=home_card(20,178,"OUTSIDE",WEATHER);
-  w.feels=text(a,16,34,182,34,"--",&lv_font_montserrat_24);
-  text(a,16,72,182,18,"Feels like",&lv_font_montserrat_14,MUTED);
-  a=home_card(246,178,"AIR QUALITY",AIR);
-  w.aqi=text(a,16,34,182,34,"--",&lv_font_montserrat_24);
-  w.aqi_hint=text(a,16,72,182,18,"European AQI",&lv_font_montserrat_14,MUTED);
-  a=home_card(20,286,"EUR / RON",RATES);
-  w.rate=text(a,16,34,182,34,"--",&lv_font_montserrat_24);
-  w.rate_hint=text(a,16,72,182,18,"Reference rate",&lv_font_montserrat_14,MUTED);
-  a=home_card(246,286,"FOCUS",TIMER);
+  lv_obj_t *a=home_card(20,166,"OUTSIDE",WEATHER);
+  w.feels=text(a,16,30,182,32,"--",&lv_font_montserrat_24);
+  text(a,16,65,182,18,"Feels like",&lv_font_montserrat_14,MUTED);
+  a=home_card(246,166,"AIR QUALITY",AIR);
+  w.aqi=text(a,16,30,182,32,"--",&lv_font_montserrat_24);
+  w.aqi_hint=text(a,16,65,182,18,"European AQI",&lv_font_montserrat_14,MUTED);
+  a=home_card(20,264,"EUR / RON",RATES);
+  w.rate=text(a,16,30,182,32,"--",&lv_font_montserrat_24);
+  w.rate_hint=text(a,16,65,182,18,"Reference rate",&lv_font_montserrat_14,MUTED);
+  a=home_card(246,264,"FOCUS",TIMER);
   w.focus_label=lv_obj_get_child(a,0);
-  w.focus=text(a,16,34,182,34,"25:00",&lv_font_montserrat_24);
-  w.focus_hint=text(a,16,72,182,18,"Ready when you are",&lv_font_montserrat_14,MUTED);
-  w.updated=text(lv_scr_act(),20,397,440,18,"Connect to Wi-Fi to receive updates",&lv_font_montserrat_14,MUTED);
+  w.focus=text(a,16,30,182,32,"25:00",&lv_font_montserrat_24);
+  w.focus_hint=text(a,16,65,182,18,"Ready when you are",&lv_font_montserrat_14,MUTED);
+  for(int i=0;i<2;i++) {
+    w.home_data[i]=panel(lv_scr_act(),20+i*226,364,214,48,CARD,14,true);
+    clickable(w.home_data[i],API_DATA);
+    w.home_data_title[i]=text(w.home_data[i],12,5,170,18,"Your data",&lv_font_montserrat_14,MUTED);
+    w.home_data_state[i]=text(w.home_data[i],144,5,58,18,"",&lv_font_montserrat_14,AMBER);
+    w.home_data_value[i]=text(w.home_data[i],12,25,170,20,"Configure",&lv_font_montserrat_16,BLUE);
+    w.home_data_arrow[i]=text(w.home_data[i],190,18,14,20,LV_SYMBOL_RIGHT,&lv_font_montserrat_14,BLUE);
+  }
+  w.home_data_prompt=panel(lv_scr_act(),20,364,440,48,CARD,14,true);
+  clickable(w.home_data_prompt,API_DATA);
+  text(w.home_data_prompt,16,14,150,22,"Your data",&lv_font_montserrat_16);
+  text(w.home_data_prompt,172,15,224,20,"Configure your APIs",&lv_font_montserrat_14,BLUE);
+  text(w.home_data_prompt,412,15,14,20,LV_SYMBOL_RIGHT,&lv_font_montserrat_14,BLUE);
   dock(HOME);
 }
 void build_weather() {
@@ -452,13 +467,14 @@ void build_browser() {
   lv_label_set_long_mode(note,LV_LABEL_LONG_WRAP);
 }
 void build_api_data() {
-  header("Your data",SETTINGS);
+  header("Your data",api_data_back);
   text(lv_scr_act(),20,70,440,24,"Two configurable public API widgets",&lv_font_montserrat_16,MUTED);
   for(int i=0;i<2;i++) {
-    lv_obj_t *p=panel(lv_scr_act(),20,117+i*137,440,118,CARD,20,true);
+    lv_obj_t *p=panel(lv_scr_act(),20,111+i*146,440,132,CARD,20,true);
     w.widget_title[i]=text(p,20,13,400,25,"API widget",&lv_font_montserrat_16,MUTED);
     w.widget_value[i]=text(p,20,47,400,35,"Not configured",&lv_font_montserrat_24);
-    w.widget_age[i]=text(p,20,91,400,18,"Configure from your browser",&lv_font_montserrat_14,MUTED);
+    w.widget_age[i]=text(p,20,89,400,38,"Configure from your browser",&lv_font_montserrat_14,MUTED);
+    lv_label_set_long_mode(w.widget_age[i],LV_LABEL_LONG_WRAP);
   }
   button(lv_scr_act(),20,403,440,56,"Configure from browser",BROWSER,BLUE);
 }
@@ -505,6 +521,7 @@ void build_welcome() {
   button(lv_scr_act(),28,423,424,48,"Explore offline",C_EXPLORE,CANVAS,INK);
 }
 void show(Page p) {
+  if(p==API_DATA && page!=API_DATA) api_data_back=page==HOME?HOME:SETTINGS;
   if(page==SETTINGS && w.settings_body) settings_scroll_y=lv_obj_get_scroll_y(w.settings_body);
   page=p; w=Widgets{}; network_hash=0; last_icon_code=-999;
   lv_obj_clean(lv_scr_act());
@@ -622,6 +639,43 @@ void refresh_widgets() {
   set(w.status,model.wifiConnected?(model.internetAvailable?"Online":"Wi-Fi connected"):"Offline");
   set(w.clock,model.timeSynced?model.clock:"--:--");
   set(w.date,model.timeSynced?model.date:"Connect to synchronize time");
+  if(page==HOME) {
+    const bool any=model.widgets[0].enabled || model.widgets[1].enabled;
+    if(any) lv_obj_add_flag(w.home_data_prompt,LV_OBJ_FLAG_HIDDEN);
+    else lv_obj_clear_flag(w.home_data_prompt,LV_OBJ_FLAG_HIDDEN);
+    for(int i=0;i<2;i++) {
+      if(any) lv_obj_clear_flag(w.home_data[i],LV_OBJ_FLAG_HIDDEN);
+      else lv_obj_add_flag(w.home_data[i],LV_OBJ_FLAG_HIDDEN);
+      const auto &widget=model.widgets[i];
+      if(widget.enabled && widget.label[0]) set(w.home_data_title[i],widget.label);
+      else { std::snprintf(buf,sizeof(buf),"API widget %d",i+1);set(w.home_data_title[i],buf); }
+      const bool failed=widget.enabled && model.wifiConnected && model.timeSynced &&
+        !widget.fetching && widget.error[0];
+      const bool retained=widget.enabled && widget.valid &&
+        (!model.wifiConnected || !model.timeSynced || widget.fetching || widget.error[0]);
+      lv_obj_set_width(w.home_data_title[i],retained?126:170);
+      set(w.home_data_state[i],retained?"Saved":"");
+      if(!widget.enabled) set(w.home_data_value[i],"Configure");
+      else if(widget.valid) {
+        char compact[48];std::snprintf(compact,sizeof(compact),"%s",widget.value);
+        if(std::strlen(compact)>12 && (std::strchr(compact,'.') || std::strchr(compact,'e') || std::strchr(compact,'E'))) {
+          char *end=nullptr;const double numeric=std::strtod(compact,&end);
+          if(end!=compact && !*end && std::isfinite(numeric))
+            std::snprintf(compact,sizeof(compact),std::fabs(numeric)>=1 && std::fabs(numeric)<100000000?"%.2f":"%.5g",numeric);
+        }
+        std::snprintf(buf,sizeof(buf),"%s%s%s",compact,widget.unit[0]?" ":"",widget.unit);
+        set(w.home_data_value[i],buf);
+      } else if(!model.wifiConnected) set(w.home_data_value[i],"Offline");
+      else if(!model.timeSynced) set(w.home_data_value[i],"Syncing clock");
+      else if(widget.fetching) set(w.home_data_value[i],"Updating...");
+      else if(failed) set(w.home_data_value[i],"Check source");
+      else set(w.home_data_value[i],"Waiting...");
+      const uint32_t fg=retained?AMBER:failed?RED:BLUE;
+      lv_obj_set_style_text_color(w.home_data_value[i],color(fg),0);
+      set(w.home_data_arrow[i],failed?"!":LV_SYMBOL_RIGHT);
+      lv_obj_set_style_text_color(w.home_data_arrow[i],color(failed?RED:fg),0);
+    }
+  }
   weather_glyph(model.weatherValid?model.weatherCode:-1);
   if(model.weatherValid) {
     std::snprintf(buf,sizeof(buf),"%.0f °C",model.temperature); set(w.temp,buf);
@@ -713,16 +767,29 @@ void refresh_widgets() {
       if(widget.label[0]) set(w.widget_title[i],widget.label);
       else { std::snprintf(buf,sizeof(buf),"API widget %d",i+1); set(w.widget_title[i],buf); }
       if(!widget.enabled) {
-        set(w.widget_value[i],"Not configured"); set(w.widget_age[i],"Configure from your browser");
-      } else if(!widget.valid) {
-        set(w.widget_value[i],"--"); set(w.widget_age[i],"Waiting for first update");
+        set(w.widget_value[i],"Disabled"); set(w.widget_age[i],"Choose a source and enable it in your browser.");
       } else {
-        std::snprintf(buf,sizeof(buf),"%s%s%s",widget.value,widget.unit[0]?" ":"",widget.unit);
-        set(w.widget_value[i],buf); age(buf,sizeof(buf),widget.ageMinutes,true);
+        if(widget.valid) {
+          std::snprintf(buf,sizeof(buf),"%s%s%s",widget.value,widget.unit[0]?" ":"",widget.unit);
+          set(w.widget_value[i],buf);
+        } else set(w.widget_value[i],"--");
         if(!model.wifiConnected) {
-          std::snprintf(part,sizeof(part),"Offline / %s",buf);set(w.widget_age[i],part);
-        } else set(w.widget_age[i],buf);
+          if(widget.valid) {
+            age(buf,sizeof(buf),widget.ageMinutes,true);
+            std::snprintf(part,sizeof(part),"Offline / %s",buf);set(w.widget_age[i],part);
+          } else set(w.widget_age[i],"Waiting for Wi-Fi connection.");
+        } else if(!model.timeSynced) set(w.widget_age[i],"Waiting for clock synchronization.");
+        else if(widget.fetching) set(w.widget_age[i],widget.valid?"Updating / previous reading shown":"Fetching your API now...");
+        else if(widget.error[0]) {
+          std::snprintf(buf,sizeof(buf),"%s%s",widget.valid?"Previous reading / ":"",widget.error);
+          set(w.widget_age[i],buf);
+        } else if(widget.valid) {
+          age(buf,sizeof(buf),widget.ageMinutes,true);set(w.widget_age[i],buf);
+        } else set(w.widget_age[i],"Ready / waiting for the first request.");
       }
+      const bool failed=widget.enabled && model.wifiConnected && model.timeSynced &&
+        !widget.fetching && widget.error[0];
+      lv_obj_set_style_text_color(w.widget_age[i],color(failed?RED:MUTED),0);
     }
   }
   timer_display();

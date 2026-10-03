@@ -7,6 +7,7 @@
 #include <Preferences.h>
 #include <LittleFS.h>
 #include <esp_http_client.h>
+#include <esp_tls.h>
 #include <esp_crt_bundle.h>
 #include <esp_heap_caps.h>
 #include <esp_system.h>
@@ -43,7 +44,8 @@ struct PsramAllocator : ArduinoJson::Allocator {
   void deallocate(void *p) override { heap_caps_free(p); }
   void *reallocate(void *p, size_t n) override { return heap_caps_realloc(p, n, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT); }
 } jsonAllocator;
-struct HttpBody { String data; bool tooLarge = false; };
+struct HttpBody { String data; bool tooLarge = false, tlsFailure = false; };
+struct HttpOutcome { const char *error = nullptr; uint16_t status = 0; };
 
 template<size_t N> void text(char (&target)[N], const char *value) { strlcpy(target, value ? value : "", N); }
 void lock() { xSemaphoreTake(stateMutex, portMAX_DELAY); }
@@ -58,33 +60,60 @@ String encoded(const String &value) {
 }
 esp_err_t httpEvent(esp_http_client_event_t *event) {
   auto *body = static_cast<HttpBody *>(event->user_data);
+  if((event->event_id==HTTP_EVENT_ERROR || event->event_id==HTTP_EVENT_DISCONNECTED) && event->data) {
+    int tlsCode=0, tlsFlags=0;
+    const esp_err_t tlsError=esp_tls_get_and_clear_last_error(static_cast<esp_tls_error_handle_t>(event->data),&tlsCode,&tlsFlags);
+    if(tlsCode || tlsFlags || tlsError==ESP_ERR_MBEDTLS_SSL_HANDSHAKE_FAILED) body->tlsFailure=true;
+  }
   if (event->event_id == HTTP_EVENT_ON_DATA) {
     if (body->data.length() + event->data_len > HTTP_LIMIT) { body->tooLarge=true; return ESP_FAIL; }
     if (!body->data.concat(static_cast<const char *>(event->data), event->data_len)) { body->tooLarge=true; return ESP_FAIL; }
   }
   return ESP_OK;
 }
-bool getHttps(const String &url, String &result) {
-  if(!url.startsWith("https://") || url.indexOf('@')>=0 || url.indexOf('#')>=0) return false;
-  int hostEnd=url.indexOf('/',8); if(hostEnd<0) hostEnd=url.length();
-  String host=url.substring(8,hostEnd); int port=host.indexOf(':'); if(port>=0) host=host.substring(0,port);
+bool getHttps(const String &url, String &result, HttpOutcome *outcome=nullptr) {
+  if(outcome) *outcome=HttpOutcome{};
+  const auto fail=[outcome](const char *reason) { if(outcome) outcome->error=reason; return false; };
+  if(!url.startsWith("https://") || url.indexOf('#')>=0) return fail("Use a public HTTPS address without credentials.");
+  int hostEnd=url.indexOf('/',8), query=url.indexOf('?',8);
+  if(hostEnd<0 || (query>=0 && query<hostEnd)) hostEnd=query;
+  if(hostEnd<0) hostEnd=url.length();
+  String host=url.substring(8,hostEnd);
+  if(host.indexOf('@')>=0) return fail("Use a public HTTPS address without credentials.");
+  int port=host.indexOf(':'); if(port>=0) host=host.substring(0,port);
   IPAddress resolved;
-  if(!WiFi.hostByName(host.c_str(),resolved)) return false;
+  if(!WiFi.hostByName(host.c_str(),resolved)) return fail("API hostname could not be resolved. Try again later.");
   if(resolved[0]==0 || resolved[0]==10 || resolved[0]==127 || resolved[0]>=224 ||
      (resolved[0]==169 && resolved[1]==254) || (resolved[0]==172 && resolved[1]>=16 && resolved[1]<=31) ||
-     (resolved[0]==192 && resolved[1]==168) || (resolved[0]==100 && resolved[1]>=64 && resolved[1]<=127)) return false;
+     (resolved[0]==192 && resolved[1]==168) || (resolved[0]==100 && resolved[1]>=64 && resolved[1]<=127)) return fail("The API must resolve to a public internet address.");
   HttpBody body; body.data.reserve(4096);
   esp_http_client_config_t config{};
   config.url=url.c_str(); config.timeout_ms=12000; config.event_handler=httpEvent;
   config.user_data=&body; config.crt_bundle_attach=esp_crt_bundle_attach;
   config.buffer_size=2048; config.buffer_size_tx=1024; config.disable_auto_redirect=true;
   auto client=esp_http_client_init(&config);
-  if (!client) return false;
+  if (!client) return fail("Unable to prepare the request. Try again later.");
   esp_http_client_set_header(client,"User-Agent","AURA-Desk/1.0 (personal dashboard)");
   const esp_err_t err=esp_http_client_perform(client);
   const int status=esp_http_client_get_status_code(client);
+  if(outcome && status>0 && status<=599) outcome->status=status;
   esp_http_client_cleanup(client);
-  if (err!=ESP_OK || status!=200 || body.tooLarge || body.data.isEmpty()) return false;
+  // An authenticated HTTPS response proves reachability even when a provider
+  // refuses one request. A failed widget must not demote an established router.
+  if(status>=100 && status<=599) { lock(); state.internetAvailable=true; unlock(); }
+  if(body.tooLarge) return fail("API response exceeds 32 KB. Choose a smaller endpoint.");
+  if(err!=ESP_OK) {
+    if(body.tlsFailure) { if(outcome) outcome->status=0; return fail("Secure connection failed. Check the clock or try another API."); }
+    return fail("API request failed or timed out. Try again later.");
+  }
+  if(status!=200) {
+    if(status==401 || status==403) return fail("Provider refused access. Choose a public API that needs no key.");
+    if(status==404) return fail("API address was not found. Check its endpoint.");
+    if(status==429) return fail("Provider rate limit reached. Retrying in 5 minutes.");
+    if(status>=300 && status<400) return fail("API redirected the request. Use its final HTTPS address.");
+    return fail("Provider returned an HTTP error. Check the API address.");
+  }
+  if(body.data.isEmpty()) return fail("API returned an empty response.");
   result=std::move(body.data); return true;
 }
 bool finiteNumber(JsonVariantConst value) { return value.is<float>() && isfinite(value.as<float>()); }
@@ -245,39 +274,132 @@ bool fetchRates() {
   String date=body.substring(p+6,p+16); if(date.length()!=10 || date[4]!='-' || date[7]!='-') return false;
   lock(); state.eurRon=ron; state.eurUsd=usd; text(state.rateDate,date.c_str()); state.ratesValid=true; state.internetAvailable=true; unlock(); return true;
 }
+bool publicWidgetUrl(const String &value) {
+  if(!value.startsWith("https://") || value.length()>200 || value.indexOf('#')>=0) return false;
+  for(size_t i=0;i<value.length();++i) if(uint8_t(value[i])<=32 || uint8_t(value[i])>=127 || value[i]=='\\') return false;
+  int end=value.indexOf('/',8), query=value.indexOf('?',8);
+  if(end<0 || (query>=0 && query<end)) end=query;
+  if(end<0) end=value.length(); String host=value.substring(8,end); host.toLowerCase();
+  if(host.endsWith(":443")) host.remove(host.length()-4);
+  if(host.isEmpty() || host.indexOf('@')>=0 || host.indexOf(':')>=0 || host.indexOf('%')>=0 || host.endsWith(".") || host.indexOf('.')<0 ||
+     host=="localhost" || host.endsWith(".localhost") || host.endsWith(".local") || host.endsWith(".internal") || host.endsWith(".lan") || host.endsWith(".home")) return false;
+  unsigned a,b,c,d; char trailing;
+  if(sscanf(host.c_str(),"%u.%u.%u.%u%c",&a,&b,&c,&d,&trailing)==4 &&
+     (a>255 || b>255 || c>255 || d>255 || a==0 || a==10 || a==127 || a>=224 || (a==169&&b==254) ||
+      (a==172&&b>=16&&b<=31) || (a==192&&b==168) || (a==100&&b>=64&&b<=127))) return false;
+  return true;
+}
+bool validWidgetPath(const String &path) {
+  if(path.isEmpty() || path.length()>80 || path[0]=='.' || path[path.length()-1]=='.' || path.indexOf("..")>=0) return false;
+  for(size_t i=0;i<path.length();++i) {
+    const uint8_t c=path[i];
+    if(!((c>='a'&&c<='z') || (c>='A'&&c<='Z') || (c>='0'&&c<='9') || c=='_' || c=='-' || c=='.')) return false;
+  }
+  return true;
+}
+bool validateWidgetOptions(JsonVariantConst options,const char *&problem) {
+  const auto fail=[&problem](const char *reason) { problem=reason; return false; };
+  if(!options.is<JsonObjectConst>()) return fail("Widget settings must be a JSON object.");
+  for(const char *key:{"label","unit","url","field"}) {
+    JsonVariantConst value=options[key];
+    if(!value.isUnbound() && !value.is<const char*>()) return fail("Widget label, unit, address, and field must be text.");
+    if(value.is<const char*>()) {
+      JsonString string=value.as<JsonString>();
+      for(size_t i=0;i<string.size();++i) if(uint8_t(string.c_str()[i])<32) return fail("Widget text contains unsupported control characters.");
+    }
+  }
+  const char *label=options["label"] | "", *unit=options["unit"] | "";
+  String url=options["url"] | "", path=options["field"] | "";
+  if(!*label || strlen(label)>27 || strlen(unit)>15 || url.length()>200 || path.length()>80) return fail("Use a short label (27 bytes), unit (15), address (200), and field (80).");
+  if(!options["enabled"].isUnbound() && !options["enabled"].is<bool>()) return fail("Widget enabled must be true or false.");
+  if(!options["interval"].isUnbound() && !options["interval"].is<uint32_t>()) return fail("Refresh interval must be a whole number of seconds.");
+  const bool enabled=options["enabled"] | false;
+  const uint32_t interval=options["interval"] | 1800U;
+  if(interval<300 || interval>86400) return fail("Choose a refresh interval from 300 to 86400 seconds.");
+  if((enabled || !url.isEmpty()) && !publicWidgetUrl(url)) return fail("Use a public HTTPS address on port 443 without credentials.");
+  if((enabled || !path.isEmpty()) && !validWidgetPath(path)) return fail("Use a dot path such as current.value or data.0.price.");
+  problem=nullptr; return true;
+}
 bool configureWidget(unsigned index,const char *json) {
-  if(index>1 || strlen(json)>512) return false;
+  if(index>1 || !json || strlen(json)>512) return false;
   JsonDocument doc(&jsonAllocator); if(deserializeJson(doc,json)) return false;
-  String url=doc["url"] | "", field=doc["field"] | "";
+  const char *problem=nullptr; if(!validateWidgetOptions(doc.as<JsonVariantConst>(),problem)) return false;
   const char *label=doc["label"] | "API widget", *unit=doc["unit"] | "";
-  const bool enabled=doc["enabled"] | true;
-  if(strlen(label)>27 || strlen(unit)>15 || url.length()>200 || field.length()>80) return false;
-  if(enabled && (!url.startsWith("https://") || url.indexOf('@')>=0 || field.isEmpty())) return false;
-  const uint32_t interval=doc["interval"] | 1800U; if(interval<300 || interval>86400) return false;
+  const bool enabled=doc["enabled"] | false;
   lock(); strlcpy(widgetConfig[index],json,sizeof(widgetConfig[index]));
-  auto &widget=state.widgets[index]; text(widget.label,label); text(widget.unit,unit); widget.enabled=enabled; widget.valid=false; widget.ageMinutes=-1; unlock();
+  auto &widget=state.widgets[index]; text(widget.label,label); text(widget.unit,unit);
+  widget.enabled=enabled; widget.valid=false; widget.fetching=false; widget.ageMinutes=-1;
+  widget.value[0]=0; widget.error[0]=0; widget.httpStatus=0; widgetFetched[index]=0; unlock();
   nextWidget[index]=0; return true;
 }
-bool fetchWidget(unsigned index) {
-  char config[513]; if(!app_get_widget_config(index,config,sizeof(config))) return false;
-  JsonDocument options(&jsonAllocator); if(deserializeJson(options,config)) return false;
-  String body; if(!getHttps(options["url"].as<String>(),body)) return false;
-  JsonDocument data(&jsonAllocator); if(deserializeJson(data,body)) return false;
-  JsonVariantConst value=data.as<JsonVariantConst>(); String path=options["field"] | "";
-  size_t start=0;
+bool selectWidgetValue(JsonVariantConst root,const String &path,JsonVariantConst &out,const char *&problem) {
+  const auto fail=[&problem](const char *reason) { problem=reason; return false; };
+  if(!validWidgetPath(path)) return fail("JSON field path is invalid. Use dot-separated fields.");
+  JsonVariantConst value=root; size_t start=0;
   while(start<path.length()) {
     int end=path.indexOf('.',start); if(end<0) end=path.length(); String part=path.substring(start,end);
-    if(value.is<JsonArrayConst>()) { bool digits=!part.isEmpty(); for(size_t n=0;n<part.length();n++) digits &= isdigit(part[n]); if(!digits) return false; value=value[part.toInt()]; }
-    else value=value[part.c_str()];
-    if(value.isNull()) return false; start=end+1;
+    if(value.is<JsonArrayConst>()) {
+      size_t selected=0;
+      for(size_t n=0;n<part.length();++n) {
+        const uint8_t c=part[n];
+        if(c<'0' || c>'9') return fail("An array field needs a zero-based numeric index, such as data.0.price.");
+        const unsigned digit=c-'0';
+        if(selected>(SIZE_MAX-digit)/10) return fail("JSON array index is too large.");
+        selected=selected*10+digit;
+      }
+      JsonArrayConst array=value.as<JsonArrayConst>();
+      if(selected>=array.size()) return fail("JSON array index is outside the returned data. Check the field path.");
+      value=array[selected];
+    } else if(value.is<JsonObjectConst>()) {
+      value=value[part.c_str()];
+      if(value.isUnbound()) return fail("JSON field was not found. Check the provider response and dot path.");
+    } else return fail("The field path continues through a value that is not an object or array.");
+    if(value.isNull()) return fail("JSON field is null. The provider has no value for it yet.");
+    start=end+1;
   }
+  out=value; problem=nullptr; return true;
+}
+bool formatWidgetValue(JsonVariantConst value,String &display,const char *&problem) {
+  const auto fail=[&problem](const char *reason) { problem=reason; return false; };
+  display=String();
+  if(value.is<const char*>()) {
+    JsonString string=value.as<JsonString>();
+    if(!string.size()) return fail("JSON field is empty. Choose a field with a value.");
+    if(string.size()>47) return fail("JSON field is longer than 47 bytes. Choose a shorter value.");
+    for(size_t i=0;i<string.size();++i) if(uint8_t(string.c_str()[i])<32) return fail("JSON text contains unsupported control characters.");
+    display=value.as<String>();
+  } else if(value.is<bool>()) display=value.as<bool>() ? "Yes" : "No";
+  else if(value.is<double>()) {
+    if(!isfinite(value.as<double>())) return fail("JSON number is not finite. Choose a valid numeric field.");
+    serializeJson(value,display);
+  } else return fail("Choose one number, text, or boolean field; objects and arrays cannot be displayed.");
+  if(display.isEmpty() || display.length()>47) return fail("JSON value cannot fit the display. Choose a shorter field.");
+  problem=nullptr; return true;
+}
+void widgetFailure(unsigned index,const char *reason,uint16_t status) {
+  lock(); auto &widget=state.widgets[index];
+  text(widget.error,reason); widget.httpStatus=status; widget.fetching=false;
+  // A later failure retains the last verified value and its original age.
+  unlock();
+}
+bool fetchWidget(unsigned index) {
+  if(index>1) return false;
+  lock(); state.widgets[index].fetching=true; state.widgets[index].error[0]=0; state.widgets[index].httpStatus=0; unlock();
+  char config[513];
+  if(!app_get_widget_config(index,config,sizeof(config))) { widgetFailure(index,"Widget has no saved configuration.",0); return false; }
+  JsonDocument options(&jsonAllocator);
+  if(deserializeJson(options,config)) { widgetFailure(index,"Saved widget settings could not be read. Save them again.",0); return false; }
+  String body; HttpOutcome outcome;
+  if(!getHttps(options["url"].as<String>(),body,&outcome)) { widgetFailure(index,outcome.error ? outcome.error : "API request failed. Try again later.",outcome.status); return false; }
+  JsonDocument data(&jsonAllocator);
+  if(deserializeJson(data,body)) { widgetFailure(index,"API did not return valid JSON. Choose a JSON endpoint.",outcome.status); return false; }
+  const char *problem=nullptr; JsonVariantConst value;
+  if(!selectWidgetValue(data.as<JsonVariantConst>(),options["field"].as<String>(),value,problem)) { widgetFailure(index,problem,outcome.status); return false; }
   String display;
-  if(value.is<const char *>()) display=value.as<String>();
-  else if(value.is<bool>()) display=value.as<bool>() ? "Yes" : "No";
-  else if(value.is<double>() && isfinite(value.as<double>())) serializeJson(value,display);
-  else return false;
-  if(display.isEmpty() || display.length()>47) return false;
-  lock(); text(state.widgets[index].value,display.c_str()); state.widgets[index].valid=true; state.widgets[index].ageMinutes=0; widgetFetched[index]=time(nullptr); state.internetAvailable=true; unlock();
+  if(!formatWidgetValue(value,display,problem)) { widgetFailure(index,problem,outcome.status); return false; }
+  lock(); auto &widget=state.widgets[index]; text(widget.value,display.c_str()); widget.valid=true;
+  widget.fetching=false; widget.error[0]=0; widget.httpStatus=outcome.status; widget.ageMinutes=0;
+  widgetFetched[index]=time(nullptr); state.internetAvailable=true; unlock();
   return true;
 }
 void loadCache() {
@@ -439,7 +561,7 @@ void networkWorker(void *) {
         nextWidget[i]=millis()+(result ? (options["interval"] | 1800U)*1000 : 300000);
       }
     }
-    lock(); state.fetching=false; if(attempted && !ok) state.internetAvailable=false; unlock();
+    lock(); state.fetching=false; unlock();
     if(attempted) { message(ok ? "Update complete. Each card shows its own data age." : "Data service unavailable. Saved values are retained."); if(ok) saveCache(); }
     web_service_poll();
   }
@@ -453,6 +575,17 @@ void app_dispatch(UiAction action,const char *first,const char *second) {
   else if(action==UiAction::SetAlwaysOn) { lock(); state.alwaysOnDisplay=cmd.first[0]=='1'; unlock(); }
 }
 bool app_get_snapshot(UiSnapshot &out) { if(!stateMutex) return false; lock(); out=state; unlock(); return true; }
+bool app_validate_widget_config(const char *json,char *error,unsigned capacity) {
+  const char *problem=nullptr; bool valid=false;
+  if(!json || strlen(json)>512) problem="Widget settings exceed the supported size.";
+  else {
+    JsonDocument doc(&jsonAllocator);
+    if(deserializeJson(doc,json)) problem="Widget settings must be valid JSON.";
+    else valid=validateWidgetOptions(doc.as<JsonVariantConst>(),problem);
+  }
+  if(error && capacity) strlcpy(error,problem ? problem : "",capacity);
+  return valid;
+}
 bool app_get_widget_config(unsigned index,char *out,unsigned capacity) { if(index>1 || !out || !capacity || !stateMutex) return false; lock(); strlcpy(out,widgetConfig[index],capacity); unlock(); return out[0]; }
 bool app_service_init() {
   stateMutex=xSemaphoreCreateMutex(); commands=xQueueCreate(8,sizeof(Command));

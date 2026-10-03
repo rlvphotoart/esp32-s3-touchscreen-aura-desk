@@ -15,7 +15,7 @@ The native host renderer compiles the actual `firmware/AuraDesk/ui.cpp` and the 
 - Password characters are immediately masked; Show/Hide requires an explicit tap.
 - Twenty snapshot updates preserve the existing SSID, password, keyboard and widget objects.
 - The Settings display card presents brightness and the Always-on display switch together within the initial viewport. Disabled mode reads `Dims after 3 minutes of inactivity.`; enabled mode reads `Keeps your selected brightness.`. The switch has an expanded 48-pixel touch area, and additional Settings rows remain accessible by scrolling with the dock fixed on-screen.
-- Always-on switching dispatches `SetAlwaysOn` with `1` and `0`. Repeated snapshots, browser-origin changes and returning to Settings synchronize the switch without duplicate commands or reconstructing the active widgets. Both display modes passed the actual LVGL host regression; see `logs/aura-always-on-ui-qa.log`.
+- Always-on switching dispatches `SetAlwaysOn` with `1` and `0`. Repeated snapshots, browser-origin changes and returning to Settings synchronize the switch without duplicate commands or reconstructing the active widgets. Both display modes passed the actual LVGL host regression; see the [historical display report](RELEASE_VALIDATION_1.0.1.md).
 - Ready on the credential keyboard dispatches the expected connection action with copied input.
 - UTF-8 inputs beyond the Wi-Fi byte limits are refused with visible feedback.
 - Countdown uses monotonic LVGL ticks; advancing wall-clock data does not alter its duration. Start, pause, elapsed-time progression and preservation while paused were verified.
@@ -23,7 +23,7 @@ The native host renderer compiles the actual `firmware/AuraDesk/ui.cpp` and the 
 
 ## Device release verification
 
-The 1.0.0 device release passed ten consecutive reboots, live router/time/API checks, authenticated HTTPS controls, a real custom JSON widget, browser OTA, and accepted-slot/image readback. Home, Weather and Tools were captured from the device with verified pixel SHA-256 hashes and inspected. See [the 1.0.0 validation](RELEASE_VALIDATION_1.0.0.md) for those results. Version 1.0.1 adds the Always-on switch and has separate idle, backlight, persistence and OTA verification in [RELEASE_VALIDATION.md](RELEASE_VALIDATION.md). Physical observations remain outside software screenshot verification.
+The 1.0.0 device release passed ten consecutive reboots, live router/time/API checks, authenticated HTTPS controls, a real custom JSON widget, browser OTA, and accepted-slot/image readback. Home, Weather and Tools were captured from the device with verified pixel SHA-256 hashes and inspected. See [the 1.0.0 validation](RELEASE_VALIDATION_1.0.0.md) for those results. Version 1.0.1 adds the Always-on switch and has separate idle, backlight, persistence and OTA verification in [its historical report](RELEASE_VALIDATION_1.0.1.md). Current release results are in [RELEASE_VALIDATION.md](RELEASE_VALIDATION.md). Physical observations remain outside software screenshot verification.
 
 Host rendering does not establish physical display orientation, touch accuracy, brightness response, RGB tearing, router authentication, internet access, or API operation. Device build/flash/boot and network observations must be recorded separately by the hardware owner task. The browser screenshot fixture uses `192.0.2.1` and pairing code `000000`, which are test values rather than actual device credentials.
 
@@ -47,3 +47,11 @@ UI ownership is limited to widget creation, presentation, navigation and monoton
 Both user-reported failures were reproduced with actual LVGL pointer hit-testing before the fix. Regression tests now click 5-minute and 15-minute countdowns, return to Tools, open Focus, and select both 25-minute and 50-minute presets. They check elapsed/reset state, start/pause, and reopening an existing running Focus session. Countdown retains its own 5/15-minute controls.
 
 The fixed Settings Browser shortcut is tested by pointer taps across five close/reopen cycles. Tests also reopen the scrolled Browser row, preserve Settings scroll, update the displayed address/code from snapshots, and verify the offline hint. All 14 pages and the earlier Always-on/credential/monotonic timer checks pass. Device-page reentry and real HTTPS pairing are recorded separately in the current release validation.
+
+## 1.0.3 custom API Home and browser regression
+
+Home has two 48-pixel API tiles above the dock for enabled widgets, or a Your data configuration shortcut when both are disabled. Pointer tests open each tile, confirm full values on the detail page and return to Home; the Settings API row returns to Settings. The existing weather, air, currency and timer cards remain accessible. Snapshot changes update the tile objects without rebuilding the active page.
+
+Fresh and retained-reading fixtures verify genuine zero, long numeric Home compaction, full detail precision, fetching, clock/network prerequisites and independent two-line error messages. Retained Home values use an amber Saved label and an error indicator. These test fixtures remain outside the target sketch and public release previews.
+
+The exact embedded browser JavaScript passes 56 offline DOM assertions for ready examples, form edits, validation feedback, expiry, wrong-code preservation, shared polling and bounded fetch/body deadlines. Actual C++ widgets pass 125 controlled assertions, and HTTP response policy passes 17 send/header/close assertions. Actual Safari/API and checked device Home/detail outcomes are documented in [BROWSER_API_VALIDATION.md](BROWSER_API_VALIDATION.md).

@@ -9,7 +9,12 @@ using UiActionCallback = void (*)(UiAction, const char *, const char *);
 
 struct WifiEntry { char ssid[33]; int16_t rssi; bool secure; };
 struct ForecastDay { char day[16]; float low, high, rain; int16_t code; };
-struct ApiWidget { char label[28], value[48], unit[16]; bool enabled, valid; int32_t ageMinutes; };
+struct ApiWidget {
+  char label[28], value[48], unit[16], error[96];
+  bool enabled, valid, fetching;
+  int32_t ageMinutes;
+  uint16_t httpStatus;
+};
 struct UiSnapshot {
   char clock[16], date[48], city[48], timezone[48], ssid[33], ip[20];
   char connection[48], message[100], firmware[24], resetReason[32];
@@ -32,3 +37,4 @@ struct UiSnapshot {
 void app_dispatch(UiAction action, const char *first = "", const char *second = "");
 bool app_get_snapshot(UiSnapshot &out);
 bool app_get_widget_config(unsigned index, char *out, unsigned capacity);
+bool app_validate_widget_config(const char *json, char *error, unsigned capacity);

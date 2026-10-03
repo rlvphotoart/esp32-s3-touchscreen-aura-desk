@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "product": "AURA Desk",
+  "version": "1.0.3",
+  "validated_at": "2026-10-03T20:55:34.944388+03:00",
+  "application_sha256": "544c77cd798d1ea0f4e43965acd85ef2b9a2d19f623fee94e996de70ab065c9b",
+  "checks": {
+    "native_safari_final": {
+      "passed": true,
+      "native_app": "Safari",
+      "pairing_success": true,
+      "wrong_code_message_preserved_after_poll_interval": true,
+      "paired_firmware_verified": true,
+      "coinbase_configuration_saved": true,
+      "humidity_configuration_preserved": true,
+      "malformed_path_rejected_inline": true,
+      "invalid_submission_preserves_last_reading": true,
+      "settings_save_accepted": true,
+      "settings_export_download_json_verified": true,
+      "export_excludes_authentication_fields": true,
+      "display_brightness": 49,
+      "always_on": true,
+      "application_ota_upload_verified_and_restarted": true,
+      "manual_refresh_updated_both_readings": true,
+      "reload_preserves_paired_session_and_saved_configurations": true
+    },
+    "earlier_private_candidate": {
+      "version": "1.0.3",
+      "application_sha256": "0999f1c5413819076044a5dcb3d9577783471dd52581e18b5b6de2bb02667dc5",
+      "ready_coinmarketcap_and_humidity_presets_saved": true,
+      "both_values_fetched": true,
+      "missing_json_field_reported": true,
+      "real_http_429_retains_prior_value_and_age": true,
+      "other_widget_remained_valid": true
+    },
+    "device_home_and_details": {
+      "product": "AURA Desk",
+      "firmware": "1.0.3",
+      "passed": true,
+      "read_only_transport_retries": 0,
+      "settings_writes": false,
+      "flash_writes": false,
+      "efuse_writes": false,
+      "physical_touch_tested": false,
+      "latest_refresh_success_required": true,
+      "checks": [
+        "ROM identity, physical PSRAM, firmware version and healthy display startup",
+        "Both existing enabled widgets have verified public API readings with known age and recorded refresh state",
+        "Checked home framebuffer independently matches both configured labels, values and units",
+        "Checked api_details framebuffer independently matches both configured labels, values and units",
+        "API configuration, always-on mode and selected/applied brightness remain unchanged"
+      ],
+      "identity_verified": true,
+      "home_both_labels_values_units_verified": true,
+      "api_details_both_labels_values_units_verified": true,
+      "selected_brightness": 49,
+      "always_on_preserved": true,
+      "brightness_preserved": true,
+      "widget_refresh_states": [
+        {
+          "slot": 0,
+          "verified_reading_valid": true,
+          "latest_refresh_http_status": 200,
+          "latest_refresh_error_present": false,
+          "reading_age_minutes": 1
+        },
+        {
+          "slot": 1,
+          "verified_reading_valid": true,
+          "latest_refresh_http_status": 200,
+          "latest_refresh_error_present": false,
+          "reading_age_minutes": 3
+        }
+      ],
+      "home_navigation_command_sent": true
+    },
+    "cpp_actual_source_host": {
+      "passed": true,
+      "assertions": 125,
+      "https_platform_stubs": true
+    },
+    "embedded_browser_js_host": {
+      "passed": true,
+      "assertions": 56,
+      "offline_dom_harness": true
+    },
+    "http_response_actual_source_host": {
+      "passed": true,
+      "assertions": 17,
+      "offline_sdk_stubs": true
+    },
+    "actual_lvgl_host": {
+      "passed": true,
+      "pages": 14,
+      "pointer_hit_tests": true,
+      "both_home_tiles": true,
+      "numeric_zero": true,
+      "compact_home_full_detail": true,
+      "saved_value_and_error_indicators": true,
+      "home_and_settings_back_origins": true,
+      "model_updates_preserve_active_objects": true,
+      "disabled_configuration_shortcut": true
+    }
+  },
+  "final_configured_sources": [
+    {
+      "slot": 1,
+      "name": "Bitcoin price",
+      "provider": "Coinbase",
+      "public_url": "https://api.coinbase.com/v2/prices/BTC-USD/spot",
+      "field": "data.amount",
+      "unit": "USD",
+      "interval_seconds": 1800
+    },
+    {
+      "slot": 2,
+      "name": "Humidity",
+      "provider": "Open-Meteo",
+      "public_url_template": "https://api.open-meteo.com/v1/forecast?latitude=<saved-latitude>&longitude=<saved-longitude>&current=relative_humidity_2m",
+      "field": "current.relative_humidity_2m",
+      "unit": "%",
+      "interval_seconds": 1800
+    }
+  ],
+  "notes": [
+    "CoinMarketCap returned HTTP429 after verification reboots; the final saved Bitcoin source uses the documented public Coinbase spot endpoint.",
+    "The initial screen-verifier baseline80 differed from the current saved brightness49. Verification was repeated with the current49 baseline; no display-policy firmware change was made.",
+    "An out-of-memory cause for earlier TLS errors was not established; completed responses now release their connections."
+  ],
+  "limits": [
+    "Actual device page navigation uses UART and SHA256-checked framebuffer transfers with regional OCR, rather than physical finger taps.",
+    "Frankfurter and carbon-intensity presets have offline form/configuration coverage; live fetches were not claimed in this run.",
+    "Physical optical quality, forced rollback, prolonged burn-in and deliberate network interruption were not measured."
+  ]
+}

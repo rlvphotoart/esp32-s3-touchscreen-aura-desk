@@ -128,7 +128,7 @@ def self_test():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port")
-    parser.add_argument("--expected-version", default="1.0.2")
+    parser.add_argument("--expected-version", default="1.0.3")
     parser.add_argument("--timeout", type=int, default=240, help="Router/readiness deadline, 60..600 seconds")
     parser.add_argument("--summary", type=Path, help="Optional non-secret JSON result; must not exist")
     parser.add_argument("--self-test", action="store_true")

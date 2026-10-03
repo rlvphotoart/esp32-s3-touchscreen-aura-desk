@@ -65,9 +65,10 @@ def uart_status(port):
     return result
 
 
-def screen_png(port):
+def screen_png(port, page=12):
+    require(type(page) is int and 0 <= page <= 13, "Screenshot page is outside the supported interface")
     port.reset_input_buffer()
-    port.write(b"screen:12\n")
+    port.write(("screen:" + str(page) + "\n").encode("ascii"))
     read_uart(port, 1, maximum=16384)
     port.write(b"screenshot\n")
     raw = read_uart(port, 60, marker=b"\nAURA_SCREEN_END\n", maximum=480 * 480 * 2 + 16384)

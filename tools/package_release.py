@@ -68,7 +68,7 @@ REQUIRED = [
         "aura_console.py", "backup_device.py", "capture_serial.py", "capture_release_screens.py", "device_inventory.py",
         "export_backup.py", "flash_aura.py", "read_efuses.py", "reset_and_capture.py",
         "restore_original.py", "screen_to_png.py", "test_aura_boot.py", "test_aura_network.py",
-        "verify_backup.py", "verify_aura_ota.py", "upload_aura_update.py", "test_always_on.py", "test_navigation_device.py", "package_release.py", "vendor/gen_esp32part.py", "vendor/PROVENANCE.json")],
+        "verify_backup.py", "verify_aura_ota.py", "upload_aura_update.py", "test_always_on.py", "test_navigation_device.py", "test_widgets.py", "test_widget_browser.py", "test_http_response_policy.py", "test_api_device.py", "package_release.py", "vendor/gen_esp32part.py", "vendor/PROVENANCE.json")],
 ]
 # Additional public reference documents are explicit, not a wildcard over docs/.
 OPTIONAL = [
@@ -76,7 +76,7 @@ OPTIONAL = [
     *[f"docs/{name}" for name in (
         "BACKUP.md", "CAPABILITIES.md", "FLASH_LAYOUT.md", "GPIO_MAP.md", "HARDWARE.md",
         "ORIGINAL_FIRMWARE.md", "RECOVERY.md", "RESEARCH.md", "SECURITY.md", "SETUP.md",
-        "TEST_PLAN.md", "DEVELOPMENT.md", "ENGINEERING_REPORT.md", "hardware_profile.json", "RELEASE_VALIDATION_1.0.0.md", "RELEASE_VALIDATION_1.0.0.json", "RELEASE_VALIDATION_1.0.1.md", "RELEASE_VALIDATION_1.0.1.json")],
+        "TEST_PLAN.md", "DEVELOPMENT.md", "ENGINEERING_REPORT.md", "hardware_profile.json", "RELEASE_VALIDATION_1.0.0.md", "RELEASE_VALIDATION_1.0.0.json", "RELEASE_VALIDATION_1.0.1.md", "RELEASE_VALIDATION_1.0.1.json", "RELEASE_VALIDATION_1.0.2.md", "RELEASE_VALIDATION_1.0.2.json", "BROWSER_API_VALIDATION.md", "BROWSER_API_VALIDATION.json")],
     "artifacts/ui-preview/home_offline.png", "artifacts/ui-preview/weather_offline.png",
     "artifacts/ui-preview/tools_offline.png", "artifacts/ui-preview/settings_offline.png",
     "artifacts/ui-preview/settings_always_on_offline.png",

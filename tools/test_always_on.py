@@ -249,7 +249,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port")
     parser.add_argument("--timeout", type=int, default=240, help="Router/idle deadlines in seconds, 200..600")
-    parser.add_argument("--expected-version", default="1.0.2")
+    parser.add_argument("--expected-version", default="1.0.3")
     parser.add_argument("--summary", type=Path, help="Optional non-secret result JSON; must not exist")
     parser.add_argument("--idle-only", action="store_true",
                         help="Skip reboot persistence phases; verify real inactivity and both backlight modes")

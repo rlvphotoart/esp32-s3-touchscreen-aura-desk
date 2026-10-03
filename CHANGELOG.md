@@ -1,5 +1,14 @@
 # AURA Desk changes
 
+## 1.0.3 — Custom API readings on Home and Safari reliability
+
+- Shows both enabled custom API readings directly on Home. Each tile opens Your data with full values, update ages and independent errors; returning goes back to the originating page.
+- Adds ready-to-use public JSON API examples, array dot-path help, and feedback beside each Browser form.
+- Reports per-widget fetching and request/JSON/field errors instead of indefinite waiting. A failed refresh retains the last successful reading with a clear warning.
+- Makes configuration validation consistent across browser submission and persisted settings.
+- Keeps pairing errors visible, prevents overlapping or indefinitely stalled browser polls, and closes completed HTTPS responses to release TLS connection resources.
+- Adds actual Safari OTA/API tests, checked device Home/detail screenshots, and host custom-widget regression evidence.
+
 ## 1.0.2 — Timer and Browser navigation
 
 - Tools → Open timer selects or resumes Focus, including after 5/15-minute countdowns. Focus 25/50-minute presets change the duration correctly. Countdown has separate 5/15-minute controls.

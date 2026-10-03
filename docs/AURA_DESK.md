@@ -1,4 +1,4 @@
-# AURA Desk 1.0.2
+# AURA Desk 1.0.3
 
 AURA Desk turns the 480 × 480 touchscreen into an internet dashboard with weather, regional air quality, currency reference rates, your own public API readings, and focus tools. Its original Horizon interface uses an ivory canvas, ink-blue cards, cobalt actions, and large touch controls.
 
@@ -25,7 +25,7 @@ The bottom navigation contains **Home**, **Weather**, **Tools**, and **Settings*
 | Page | How to open it | What it contains |
 | --- | --- | --- |
 | Welcome | First use, before configuration | Connect Wi-Fi or Explore offline |
-| Home | Home in the bottom navigation | Clock, date, outside conditions, air quality, EUR/RON, and current timer |
+| Home | Home in the bottom navigation | Clock, date, outside conditions, air quality, EUR/RON, current timer and both enabled custom API readings |
 | Weather | Weather navigation or Outside card | Temperature, feels-like, humidity, wind, three forecast days, sunrise and sunset |
 | Air quality | Home → Air Quality | European AQI, category, PM2.5, source, and data age |
 | Currency reference | Home → EUR/RON | EUR/RON and EUR/USD with ECB publication date |
@@ -36,7 +36,7 @@ The bottom navigation contains **Home**, **Weather**, **Tools**, and **Settings*
 | Wi-Fi credentials | Select a network or enter one manually | Network name, masked password, keyboard, and connection feedback |
 | Location | Settings → Location | Online city lookup and saved location |
 | Browser access | Settings → Browser button in the header, or Browser configuration row | Local HTTPS address and pairing code |
-| Your data | Settings → API widgets | Two public API widget readings and their data ages |
+| Your data | Home → either API tile or Your data shortcut; Settings → API widgets | Two public API widget readings, full values, data ages and errors |
 | About AURA | Settings → About & diagnostics | Firmware, uptime, memory, connection, reset reason, data sources, restart, and Forget Wi-Fi |
 
 Tap the back arrow to return from a detailed page. Settings and About intentionally scroll. Home cards provide direct access to their related detailed pages.
@@ -62,7 +62,7 @@ Open-Meteo's hosted free access is intended for personal, non-commercial use. Pr
 
 ## Your own API widgets
 
-Connect your phone or computer to the same router, pair the browser as described below, and scroll to **Your data, your way**. Each of the two widgets has an Enabled checkbox, display label, public HTTPS API address, JSON field path, optional unit, and refresh interval.
+Connect your phone or computer to the same router, pair the browser as described below, and scroll to **Your data, your way**. Each of the two widgets has a source-example selector, Enabled checkbox, display label, public HTTPS API address, JSON field path, optional unit, and refresh interval. Choosing an example fills the form; **Save widget** applies it. The same API can be used in either slot, or configure your own public JSON source.
 
 A dot path selects a value from a JSON response. For example, this illustrative response:
 
@@ -74,7 +74,11 @@ supports `current.temperature` or `readings.0.value`. These are examples of the 
 
 Widgets accept a short text, number, or boolean. Choose a label up to 27 bytes, unit up to 15 bytes, URL up to 200 characters, field path up to 80 characters, and interval from 300 seconds to 86400 seconds. A longer returned value or a missing field is treated as an unsuccessful update; the last successful reading remains available during that powered session.
 
-Use a public API that returns HTTP 200 JSON directly. API keys, authentication headers, account logins, private-network addresses, redirects, arbitrary scripts, and responses above 32 KiB are outside v1. The device verifies the remote HTTPS certificate through its bundled trusted roots. Save changes with the widget's **Save widget** button, then open **Settings → API widgets** to see the result. Disable a widget to stop its polling.
+Use a public API that returns HTTP 200 JSON directly. API keys, authentication headers, account logins, private-network addresses, redirects, arbitrary scripts, and responses above 32 KiB are outside v1. The device verifies the remote HTTPS certificate through its bundled trusted roots. Save changes with the widget's **Save widget** button, then see the result in the two tiles on **Home**. Tap either tile for **Your data**, or open **Settings → API widgets**. Disable a widget to stop its polling. The browser shows fetching and concrete request/JSON/field errors beside the affected widget. A failed refresh keeps the last successful value and its age, with a warning. **Refresh data** requests a new update without waiting for the normal interval. A disabled widget retains its configuration but does not request data.
+
+Home compacts long numeric readings to fit the tiles; **Your data** shows their full values. Failed refreshes mark retained values as **Saved** and show the error in the detail page. Back returns to the page you used to open Your data. When neither widget is enabled, Home shows a **Your data · Configure your APIs** shortcut.
+
+Numbers including zero are supported. Array indices start at zero: `data.0.price` selects the first price in a `data` array. Select a scalar field, not the entire object or array. Text/boolean values are supported; image URLs are displayed only as text, and image-only endpoints cannot be used as numeric/text JSON widgets. The [Browser/API verification report](BROWSER_API_VALIDATION.md) includes working endpoints and tested behavior.
 
 ## Focus, countdown and stopwatch
 
@@ -104,8 +108,8 @@ The pairing code changes when the application restarts. Browser sessions are hel
 
 For a compatible AURA Desk update, pair the local browser, choose **Firmware update**, and upload the **application image**:
 
-- [AuraDesk.ino.bin](../releases/aura-desk-1.0.2/AuraDesk.ino.bin): application image for browser OTA.
-- [AuraDesk.ino.merged.bin](../releases/aura-desk-1.0.2/AuraDesk.ino.merged.bin): complete 16 MiB factory image for the serial installation/recovery tooling; not a browser OTA file.
+- [AuraDesk.ino.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.3/AuraDesk.ino.bin): application image for browser OTA.
+- [AuraDesk.ino.merged.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.3/AuraDesk.ino.merged.bin): complete 16 MiB factory image for the serial installation/recovery tooling; not a browser OTA file.
 
 The firmware has two 5 MiB application slots. An update writes to the inactive slot, verifies the image structure/integrity and ESP32-S3 target, selects it for the next boot, and restarts. Startup health checks defer acceptance until the new application is running. If a pending update fails those checks, the rollback mechanism can return to the previous valid custom application. It does not restore the vendor firmware or recover a changed partition layout.
 
@@ -113,8 +117,8 @@ Keep power connected during installation. Use application binaries from the matc
 
 The original 16 MiB firmware snapshot was acquired again before replacement and retained privately at:
 
-- [Original full flash](../backups/pre-aura-20261003/full_flash_original.bin)
-- [Original backup manifest](../backups/pre-aura-20261003/manifest.json)
+- Original full flash: retained privately by the owner.
+- Original backup manifest: retained privately by the owner.
 
 Its SHA-256 is:
 
