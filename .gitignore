@@ -20,7 +20,7 @@ __pycache__/
 *.zip
 
 # Captures can reveal local addresses, pairing codes, or network configuration.
-# Only explicitly selected synthetic offline UI previews are public samples.
+# Only explicitly reviewed non-sensitive gallery images are public samples.
 *.png
 /artifacts/*
 !/artifacts/ui-preview/
@@ -30,6 +30,12 @@ __pycache__/
 !/artifacts/ui-preview/settings_always_on_offline.png
 !/artifacts/ui-preview/weather_offline.png
 !/artifacts/ui-preview/tools_offline.png
+!/artifacts/readme-1.0.5/
+/artifacts/readme-1.0.5/*
+!/artifacts/readme-1.0.5/device-home-api.png
+!/artifacts/readme-1.0.5/preview-your-data.png
+!/artifacts/readme-1.0.5/preview-settings-always-on.png
+!/artifacts/readme-1.0.5/browser-companion.png
 *.raw
 *.partial
 *.pending

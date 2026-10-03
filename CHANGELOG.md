@@ -1,5 +1,11 @@
 # AURA Desk changes
 
+## Documentation refresh — 4 October 2026
+
+- Refreshes the front page for the current 1.0.5 interface with a reviewed actual-device Home frame and current-source Your data, Always-on and 500-service companion previews.
+- Adds screenshot provenance and linked GitHub Issues with symptoms, diagnosis, fixes, release commits and validation evidence.
+- Clarifies API discovery versus ready templates, pairing/setup and the on-device widget workflow. The verified 1.0.5 firmware release assets retain their original snapshots.
+
 ## 1.0.5 — 500-service browser companion
 
 - Adds all 500 distinct reviewed API services across 50 topics to both browser widget selectors, with searchable groups, documentation, access evidence, formats and setup requirements.

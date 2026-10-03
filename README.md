@@ -1,47 +1,112 @@
 # AURA Desk — ESP32-S3 Touchscreen Firmware
 
-An original **Horizon** interface and internet dashboard for the **Jingcai / Guition ESP32-4848S040C_I_Y_3** touchscreen: a 480 × 480 ST7701 RGB display, GT911 touch, 16 MiB flash and 8 MiB OPI PSRAM.
+An internet-connected desk dashboard with the original **Horizon** interface, built for the **Jingcai / Guition ESP32-4848S040C_I_Y_3**: a 480 × 480 ST7701 RGB display, GT911 touch, 16 MiB flash and 8 MiB OPI PSRAM.
 
-AURA connects to your 2.4 GHz Wi-Fi router and combines a clock, weather, air quality, reference exchange rates, public JSON API widgets and practical timers. It runs locally on the ESP32-S3 and includes paired HTTPS browser management and dual-slot OTA updates.
+**Current firmware: 1.0.5** · [Download](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/tag/v1.0.5) · [Setup and manual](docs/AURA_DESK.md) · [API catalog](docs/PUBLIC_API_SERVICES.md) · [Resolved Issues](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues?q=is%3Aissue%20is%3Aclosed%20label%3Ahistory)
 
-| Home | Settings |
+AURA connects to your 2.4 GHz Wi-Fi router and puts the clock, weather, air quality, reference exchange rates, timers and your own API readings on the touchscreen. Its local HTTPS browser companion manages settings, searches public APIs and installs application updates.
+
+| Public API services | Topics | Reading templates | On-screen widgets |
+| ---: | ---: | ---: | ---: |
+| **500** | **50** | **122** | **2** |
+
+## The current interface
+
+| Home — custom API readings at a glance | Your data — complete readings and update ages |
 | --- | --- |
-| ![Offline Home preview](artifacts/ui-preview/home_offline.png) | ![Offline Settings preview](artifacts/ui-preview/settings_always_on_offline.png) |
+| ![AURA Desk 1.0.5 actual device Home frame with Caffeine mass and Character API tiles](artifacts/readme-1.0.5/device-home-api.png) | ![AURA Desk 1.0.5 Your data preview with full API values and units](artifacts/readme-1.0.5/preview-your-data.png) |
 
-These are host-rendered offline previews of the actual LVGL interface. Test fixture data is excluded from the device application.
+The Home image is an unedited ESP32-rendered frame captured during final 1.0.5 verification, before the owner's original widgets were restored. Your data is rendered from the same release's LVGL source with the same public example readings. [Screenshot sources](docs/SCREENSHOTS.md)
 
-## Features
+## Your data, your way
 
-- Wi-Fi setup on the touchscreen, network scanning, saved credentials and automatic reconnection.
-- Network clock/calendar, editable city and supported daylight-saving rules.
-- Open-Meteo weather, three forecast days, sunrise/sunset, European AQI and PM2.5.
-- Dated ECB EUR/RON and EUR/USD reference rates.
-- Two configurable public HTTPS JSON API widgets, shown directly on Home, with **500 searchable API services and 122 reading templates**, searchable category groups, array-aware dot paths, controlled refresh intervals and clear error feedback.
-- Focus sessions with 25/50-minute presets, 5/15-minute countdowns and a stopwatch using monotonic time.
-- Saved brightness and **Always-on display** choice. On retains selected brightness; Off dims after three minutes without touch.
-- A visible **Settings → Browser** shortcut for the current local HTTPS address and six-digit pairing code.
-- Authenticated settings export, device health, and verified application OTA updates.
+The browser companion offers **500 searchable services in 50 categories**. Each entry explains its provider, documentation, access requirements, formats and setup needs. The separate reading selector provides **122 ready URL-and-field templates**, including 22 additional services introduced in 1.0.5.
 
-The browser companion includes all 500 reviewed services across 50 topics, with documentation, access evidence and compatibility notes. Thirty-nine listed services have installed reading templates; the other 461 support browsing and manual setup guidance. The original 100 templates remain available, including seven legacy choices outside the 500-service catalog. This does not establish 500 working device integrations.
+![Current AURA Desk browser companion showing 500-service selectors, 122 reading templates and two public example widgets](artifacts/readme-1.0.5/browser-companion.png)
 
-Cards show source dates and data ages. Invalid data stays unavailable. Open-Meteo hosted free access is for personal, non-commercial use; API/provider scope is documented in the [manual](docs/AURA_DESK.md).
+This is the exact 1.0.5 embedded companion running with safe demo status data. The preview makes no requests to the device or providers.
 
-## Download and setup
+1. Open **Settings → Browser** on the touchscreen, then visit the local HTTPS address shown there from a phone or computer on the same router.
+2. Enter the displayed six-digit pairing code. Search for an API, browse its access/format notes and choose a reading template, or enter your own public HTTPS JSON source.
+3. Select a number, short text or boolean using its JSON dot path. Array positions start at zero: `data.0.price` reads the first item's price. Set an optional unit and a refresh interval of at least 300 seconds.
+4. Enable the widget and **Save**. Saving starts its first device request; browsing alone preserves your fields. The browser shows each request's result and any error.
+5. See both enabled readings on **Home**. Tap a tile to open **Your data** with full values, units, update ages and independent errors.
 
-**Current version: 1.0.5.** Download verified files from [GitHub Releases](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases).
+**Catalog scope:** 39 of the 500 services have 115 associated reading profiles. Seven original GitHub/TimeAPI.io choices remain available independently, bringing the total to 122. The other 461 services provide discovery and custom-configuration guidance. API keys, image responses, redirects and non-JSON formats require work beyond the current scalar reader. Catalog inclusion does not establish a working integration for every provider endpoint. [Complete catalog evidence](docs/API_SERVICES_VALIDATION.md)
 
-- `AuraDesk.ino.bin`: application image for the device's browser OTA updater.
-- `AuraDesk.ino.merged.bin`: 16 MiB factory image for the exact supported board/layout.
-- `AURA-Desk-1.0.5.zip`: firmware, source, pinned dependency information and validation report.
-- SHA-256 files establish integrity; releases are not publisher-signed.
+## A display that fits your desk
 
-Connect through **Settings → Network** using a 2.4 GHz network. Set your weather city in **Settings → Location**. Open the always-visible **Browser** button in Settings to pair a phone/computer on the same router. The local browser uses the device's own HTTPS certificate.
+<img src="artifacts/readme-1.0.5/preview-settings-always-on.png" width="420" alt="Current AURA Desk Settings preview with Always-on enabled, a 49 percent brightness slider and a visible Browser shortcut">
 
-**Use only the matching board and flash layout.** Ordinary Arduino CLI upload uses different offsets from this project's custom layout. Factory flashing replaces stored settings; take and verify a complete backup first. Use application-only browser OTA for later updates. [Recovery guide](docs/RECOVERY.md)
+**Always-on display** keeps your selected brightness. Turning it off restores dimming after three minutes without touch, to one-fifth of the chosen level with a 10% floor. The preference is saved and can be changed from the touchscreen or browser.
+
+The Settings header keeps **Browser** accessible, so you can reopen the local address and pairing code whenever you need them. This screenshot is a current-source LVGL preview with demo network/location settings.
+
+## What the firmware includes
+
+| Area | Functions |
+| --- | --- |
+| Connection | Touchscreen Wi-Fi setup, scanning, saved credentials and automatic reconnection |
+| Time | Network clock/calendar, editable city and supported daylight-saving rules |
+| Weather | Open-Meteo conditions, three forecast days, sunrise/sunset, European AQI and PM2.5 |
+| Reference rates | Dated ECB EUR/RON and EUR/USD readings |
+| Your APIs | Two public HTTPS JSON widgets, scalar/array dot paths, saved readings, refresh ages and independent error feedback |
+| Tools | Focus sessions with 25/50-minute presets, separate 5/15-minute countdowns and a monotonic stopwatch |
+| Display | Saved brightness and Always-on choice |
+| Browser | Local paired HTTPS, settings export, device health and verified application OTA |
+
+Source dates and data ages stay visible. Invalid values remain unavailable; a failed refresh can retain the last successful reading with its age and error. Provider terms and quotas still apply. Open-Meteo hosted free access is for personal, non-commercial use. [Provider and platform limits](docs/AURA_DESK.md)
+
+## Download and first setup
+
+Get the [verified 1.0.5 release](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/tag/v1.0.5):
+
+| File | Use |
+| --- | --- |
+| `AuraDesk.ino.bin` | Application-only update through the device's browser OTA form |
+| `AuraDesk.ino.merged.bin` | 16 MiB factory image for the exact supported board and custom layout |
+| `AURA-Desk-1.0.5.zip` | Firmware, release source snapshot, build layout, dependency locks/licenses and validation reports |
+| Catalog and validation JSON assets | Machine-readable API evidence and release conclusions |
+| SHA-256 files | Integrity checks for the archive and packaged files |
+
+Connect using **Settings → Network** and a 2.4 GHz router. Set your weather city in **Settings → Location**, choose display brightness/Always-on, then pair the browser to configure your two API widgets.
+
+Use only the matching board and flash layout. Factory flashing replaces stored settings; first take and verify a complete backup. Ordinary Arduino CLI upload offsets differ from this project's layout. Use application-only browser OTA for later updates. [Build and flashing guide](docs/FIRMWARE_BUILD.md) · [Recovery](docs/RECOVERY.md)
+
+Release hashes establish integrity; releases are not publisher-signed. Firmware release assets and tags preserve their verified snapshots; this front page and issue history receive later documentation updates.
+
+## Verified on the device
+
+The final 1.0.5 application passed paired, certificate-pinned HTTPS installation, image readback and three consecutive healthy restarts. Router, location, widgets and display preferences were compared before/after the update and preserved.
+
+- **All 22 additional reading profiles** returned HTTP 200 and valid bounded scalars on the ESP32.
+- **Native Safari** passed both catalog selectors, search, draft preservation, representative new Save/fetch flows in both widget slots, reload and saved-source recognition.
+- **Actual ESP32-rendered Home and Your data frames** independently matched both configured labels, values and units. Frame checks are separate from browser success.
+- **All 15 release assets** were downloaded anonymously and matched the local release bytes and SHA-256 hashes.
+- Offline coverage includes **25,521 catalog checks**, **16,732 embedded-browser assertions**, production C++ profile checks and all **14 LVGL pages**.
+
+All 22 new live profiles were checked in slot 0, with representative Save/display coverage in both slots. The original 100-profile provider evidence is dated to 1.0.4; all 100 were not fetched on the final 1.0.5 ESP32 image. Rendered frames are distinct from optical panel measurements and manual physical touch tests. [Release validation](docs/RELEASE_VALIDATION.md) · [API service verification](docs/API_SERVICES_VALIDATION.md)
+
+## Issues and how they were fixed
+
+The [GitHub Issues history](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues?q=is%3Aissue%20is%3Aclosed%20label%3Ahistory) records symptoms, diagnosis, the implemented fix, source commits and verification evidence. Historical entries were added retrospectively on **4 October 2026**; their bodies preserve the actual release validation dates.
+
+| Problem or request | What changed | Issue / delivery |
+| --- | --- | --- |
+| Screen dimmed with no user choice | Saved Always-on switch on device and in browser | [#2](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/2) · 1.0.1 |
+| Open timer kept a 5/15-minute countdown | Explicit Focus entry and working 25/50-minute presets | [#3](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/3) · 1.0.2 |
+| Browser address/code was difficult to reopen | Visible Settings header shortcut and preserved scroll | [#4](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/4) · 1.0.2 |
+| API values appeared in browser but not Home | Two Home tiles linked to full Your data details | [#5](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/5) · 1.0.3 |
+| API choices lacked breadth and setup context | 500-service discovery catalog and 122 separate reading templates | [#8](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/8) · 1.0.5 |
+| GBIF rejected the broad TLS cipher offer | Four standard ECDHE AES-GCM suites with certificate verification retained | [#9](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/9) · 1.0.5 |
+
+[Full issue and improvement history](docs/ISSUE_HISTORY.md) also covers startup stability, Safari request/session handling, the rate-limited Bitcoin example and this repository refresh. Earlier failed requests remain recorded alongside successful final repeats; an unexplained provider failure is not presented as a diagnosed repair.
+
+For a new problem, [open an issue](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/new) with firmware version, board model, steps, expected/actual behavior and any non-sensitive error text. Keep Wi-Fi credentials, local addresses, pairing/session material, certificates and full-flash backups out of issue attachments.
 
 ## Build and verify
 
-The isolated toolchain pins Arduino-ESP32 **3.1.1**, its matching official high-performance SDK, ESP32_Display_Panel, LVGL **8.4.0** and ArduinoJson **7.4.2**. The SDK uses PSRAM XIP; usable heap PSRAM is therefore smaller than physical capacity.
+The isolated toolchain pins Arduino-ESP32 **3.1.1**, its matching official high-performance SDK, ESP32_Display_Panel, LVGL **8.4.0** and ArduinoJson **7.4.2**. The SDK uses PSRAM XIP; usable heap PSRAM is smaller than physical capacity. Follow [FIRMWARE_BUILD.md](docs/FIRMWARE_BUILD.md) and [SETUP.md](docs/SETUP.md) for the pinned local environment.
 
 ```sh
 ./scripts/build.sh
@@ -57,7 +122,7 @@ The isolated toolchain pins Arduino-ESP32 **3.1.1**, its matching official high-
 .venv/bin/python tools/test_package_release.py
 ```
 
-Follow [FIRMWARE_BUILD.md](docs/FIRMWARE_BUILD.md) and [SETUP.md](docs/SETUP.md) to install the pinned local tools. Export your board's own identity before identity-checked maintenance operations:
+Identity-checked device maintenance uses your own runtime configuration:
 
 ```sh
 export ESP32_PORT='<your-serial-port>'
@@ -67,7 +132,7 @@ export AURA_EXPECTED_MAC='<your-board-mac>'
 ./scripts/restore_original.sh  # review only; execution requires its explicit flag
 ```
 
-No owner-specific MAC, local network address, credentials, raw backup or private capture is included. Application binaries and debug metadata are audited for local build paths before release packaging.
+No owner-specific device identity, local network address, credentials or full-flash backup is included. Public gallery images are explicitly reviewed and allowlisted; private captures remain excluded.
 
 ## Tested hardware
 
@@ -82,11 +147,11 @@ No owner-specific MAC, local network address, credentials, raw backup or private
 
 Native USB pins overlap this board's display/touch wiring. Other boards need a reviewed pin/display profile and their own validation. Physical PCB revision remains unverified.
 
-## Documentation and history
+## Documentation and release history
 
-- [Manual](docs/AURA_DESK.md), [current validation](docs/RELEASE_VALIDATION.md), [500-service catalog](docs/PUBLIC_API_SERVICES.md), [additional readings](docs/PUBLIC_API_SERVICE_READINGS.md), [original reading templates](docs/PUBLIC_API_CATALOG.md), [500-service release verification](docs/API_SERVICES_VALIDATION.md), [original catalog verification](docs/API_CATALOG_VALIDATION.md), [1.0.3 Safari and API verification](docs/BROWSER_API_VALIDATION.md), [UI QA](docs/UI_QA.md).
-- [Changelog](CHANGELOG.md), [1.0.0 validation](docs/RELEASE_VALIDATION_1.0.0.md), [1.0.1 validation](docs/RELEASE_VALIDATION_1.0.1.md), [1.0.2 validation](docs/RELEASE_VALIDATION_1.0.2.md), [1.0.3 validation](docs/RELEASE_VALIDATION_1.0.3.md), [1.0.4 validation](docs/RELEASE_VALIDATION_1.0.4.md).
-- [Build guide](docs/FIRMWARE_BUILD.md), [dependency lock](docs/TOOLCHAIN_LOCK.json), [third-party notices](THIRD_PARTY_NOTICES.md).
-- [Hardware](docs/HARDWARE.md), [GPIO map](docs/GPIO_MAP.md), [backup](docs/BACKUP.md), [security](docs/SECURITY.md), [recovery](docs/RECOVERY.md).
+- **Use:** [Manual](docs/AURA_DESK.md), [500 services](docs/PUBLIC_API_SERVICES.md), [additional readings](docs/PUBLIC_API_SERVICE_READINGS.md), [original templates](docs/PUBLIC_API_CATALOG.md), [screenshots](docs/SCREENSHOTS.md).
+- **Verify:** [Current release](docs/RELEASE_VALIDATION.md), [API services](docs/API_SERVICES_VALIDATION.md), [original catalog](docs/API_CATALOG_VALIDATION.md), [Safari/API report](docs/BROWSER_API_VALIDATION.md), [UI QA](docs/UI_QA.md).
+- **History:** [Issues and fixes](docs/ISSUE_HISTORY.md), [changelog](CHANGELOG.md), release validation for [1.0.0](docs/RELEASE_VALIDATION_1.0.0.md), [1.0.1](docs/RELEASE_VALIDATION_1.0.1.md), [1.0.2](docs/RELEASE_VALIDATION_1.0.2.md), [1.0.3](docs/RELEASE_VALIDATION_1.0.3.md), [1.0.4](docs/RELEASE_VALIDATION_1.0.4.md).
+- **Maintain:** [Build](docs/FIRMWARE_BUILD.md), [dependency lock](docs/TOOLCHAIN_LOCK.json), [hardware](docs/HARDWARE.md), [GPIO](docs/GPIO_MAP.md), [backup](docs/BACKUP.md), [security](docs/SECURITY.md), [recovery](docs/RECOVERY.md).
 
-Original source/UX rights are recorded in [ORIGINAL_CODE_RIGHTS.md](ORIGINAL_CODE_RIGHTS.md), with upstream dependency licenses in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Public source history contains recovered release snapshots and the current changes. Private full-flash backups stay with the owner.
+Original source/UX rights are recorded in [ORIGINAL_CODE_RIGHTS.md](ORIGINAL_CODE_RIGHTS.md), with upstream dependency licenses in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Public history contains clearly identified recovered source snapshots and subsequent changes. Provider data retains its own terms.

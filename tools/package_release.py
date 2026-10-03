@@ -93,12 +93,14 @@ REQUIRED = [
 OPTIONAL = [
     f"{RELEASE}/AuraDesk.ino.map",
     *[f"docs/{name}" for name in (
-        "BACKUP.md", "CAPABILITIES.md", "FLASH_LAYOUT.md", "GPIO_MAP.md", "HARDWARE.md",
+        "BACKUP.md", "CAPABILITIES.md", "FLASH_LAYOUT.md", "GPIO_MAP.md", "HARDWARE.md", "ISSUE_HISTORY.md", "SCREENSHOTS.md",
         "ORIGINAL_FIRMWARE.md", "RECOVERY.md", "RESEARCH.md", "SECURITY.md", "SETUP.md",
         "TEST_PLAN.md", "DEVELOPMENT.md", "ENGINEERING_REPORT.md", "hardware_profile.json", "RELEASE_VALIDATION_1.0.0.md", "RELEASE_VALIDATION_1.0.0.json", "RELEASE_VALIDATION_1.0.1.md", "RELEASE_VALIDATION_1.0.1.json", "RELEASE_VALIDATION_1.0.2.md", "RELEASE_VALIDATION_1.0.2.json", "BROWSER_API_VALIDATION.md", "BROWSER_API_VALIDATION.json", "RELEASE_VALIDATION_1.0.3.md", "RELEASE_VALIDATION_1.0.3.json", "RELEASE_VALIDATION_1.0.4.md", "RELEASE_VALIDATION_1.0.4.json")],
     "artifacts/ui-preview/home_offline.png", "artifacts/ui-preview/weather_offline.png",
     "artifacts/ui-preview/tools_offline.png", "artifacts/ui-preview/settings_offline.png",
     "artifacts/ui-preview/settings_always_on_offline.png",
+    "artifacts/readme-1.0.5/device-home-api.png", "artifacts/readme-1.0.5/preview-your-data.png",
+    "artifacts/readme-1.0.5/preview-settings-always-on.png", "artifacts/readme-1.0.5/browser-companion.png",
 ]
 PRIVATE_KEYS = {
     "password", "pass", "passphrase", "psk", "secret", "token", "access_token",
@@ -216,8 +218,8 @@ def inputs() -> tuple[dict[str, bytes], dict]:
                     if allowed(name).is_file()), None)
     if notices is None:
         missing.append("THIRD_PARTY_NOTICES.md or THIRD_PARTY_NOTICES")
-    # Public previews contain only offline default states. Private device/pairing
-    # captures stay outside the package; live conclusions are in validation JSON.
+    # Public gallery paths are explicitly reviewed and allowlisted. Private
+    # device/pairing captures stay excluded; live conclusions are in validation JSON.
     if not allowed("artifacts/ui-preview/home_offline.png").is_file():
         missing.append("artifacts/ui-preview/home_offline.png")
     if missing:
