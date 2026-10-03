@@ -1,16 +1,24 @@
 #!/usr/bin/env python3
 """Read-only, identity-checked, resumable ESP32-S3 backup using Espressif APIs."""
-import argparse, hashlib, json, os, time
+import argparse, hashlib, json, os, re, time
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import esptool
 import serial
 
-EXPECTED_MAC = os.environ.get('AURA_EXPECTED_MAC','')
+EXPECTED_MAC = os.environ.get('AURA_EXPECTED_MAC', '').lower()
 FLASH_BYTES = 0x1000000
 EXPECTED_JEDEC = 0x184068
 CHUNK_BYTES = 0x10000
+
+def require_expected_mac():
+    """Fail before touching hardware unless the operator supplied its identity."""
+    if not EXPECTED_MAC:
+        raise RuntimeError('Set AURA_EXPECTED_MAC to your verified device MAC before hardware maintenance')
+    if re.fullmatch(r'(?:[0-9a-f]{2}:){5}[0-9a-f]{2}', EXPECTED_MAC) is None:
+        raise RuntimeError('AURA_EXPECTED_MAC must contain six colon-separated hexadecimal octets')
+    return EXPECTED_MAC
 
 def private_write(path, data):
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -49,6 +57,7 @@ def finish_commit(out):
         partial.unlink()
 
 def connect(port, baud):
+    require_expected_mac()
     esp = esptool.connect_esp(port=port, chip='esp32s3', initial_baud=115200, before='default-reset', connect_attempts=1)
     try:
         mac = ':'.join(f'{b:02x}' for b in esp.read_mac())
@@ -89,6 +98,7 @@ def main():
         return
     if not a.port:
         p.error('--port is required for acquisition')
+    require_expected_mac()
     out.mkdir(parents=True, exist_ok=True)
     out.chmod(0o700)
     target, partial = out/'full_flash_original.bin', out/'full_flash_original.bin.partial'

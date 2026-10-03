@@ -4,10 +4,8 @@
 build/
 sdkconfig
 sdkconfig.old
-backups/*
-logs/*
-!backups/.gitkeep
-!logs/.gitkeep
+/backups/
+/logs/
 __pycache__/
 .DS_Store
 .env

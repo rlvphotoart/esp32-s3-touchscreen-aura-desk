@@ -1,2 +1,2 @@
 #pragma once
-#define AURA_VERSION "1.0.1"
+#define AURA_VERSION "1.0.2"

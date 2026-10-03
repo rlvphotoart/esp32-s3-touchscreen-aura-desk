@@ -6,7 +6,7 @@ Completed on **3 October 2026 at 16:15:20 Europe/Bucharest**. The original devic
 
 - File: `backups/full_flash_original.bin`
 - Offset: `0x0`; length: **16,777,216 bytes (16 MiB)**
-- Chip: ESP32-S3 v0.2; MAC: `<runtime-device-mac>`; flash ID: `68 40 18`
+- Chip: ESP32-S3 v0.2; MAC: withheld publicly and retained in the private manifest; flash ID: `68 40 18`
 - SHA-256: `18d2f07ee3d3d216ed9a1b2b83accc40d5c925cd2902f9390a8f671c0ca3a1da`
 - Full-device MD5 at acquisition: `45b47b9294b417273af642fa8309ee02`, **matches saved image**
 - Manifest: `backups/manifest.json`; per-file SHA-256 list: `backups/SHA256SUMS`
@@ -46,7 +46,7 @@ Each export was compared to the verified full image. The bootloader/application 
 
 ## Reuse and interrupted acquisition
 
-`./scripts/verify_backup.sh` checks the ORIGINAL snapshot offline. A different snapshot directory can be supplied as its argument. `./scripts/backup_flash.sh` creates a fresh dated directory, displays the port, checks the same chip/MAC/flash/security and acquires another snapshot at conservative 115200 baud.
+`./scripts/verify_backup.sh` checks the ORIGINAL snapshot offline. A different snapshot directory can be supplied as its argument. `./scripts/backup_flash.sh` requires a privately supplied `AURA_EXPECTED_MAC` and creates a fresh dated directory, displays the port, checks the same chip/MAC/flash/security and acquires another snapshot at conservative 115200 baud.
 
 If an acquisition fails, keep the `.partial` file. A resume requires that exact board and a device-MD5 match for its entire saved prefix:
 

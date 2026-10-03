@@ -9,7 +9,7 @@ Investigated on 3 October 2026, Europe/Bucharest. The owner requested identifica
 | Chip family | ESP32-S3 | ROM chip identification; image target ID 9 |
 | Package / silicon revision | QFN56 / v0.2 | esptool and read-only eFuses |
 | Main CPU capability | Dual Xtensa LX7, up to 240 MHz | Chip features and datasheet; running CPU frequency not measured |
-| Base MAC | `<runtime-device-mac>` | ROM read; host tools bind this board identity |
+| Base MAC | Withheld from public evidence | Verified locally; host tools bind the operator-supplied `AURA_EXPECTED_MAC` |
 | Crystal | 40 MHz | esptool |
 | Flash | 16 MiB (16,777,216 bytes), JEDEC `68 40 18` | Flash ID/capacity query |
 | Flash bus / voltage | Four data lines / 3.3 V | eFuses `FLASH_TYPE`, `VDD_SPI_FORCE/TIEH` |

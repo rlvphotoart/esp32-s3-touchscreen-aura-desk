@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import esptool
-from backup_device import EXPECTED_MAC,EXPECTED_JEDEC,FLASH_BYTES
+from backup_device import EXPECTED_MAC,EXPECTED_JEDEC,FLASH_BYTES,require_expected_mac
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -16,6 +16,7 @@ def main():
     p.add_argument('--execute',action='store_true',help='perform the destructive restore after a fresh current-state backup')
     p.add_argument('--confirm-mac',help='required exact device MAC when --execute is selected')
     a=p.parse_args()
+    require_expected_mac()
     if a.execute and a.confirm_mac!=EXPECTED_MAC:
         p.error('--execute requires --confirm-mac '+EXPECTED_MAC)
     directory=a.directory.resolve()

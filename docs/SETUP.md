@@ -20,7 +20,7 @@ The initial audit checked normal shell PATH, Homebrew packages, standard applica
 | Apple system Python | `/usr/bin/python3` | 3.9.6 |
 | Git | `/usr/bin/git` | 2.54.0 (Apple Git-157) |
 | Active Xcode developer directory | `/Applications/Xcode-beta.app/Contents/Developer` | Confirmed with `xcode-select -p` |
-| Workspace Python | `<project-root>/.venv/bin/python` | 3.11.9 |
+| Workspace Python | `/absolute/path/to/ESP32/.venv/bin/python` | 3.11.9 |
 | Workspace esptool | `.venv`, Python package | 5.4.0 |
 | Workspace pyserial | `.venv`, Python package | 3.5 |
 | ESP-IDF / `idf.py` | Normal PATH and standard locations | Not found; not installed by this investigation |
@@ -37,7 +37,7 @@ Before the workspace environment was created, esptool, pyserial, and PlatformIO 
 Run commands from the workspace root. Activation is optional when using the explicit interpreter path:
 
 ```sh
-cd '<project-root>'
+cd '/absolute/path/to/ESP32'
 .venv/bin/python --version
 .venv/bin/python -m esptool version
 .venv/bin/python -m pip check
@@ -58,7 +58,7 @@ Use `deactivate` when finished. No persistent shell configuration changes are ne
 The full set of pinned package versions is in `requirements-tools.lock` at the workspace root. In a fresh checkout or directory without an existing `.venv`, use the verified Python 3.11 interpreter:
 
 ```sh
-cd '<project-root>'
+cd '/absolute/path/to/ESP32'
 /usr/local/bin/python3.11 -m venv .venv
 .venv/bin/python -m pip install --requirement requirements-tools.lock
 .venv/bin/python -m pip check

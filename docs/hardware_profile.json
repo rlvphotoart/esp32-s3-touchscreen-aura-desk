@@ -5,7 +5,6 @@
     "package": "QFN56",
     "revision": "v0.2",
     "rom_chip_id": 9,
-    "base_mac": "<runtime-device-mac>",
     "chip_max_cpu_mhz": 240,
     "crystal_mhz": 40,
     "flash_bytes": 16777216,
@@ -56,7 +55,8 @@
       "psram_8mib_initialized": true,
       "auth_expire_count": 5,
       "recognized_crash_markers": 0
-    }
+    },
+    "device_identity": "Withheld publicly; verify locally and supply AURA_EXPECTED_MAC for maintenance"
   },
   "likely": {
     "silicon_ordering_family": "ESP32-S3R8",

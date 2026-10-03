@@ -5,7 +5,12 @@ CLI="$ROOT/.toolchains/bin/arduino-cli"
 CONFIG="$ROOT/.toolchains/arduino-cli.yaml"
 SKETCH="$ROOT/firmware/AuraDesk"
 BUILD="$ROOT/build/AuraDesk"
-OUTPUT="$ROOT/releases/aura-desk-1.0.0"
+VERSION="$(sed -n 's/^#define AURA_VERSION "\([0-9.]*\)"$/\1/p' "$SKETCH/firmware_version.h")"
+if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo 'Invalid firmware version header.' >&2
+    exit 1
+fi
+OUTPUT="$ROOT/releases/aura-desk-$VERSION"
 FQBN='esp32:esp32:esp32s3:PSRAM=opi,FlashMode=dio,FlashSize=16M,CPUFreq=240,LoopCore=1,EventsCore=1,USBMode=hwcdc,CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PartitionScheme=custom,UploadSpeed=115200,DebugLevel=none,EraseFlash=none'
 if [[ ! -x "$CLI" || ! -f "$CONFIG" ]]; then
     echo 'Pinned local Arduino toolchain missing. See docs/FIRMWARE_BUILD.md.' >&2
@@ -29,8 +34,8 @@ mkdir -p "$BUILD" "$OUTPUT"
 "$CLI" --config-file "$CONFIG" compile --jobs 4 \
     --fqbn "$FQBN" \
     --build-property 'compiler.optimization_flags=-O2' \
-    --build-property 'compiler.c.extra_flags=-DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE' \
-    --build-property 'compiler.cpp.extra_flags=-DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE -DNETWORK_EVENTS_MUTEX' \
+    --build-property "compiler.c.extra_flags=-DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE -ffile-prefix-map=$ROOT=. -fdebug-prefix-map=$ROOT=." \
+    --build-property "compiler.cpp.extra_flags=-DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE -DNETWORK_EVENTS_MUTEX -ffile-prefix-map=$ROOT=. -fdebug-prefix-map=$ROOT=." \
     --build-path "$BUILD" --output-dir "$OUTPUT" "$SKETCH"
 # Arduino3.1.1 hardcodes app0x10000 and boot_app0xE000 in its merged export.
 # Our custom layout starts ota_0 at0x20000. Replace that export explicitly.
@@ -90,5 +95,18 @@ layout={'chip':'esp32s3','flash_size_bytes':flash_size,'application_offset':hex(
 (output/'build-layout.json').write_text(json.dumps(layout,indent=2)+'\n')
 print('Custom merged image validated:16MiB, application at0x20000; no boot_app0 written.')
 PYCODE
+# Linker maps contain linker input filenames, independent of compiler prefix maps.
+"$PYTHON" - "$ROOT" "$OUTPUT" <<'PUBLIC_PATHS'
+from pathlib import Path
+import sys
+root,output=map(Path,sys.argv[1:])
+map_file=output/'AuraDesk.ino.map'
+if map_file.exists():
+    map_file.write_text(map_file.read_text().replace(str(root),'.'))
+for path in output.iterdir():
+    if path.suffix in ('.bin','.elf','.map') and str(Path.home()).encode() in path.read_bytes():
+        raise SystemExit('Private home path remains in release artifact: '+path.name)
+print('Public artifact path audit passed.')
+PUBLIC_PATHS
 cp "$ROOT/docs/TOOLCHAIN_LOCK.json" "$OUTPUT/TOOLCHAIN_LOCK.json"
 echo "Firmware artifacts: $OUTPUT"

@@ -3,7 +3,7 @@
 import argparse,json,os,re,time
 from pathlib import Path
 import esptool
-from backup_device import EXPECTED_MAC
+from backup_device import EXPECTED_MAC,require_expected_mac
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
@@ -11,6 +11,7 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--seconds',type=float,default=15)
     a=p.parse_args()
+    require_expected_mac()
     if not 0<a.seconds<=60:p.error('seconds must be within (0,60]')
     a.output.parent.mkdir(parents=True,exist_ok=True)
     fd=os.open(a.output,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)

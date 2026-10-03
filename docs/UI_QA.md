@@ -14,6 +14,8 @@ The native host renderer compiles the actual `firmware/AuraDesk/ui.cpp` and the 
 - The keyboard is positioned explicitly, supports letters/numbers/symbols, directs input to the selected field, and supports its Ready/Cancel events.
 - Password characters are immediately masked; Show/Hide requires an explicit tap.
 - Twenty snapshot updates preserve the existing SSID, password, keyboard and widget objects.
+- The Settings display card presents brightness and the Always-on display switch together within the initial viewport. Disabled mode reads `Dims after 3 minutes of inactivity.`; enabled mode reads `Keeps your selected brightness.`. The switch has an expanded 48-pixel touch area, and additional Settings rows remain accessible by scrolling with the dock fixed on-screen.
+- Always-on switching dispatches `SetAlwaysOn` with `1` and `0`. Repeated snapshots, browser-origin changes and returning to Settings synchronize the switch without duplicate commands or reconstructing the active widgets. Both display modes passed the actual LVGL host regression; see `logs/aura-always-on-ui-qa.log`.
 - Ready on the credential keyboard dispatches the expected connection action with copied input.
 - UTF-8 inputs beyond the Wi-Fi byte limits are refused with visible feedback.
 - Countdown uses monotonic LVGL ticks; advancing wall-clock data does not alter its duration. Start, pause, elapsed-time progression and preservation while paused were verified.
@@ -21,7 +23,7 @@ The native host renderer compiles the actual `firmware/AuraDesk/ui.cpp` and the 
 
 ## Device release verification
 
-The final device release passed ten consecutive reboots, live router/time/API checks, authenticated HTTPS controls, a real custom JSON widget, browser OTA, and accepted-slot/image readback. Home, Weather and Tools were captured from the device with verified pixel SHA-256 hashes and inspected. See [RELEASE_VALIDATION.md](RELEASE_VALIDATION.md) for the recorded results and physical observations that remain outside software screenshot verification.
+The 1.0.0 device release passed ten consecutive reboots, live router/time/API checks, authenticated HTTPS controls, a real custom JSON widget, browser OTA, and accepted-slot/image readback. Home, Weather and Tools were captured from the device with verified pixel SHA-256 hashes and inspected. See [the 1.0.0 validation](RELEASE_VALIDATION_1.0.0.md) for those results. Version 1.0.1 adds the Always-on switch and has separate idle, backlight, persistence and OTA verification in [RELEASE_VALIDATION.md](RELEASE_VALIDATION.md). Physical observations remain outside software screenshot verification.
 
 Host rendering does not establish physical display orientation, touch accuracy, brightness response, RGB tearing, router authentication, internet access, or API operation. Device build/flash/boot and network observations must be recorded separately by the hardware owner task. The browser screenshot fixture uses `192.0.2.1` and pairing code `000000`, which are test values rather than actual device credentials.
 
@@ -35,5 +37,13 @@ An initial device screenshot appeared shifted from one row onward. Read-only ins
 - `artifacts/ui-preview/password_offline.png`: router credentials and keyboard.
 - `artifacts/ui-preview/weather_fixture.png`: forecast, units, sunrise/sunset and attribution.
 - `artifacts/ui-preview/api_widgets_offline.png`: unconfigured widget states.
+- `artifacts/ui-preview/settings_offline.png`: brightness and automatic dimming mode.
+- `artifacts/ui-preview/settings_always_on_offline.png`: brightness and Always-on mode.
 
 UI ownership is limited to widget creation, presentation, navigation and monotonic timers. Network, persistence, TLS, API parsing, firmware updates and board initialization are provided by the application services. Snapshot updates do not reconstruct the active screen or discard typed input.
+
+## 1.0.2 timer and Browser navigation regression
+
+Both user-reported failures were reproduced with actual LVGL pointer hit-testing before the fix. Regression tests now click 5-minute and 15-minute countdowns, return to Tools, open Focus, and select both 25-minute and 50-minute presets. They check elapsed/reset state, start/pause, and reopening an existing running Focus session. Countdown retains its own 5/15-minute controls.
+
+The fixed Settings Browser shortcut is tested by pointer taps across five close/reopen cycles. Tests also reopen the scrolled Browser row, preserve Settings scroll, update the displayed address/code from snapshots, and verify the offline hint. All 14 pages and the earlier Always-on/credential/monotonic timer checks pass. Device-page reentry and real HTTPS pairing are recorded separately in the current release validation.

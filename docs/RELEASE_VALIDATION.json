@@ -1,78 +1,84 @@
 {
   "schema_version": 1,
   "product": "AURA Desk",
-  "version": "1.0.1",
-  "validated_at": "2026-10-03T19:09:44.253491+03:00",
+  "interface": "Horizon",
+  "version": "1.0.2",
+  "validated_at": "2026-10-03T19:36:10.661746+03:00",
+  "application": {
+    "file": "AuraDesk.ino.bin",
+    "offset": "0x20000",
+    "bytes": 1922208,
+    "sha256": "18f072c0d1fb4caa9e29a499359de47da2e1afe68f64729d2218b7e3ab20df0d"
+  },
+  "factory_image": {
+    "file": "AuraDesk.ino.merged.bin",
+    "bytes": 16777216,
+    "sha256": "17e6e0e28b226a287948958b57d922ec8a13aaa32b53b93b984f6323224585bc"
+  },
   "checks": {
+    "fresh_pre_update_backup": {
+      "passed": true,
+      "bytes": 16777216,
+      "sha256": "d59167d340f29757cf19a4789a1b749c43bf7159eadf6b317f3e89b314b844bc",
+      "device_md5_verified": true
+    },
+    "target_build": {
+      "passed": true,
+      "application_bytes": 1922208,
+      "fits_both_five_mib_slots": true,
+      "image_and_partition_checks": true
+    },
     "application_update": {
       "passed": true,
-      "version": "1.0.1",
+      "version": "1.0.2",
       "https_application_update": true,
       "healthy_restart": true,
       "settings_preserved": true
     },
-    "fresh_backup": {
+    "host_lvgl_ui": {
       "passed": true,
-      "bytes": 16777216,
-      "sha256": "a150b4ca0fc1b6cfba889f955f8aef5f8c314ca040fd5c30e6500bd0441d4817",
-      "device_md5_verified": true
+      "pages": 14,
+      "pointer_hit_testing": true,
+      "failures_reproduced_before_fix": true,
+      "countdown_to_focus_25_50": true,
+      "countdown_presets_and_start_pause": true,
+      "running_focus_resume": true,
+      "browser_close_reopen_cycles": 5,
+      "settings_scroll_restored": true,
+      "updated_address_and_code_snapshot": true,
+      "always_on_and_credentials_regression": true
     },
-    "display_persistence": {
-      "passed": true,
-      "healthy_restarts": 2,
-      "checks": [
-        "Automatic dim setting persists across healthy restart and settings export",
-        "Always-on setting persists across healthy restart and settings export"
-      ]
-    },
-    "display_idle": {
+    "device_browser_reentry": {
       "product": "AURA Desk",
-      "firmware": "1.0.1",
+      "firmware": "1.0.2",
       "passed": true,
-      "idle_threshold_ms": 180000,
+      "serial_page_navigation_tested": true,
+      "physical_touch_tested": false,
+      "settings_writes": false,
+      "flash_writes": false,
+      "efuse_writes": false,
+      "read_only_transport_retries": 0,
       "checks": [
-        "Settings reject non-boolean display policy",
-        "Always-on status and settings export round-trip before idle check",
-        "Always-on retains selected physical backlight beyond three minutes of actual touch inactivity",
-        "Disabling always-on while idle applies the existing dim level without touch",
-        "Enabling always-on restores selected backlight without touch"
+        "Expected firmware, physical PSRAM, display diagnostics and router connection",
+        "Checked Browser screenshots retain current pairing details after serial Settings/Home re-entry",
+        "Reopened Browser pairs over the same pinned TLS certificate and returns correct authenticated firmware/settings",
+        "Export excludes sensitive fields and retains selected display policy and brightness"
       ],
-      "device_states": {
-        "always_on_after_idle": {
-          "backlight": 78,
-          "always_on": 1,
-          "dimmed": 0,
-          "idle_ms": 183284
-        },
-        "automatic_dim_after_idle": {
-          "backlight": 15,
-          "always_on": 0,
-          "dimmed": 1,
-          "idle_ms": 185298
-        },
-        "always_on_restored_without_touch": {
-          "backlight": 78,
-          "always_on": 1,
-          "dimmed": 0,
-          "idle_ms": 186426
-        }
-      },
-      "mode": "idle-only",
-      "persistence_reboots_skipped": true,
-      "skipped_checks": [
-        "Automatic dim policy persists across reboot",
-        "Always-on policy persists across reboot"
-      ],
-      "original_brightness": 78,
-      "test_brightness": 78,
-      "cleanup_always_on_enabled": true
+      "selected_always_on": true,
+      "selected_brightness": 80,
+      "browser_address_stable_within_boot": true,
+      "browser_code_stable_within_boot": true,
+      "always_on_preserved": true,
+      "brightness_preserved": true,
+      "https_pairing_verified": true,
+      "home_navigation_command_sent": true
     },
     "ota_readback": {
       "passed": true,
-      "active_partition": "ota_0",
-      "active_offset": "0x20000",
+      "active_partition": "ota_1",
+      "active_offset": "0x520000",
       "active_state": "VALID",
-      "ota_sequence": 3,
+      "ota_sequence": 4,
       "metadata": [
         {
           "copy": 0,
@@ -82,40 +88,42 @@
         },
         {
           "copy": 1,
-          "sequence": 2,
+          "sequence": 4,
           "state": 2,
           "valid": true
         }
       ],
-      "application_bytes": 1924992,
-      "application_sha256": "ce8ec24e04035c1e1c7d8de940e304656eb0fe5594f4b2989200b19acfa0c397",
-      "previous_application_sha256": "18a0d6f6646f8bc5c3263bbc472310697774b14a1c7e6972755681f4b797f1b2",
+      "application_bytes": 1922208,
+      "application_sha256": "18f072c0d1fb4caa9e29a499359de47da2e1afe68f64729d2218b7e3ab20df0d",
+      "previous_application_sha256": "ce8ec24e04035c1e1c7d8de940e304656eb0fe5594f4b2989200b19acfa0c397",
       "both_application_md5_readbacks_match_expected_images": true,
       "flash_writes": false,
       "efuse_writes": false
     },
-    "post_readback_boot": {
-      "boot": 1,
-      "ready": true,
-      "healthy": true,
-      "rom_boots": 1,
-      "crash_markers": {
-        "Guru Meditation": 0,
-        "Backtrace:": 0,
-        "PANIC": 0,
-        "Brownout": 0,
-        "AURA_FATAL": 0
-      },
-      "status": [
-        "AURA_STATUS version=1.0.1 uptime=7 heap=157640 min_heap=105344 psram=8388608 wifi=1 internet=1 time=1 weather=1 air=1 rates=1 board=1 always_on=1 backlight=78 idle_ms=6568 dimmed=0"
-      ]
-    },
-    "host_ui": {
+    "three_final_boots": {
       "passed": true,
-      "pages": 14,
-      "always_on_dispatch_and_snapshot_checks": true
+      "count": 3,
+      "crash_markers": 0,
+      "minimum_reported_heap": 126636,
+      "always_on_enabled_after_all_boots": true,
+      "selected_brightness": 80
+    },
+    "public_source_and_artifacts": {
+      "passed": true,
+      "owner_paths_in_application_elf_map": 0,
+      "runtime_device_identity_required": true,
+      "private_captures_and_backups_excluded": true,
+      "historical_source_privacy_audit": true,
+      "upstream_license_texts": 22
     }
   },
-  "verification_method": "Persistence checks completed in the full run; its idle window expired after touch activity. A separate idle-only run passed beyond 180000 ms.",
-  "baseline_validation": "RELEASE_VALIDATION_1.0.0.md"
+  "baseline_validation": [
+    "RELEASE_VALIDATION_1.0.0.md",
+    "RELEASE_VALIDATION_1.0.1.md"
+  ],
+  "limits": [
+    "UI pointer regressions run against actual LVGL on the host; device page reentry uses UART navigation.",
+    "Physical touch feel/accuracy, optical luminance, forced rollback and prolonged burn-in are not tested."
+  ],
+  "verification_note": "One initial navigation check had a ConnectionResetError during an authenticated GET. The complete rerun passed without transport retries, preserving the same certificate pin and display settings."
 }

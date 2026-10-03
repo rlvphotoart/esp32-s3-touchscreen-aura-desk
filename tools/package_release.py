@@ -11,28 +11,54 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path, PurePosixPath
 import stat
 import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
-VERSION = "1.0.0"
+VERSION = re.search(r'^#define AURA_VERSION "([0-9]+\.[0-9]+\.[0-9]+)"$', (ROOT/'firmware/AuraDesk/firmware_version.h').read_text(), re.M)[1]
 RELEASE = f"releases/aura-desk-{VERSION}"
 MANIFEST = f"{RELEASE}/release-manifest.json"
 SUMS = f"{RELEASE}/SHA256SUMS"
 FORBIDDEN = {"backups", "logs", ".toolchains", ".venv", "build", ".git", "__pycache__"}
 
 REQUIRED = [
-    "README.md", "requirements-tools.lock",
+    ".gitignore", "README.md", "CHANGELOG.md", "ORIGINAL_CODE_RIGHTS.md", "requirements-tools.lock",
     "docs/AURA_DESK.md", "docs/FIRMWARE_BUILD.md", "docs/UI_QA.md",
     "docs/RELEASE_VALIDATION.md", "docs/TOOLCHAIN_LOCK.json",
     "firmware/ui_preview/render.cpp", "tools/render_ui.py",
+    'third_party/licenses/Apache-2.0.txt',
+    'third_party/licenses/ArduinoJson-MIT.txt',
+    'third_party/licenses/CC0-1.0.txt',
+    'third_party/licenses/Espressif-radio-binaries-LICENSE.txt',
+    'third_party/licenses/FONT_PROVENANCE.json',
+    'third_party/licenses/FontAwesome-5.9.0-LICENSE.txt',
+    'third_party/licenses/FreeRTOS-MIT.txt',
+    'third_party/licenses/GCC-GPL-3.0.txt',
+    'third_party/licenses/GCC-Runtime-Exception-3.1.txt',
+    'third_party/licenses/GPL-2.0.txt',
+    'third_party/licenses/IDF-newlib-COPYING.txt',
+    'third_party/licenses/LGPL-2.1.txt',
+    'third_party/licenses/LVGL-MIT.txt',
+    'third_party/licenses/Montserrat-7.200-OFL.txt',
+    'third_party/licenses/PROVENANCE.json',
+    'third_party/licenses/SIL-OFL-1.1.txt',
+    'third_party/licenses/WPA-supplicant-COPYING.txt',
+    'third_party/licenses/cJSON-MIT.txt',
+    'third_party/licenses/esp-littlefs-MIT.txt',
+    'third_party/licenses/http-parser-MIT.txt',
+    'third_party/licenses/littlefs-BSD-3-Clause.txt',
+    'third_party/licenses/lwIP-COPYING.txt',
+    'third_party/licenses/mbedTLS-3.6.2-LICENSE.txt',
+    'third_party/licenses/toolchain-newlib-COPYING.txt',
+
     *[f"{RELEASE}/{name}" for name in (
         "AuraDesk.ino.bin", "AuraDesk.ino.bootloader.bin", "AuraDesk.ino.partitions.bin",
         "AuraDesk.ino.merged.bin", "AuraDesk.ino.elf", "build-layout.json", "TOOLCHAIN_LOCK.json")],
     *[f"firmware/AuraDesk/{name}" for name in (
-        "AuraDesk.ino", "app_model.h", "app_service.cpp", "app_service.h",
+        "AuraDesk.ino", "firmware_version.h", "app_model.h", "app_service.cpp", "app_service.h",
         "esp_panel_board_supported_conf.h", "lv_conf.h", "lvgl_v8_port.cpp",
         "lvgl_v8_port.h", "partitions.csv", "ui.cpp", "ui.h", "web_service.cpp", "web_service.h")],
     *[f"scripts/{name}" for name in (
@@ -42,7 +68,7 @@ REQUIRED = [
         "aura_console.py", "backup_device.py", "capture_serial.py", "capture_release_screens.py", "device_inventory.py",
         "export_backup.py", "flash_aura.py", "read_efuses.py", "reset_and_capture.py",
         "restore_original.py", "screen_to_png.py", "test_aura_boot.py", "test_aura_network.py",
-        "verify_backup.py", "verify_aura_ota.py", "package_release.py", "vendor/gen_esp32part.py", "vendor/PROVENANCE.json")],
+        "verify_backup.py", "verify_aura_ota.py", "upload_aura_update.py", "test_always_on.py", "test_navigation_device.py", "package_release.py", "vendor/gen_esp32part.py", "vendor/PROVENANCE.json")],
 ]
 # Additional public reference documents are explicit, not a wildcard over docs/.
 OPTIONAL = [
@@ -50,8 +76,10 @@ OPTIONAL = [
     *[f"docs/{name}" for name in (
         "BACKUP.md", "CAPABILITIES.md", "FLASH_LAYOUT.md", "GPIO_MAP.md", "HARDWARE.md",
         "ORIGINAL_FIRMWARE.md", "RECOVERY.md", "RESEARCH.md", "SECURITY.md", "SETUP.md",
-        "TEST_PLAN.md", "hardware_profile.json")],
-    "artifacts/device-home.png", "artifacts/device-weather.png", "artifacts/device-tools.png",
+        "TEST_PLAN.md", "DEVELOPMENT.md", "ENGINEERING_REPORT.md", "hardware_profile.json", "RELEASE_VALIDATION_1.0.0.md", "RELEASE_VALIDATION_1.0.0.json", "RELEASE_VALIDATION_1.0.1.md", "RELEASE_VALIDATION_1.0.1.json")],
+    "artifacts/ui-preview/home_offline.png", "artifacts/ui-preview/weather_offline.png",
+    "artifacts/ui-preview/tools_offline.png", "artifacts/ui-preview/settings_offline.png",
+    "artifacts/ui-preview/settings_always_on_offline.png",
 ]
 VALIDATION_JSON = (
     "docs/RELEASE_VALIDATION.json", "docs/release_validation.json",
@@ -109,10 +137,10 @@ def inputs() -> tuple[dict[str, bytes], dict]:
                     if allowed(name).is_file()), None)
     if notices is None:
         missing.append("THIRD_PARTY_NOTICES.md or THIRD_PARTY_NOTICES")
-    # At least Home must be an actual device capture. Other approved captures are
-    # included if present. Pairing/credential pages are never included.
-    if not allowed("artifacts/device-home.png").is_file():
-        missing.append("artifacts/device-home.png")
+    # Public previews contain only offline default states. Private device/pairing
+    # captures stay outside the package; live conclusions are in validation JSON.
+    if not allowed("artifacts/ui-preview/home_offline.png").is_file():
+        missing.append("artifacts/ui-preview/home_offline.png")
     if missing:
         raise ValueError("Release is incomplete; missing: " + ", ".join(missing))
     names = set(REQUIRED + [notices])

@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import esptool
-from backup_device import EXPECTED_MAC, EXPECTED_JEDEC, FLASH_BYTES
+from backup_device import EXPECTED_MAC, EXPECTED_JEDEC, FLASH_BYTES,require_expected_mac
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -67,6 +67,7 @@ def main():
     p.add_argument('--erase-all',action='store_true')
     p.add_argument('--app-only',action='store_true',help='update the known initial ota0 installation while preserving settings and cache; requires --execute')
     a=p.parse_args()
+    require_expected_mac()
     if a.app_only and not a.execute: p.error('--app-only requires --execute')
     if a.app_only and a.erase_all: p.error('--app-only cannot be combined with --erase-all')
     backup=a.backup.resolve(); release=a.release.resolve()

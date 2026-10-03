@@ -1,10 +1,10 @@
 # Recovery plan for this device
 
-No restoration or destructive recovery test was performed during identification. The original flash is being preserved, not replaced. Reading ROM identity, security fields and flash demonstrates that the automatic ROM download path is accessible.
+No restoration or destructive recovery test was performed during identification. The original flash was preserved privately before the subsequent AURA installation. Reading ROM identity, security fields and flash demonstrates that the automatic ROM download path is accessible.
 
 ## Recognize the target
 
-Run `./scripts/detect_device.sh`. The observed UART bridge is `1A86:7523`, currently `/dev/cu.usbserial-10`; port names can change after reconnection. Descriptor matching selects only one matching bridge and refuses ambiguity. Chip/MAC/flash checks must identify ESP32-S3, `<runtime-device-mac>`, JEDEC `68 40 18`, 16 MiB. USB descriptors alone cannot distinguish two identical boards.
+Run `./scripts/detect_device.sh`. The observed UART bridge is `1A86:7523`, currently `/dev/cu.usbserial-10`; port names can change after reconnection. Descriptor matching selects only one matching bridge and refuses ambiguity. Chip/MAC/flash checks must identify ESP32-S3, the privately supplied `AURA_EXPECTED_MAC`, JEDEC `68 40 18`, 16 MiB. USB descriptors alone cannot distinguish two identical boards.
 
 ## Download mode
 
@@ -15,16 +15,17 @@ The reference display profile uses GPIO0/46 as RGB signals after boot. Its nativ
 ## Verify and review the original restore
 
 ```sh
-cd '<project-root>'
+cd '/absolute/path/to/ESP32'
+export AURA_EXPECTED_MAC='<your verified six-octet MAC>'
 ./scripts/verify_backup.sh
 ./scripts/restore_original.sh
 ```
 
 Both default commands operate on the original `backups/` snapshot. The restore wrapper prints a **review-only plan and does not open hardware** unless explicitly invoked with `--execute`. For another saved snapshot, verification accepts a directory argument and the restore tool accepts `--directory /absolute/path/to/snapshot`.
 
-An explicit restore is destructive to the current external-flash contents. It restores all 16 MiB, including the bootloader, partition table, application, NVS, crash storage and unnamed areas. The tool requires both `--execute` and the exact `--confirm-mac <runtime-device-mac>`. It first creates and verifies a fresh `backups/pre-restore-*` current-state snapshot, then rechecks chip/MAC/flash/security, writes the original at offset zero, checks the device MD5, and resets to normal boot. It retains original mode/frequency/size and has no eFuse write or security-bypass path.
+An explicit restore is destructive to the current external-flash contents. It restores all 16 MiB, including the bootloader, partition table, application, NVS, crash storage and unnamed areas. The tool requires both `--execute` and the exact `--confirm-mac "$AURA_EXPECTED_MAC"`. It first creates and verifies a fresh `backups/pre-restore-*` current-state snapshot, then rechecks chip/MAC/flash/security, writes the original at offset zero, checks the device MD5, and resets to normal boot. It retains original mode/frequency/size and has no eFuse write or security-bypass path.
 
-No `erase-flash` command is used. **Writing flash automatically erases the addressed sectors**, so the restore remains destructive even without a separate erase command. The execution path is prepared and locally reviewed; it has not been tested by restoring this board because no replacement occurred.
+No `erase-flash` command is used. **Writing flash automatically erases the addressed sectors**, so the restore remains destructive even without a separate erase command. The execution path is prepared and locally reviewed; it has not been tested by restoring this board during the initial investigation; later AURA installations do not establish a successful original-firmware restore.
 
 ## Failed firmware or partition table
 

@@ -6,7 +6,8 @@ import esptool
 from backup_device import connect,EXPECTED_MAC
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--port',required=True);p.add_argument('--application',type=Path,required=True);p.add_argument('--summary',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--port',required=True);p.add_argument('--application',type=Path,required=True);p.add_argument('--summary',type=Path,required=True)
+    p.add_argument('--previous-application',type=Path);p.add_argument('--expected-sequence',type=int,default=2);a=p.parse_args()
     if a.summary.exists():p.error('summary already exists')
     application=a.application.read_bytes();expected=hashlib.md5(application).hexdigest()
     esp,security=connect(a.port,115200)
@@ -20,10 +21,12 @@ def main():
         valid=[item for item in copies if item['valid']]
         if not valid:raise RuntimeError('No CRC-valid accepted OTA application')
         selected=max(valid,key=lambda item:item['sequence'])
-        if selected['sequence']!=2:raise RuntimeError('Expected the first verified browser update in sequence 2')
-        if esp.flash_md5sum(0x520000,len(application))!=expected:raise RuntimeError('Updated OTA application differs from release')
-        if esp.flash_md5sum(0x20000,len(application))!=expected:raise RuntimeError('Previous valid application differs from release')
-        summary={'passed':True,'active_partition':'ota_1','active_offset':'0x520000','active_state':'VALID','ota_sequence':2,'metadata':copies,'application_bytes':len(application),'application_sha256':hashlib.sha256(application).hexdigest(),'both_application_md5_readbacks_match_release':True,'flash_writes':False,'efuse_writes':False}
+        if selected['sequence']!=a.expected_sequence:raise RuntimeError('OTA sequence differs from the expected update')
+        slot=(selected['sequence']-1)%2;active_offset=(0x20000,0x520000)[slot];previous_offset=(0x520000,0x20000)[slot]
+        if esp.flash_md5sum(active_offset,len(application))!=expected:raise RuntimeError('Updated OTA application differs from release')
+        previous=a.previous_application.read_bytes() if a.previous_application else application
+        if esp.flash_md5sum(previous_offset,len(previous))!=hashlib.md5(previous).hexdigest():raise RuntimeError('Previous valid application differs from its preserved release')
+        summary={'passed':True,'active_partition':f'ota_{slot}','active_offset':hex(active_offset),'active_state':'VALID','ota_sequence':selected['sequence'],'metadata':copies,'application_bytes':len(application),'application_sha256':hashlib.sha256(application).hexdigest(),'previous_application_sha256':hashlib.sha256(previous).hexdigest(),'both_application_md5_readbacks_match_expected_images':True,'flash_writes':False,'efuse_writes':False}
         fd=os.open(a.summary,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
         with os.fdopen(fd,'w') as out:json.dump(summary,out,indent=2);out.write('\n')
         print(json.dumps(summary),flush=True)

@@ -1,6 +1,6 @@
 # Aura Desk firmware build
 
-**2026-10-03 update:** AURA Desk 1.0.0 has been built and installed using pinned Arduino-ESP32 3.1.1 and the matching official high-performance SDK. Release builds use `DebugLevel=none` and two 5 MiB application slots. Serial app-only updates require a fresh verified full-flash backup and preserve settings/cache; no eFuse changes were made. See the [user manual](AURA_DESK.md) and [release validation](RELEASE_VALIDATION.md) for current behavior and recorded device tests. Network, physical touch, and OTA results depend on those tests.
+**2026-10-03 update:** AURA Desk 1.0.2 has been built and installed using pinned Arduino-ESP32 3.1.1 and the matching official high-performance SDK. Release builds use `DebugLevel=none` and two 5 MiB application slots. Serial app-only updates require a fresh verified full-flash backup and preserve settings/cache; no eFuse changes were made. See the [user manual](AURA_DESK.md) and [release validation](RELEASE_VALIDATION.md) for current behavior and recorded device tests. Network, physical touch, and OTA results depend on those tests.
 
 The build uses a local Arduino CLI installation and isolated SDK/libraries under `.toolchains/`. Global Arduino installations and shell configuration are not used. The exact versions, upstream commits, artifact URLs, checksums, and board parameters are retained in [TOOLCHAIN_LOCK.json](TOOLCHAIN_LOCK.json).
 
@@ -12,7 +12,7 @@ From the workspace root:
 ./scripts/build.sh
 ```
 
-The wrapper runs compilation with four workers and writes intermediate files to `build/AuraDesk/` and exported artifacts to `releases/aura-desk-1.0.0/`. It requires complete sources, a custom partition table, the correct supported-board configuration, and the matching high-performance SDK with XIP from PSRAM. It does not open a serial connection, erase, upload, or reset a device. Hardware installation and release verification are separate operations.
+The wrapper reads the release version from `firmware/AuraDesk/firmware_version.h`. It runs compilation with four workers and writes intermediate files to `build/AuraDesk/` and exported artifacts to `releases/aura-desk-1.0.2/`. It requires complete sources, a custom partition table, the correct supported-board configuration, and the matching high-performance SDK with XIP from PSRAM. It does not open a serial connection, erase, upload, or reset a device. Hardware installation and release verification are separate operations.
 
 Generated ELF/map files support crash diagnosis. The wrapper replaces Arduino3.1.1's incorrect default merged image with an explicitly verified16MiB image: bootloader at0x0, partition table at0x8000, and application at0x20000. It checks the compiled table against the source CSV, partition ranges, both OTA-slot capacities, image checksums/digests, and the complete merged contents. `build-layout.json` records offsets and SHA-256 hashes. No `boot_app0.bin` is included; the OTA metadata remains erased, and the bootloader selects the first OTA slot.
 
@@ -96,3 +96,7 @@ Only after display/touch, UI, services, and startup checks succeed should the ap
 LVGL8.4 snapshot support provides `lv_snapshot_buf_size_needed()` and `lv_snapshot_take_to_buf()`. Capture `LV_IMG_CF_TRUE_COLOR` into a buffer sized by the first function, preferably in PSRAM. Hold the LVGL mutex during capture, then release it before streaming the copied buffer. A 480×480 RGB565 image contains 460800 pixel bytes; use LVGL's reported buffer size for alignment and any object draw extent. Snapshot generation confirms the software-rendered UI; it does not prove physical panel colours, orientation or touch accuracy.
 
 Release builds suppress Arduino diagnostic logging during binary transfers. The screenshot header includes the SHA-256 of the actual pixel bytes. The decoder requires the exact payload length, terminator, and matching digest, and rejects diagnostic text inserted into the stream. The UART client waits through a possible WCH driver reset before sending a command.
+
+## Public artifact paths
+
+C and C++ builds use `-ffile-prefix-map` and `-fdebug-prefix-map` to replace the checkout path with `.` in compiled file names and debug metadata. Linker map paths are normalized separately. The wrapper rejects any exported binary, ELF or map containing the current home path. Application/merged images are revalidated after building, and release packages are checked before publication. Private backups and captures are excluded.

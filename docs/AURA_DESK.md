@@ -1,6 +1,4 @@
-# AURA Desk 1.0.0
-
-This source-history snapshot omits local firmware binaries, private recovery backups, and live device captures. Paths to those historical local artifacts are retained as documentation rather than public downloads.
+# AURA Desk 1.0.2
 
 AURA Desk turns the 480 × 480 touchscreen into an internet dashboard with weather, regional air quality, currency reference rates, your own public API readings, and focus tools. Its original Horizon interface uses an ivory canvas, ink-blue cards, cobalt actions, and large touch controls.
 
@@ -33,11 +31,11 @@ The bottom navigation contains **Home**, **Weather**, **Tools**, and **Settings*
 | Currency reference | Home → EUR/RON | EUR/RON and EUR/USD with ECB publication date |
 | Tools | Tools navigation | Focus timer, 5-minute and 15-minute countdowns, and stopwatch |
 | Timer | A timer button or Home timer card | Start, pause, resume, reset, and focus presets |
-| Settings | Settings navigation | Network, location, brightness, browser access, API widgets, and diagnostics; scroll for lower rows |
+| Settings | Settings navigation | Network, location, brightness, Always-on display, browser access, API widgets, and diagnostics; scroll for lower rows |
 | Network | Settings → Network or Home connection status | Nearby 2.4 GHz networks and manual entry |
 | Wi-Fi credentials | Select a network or enter one manually | Network name, masked password, keyboard, and connection feedback |
 | Location | Settings → Location | Online city lookup and saved location |
-| Browser access | Settings → Browser configuration | Local HTTPS address and pairing code |
+| Browser access | Settings → Browser button in the header, or Browser configuration row | Local HTTPS address and pairing code |
 | Your data | Settings → API widgets | Two public API widget readings and their data ages |
 | About AURA | Settings → About & diagnostics | Firmware, uptime, memory, connection, reset reason, data sources, restart, and Forget Wi-Fi |
 
@@ -86,14 +84,14 @@ One timer mode is active at a time. Selecting a different preset resets that ses
 
 ## Display settings
 
-**Settings → Display brightness** adjusts the saved level from 10% to 100%. After three minutes without touchscreen interaction, the backlight dims to approximately one-fifth of that level with a 10% floor. Touch restores the selected brightness. The application stays active during dimming; the display is not entering deep sleep.
+**Settings → Display brightness** adjusts the saved level from 10% to 100%. The **Always-on display** switch directly below it controls automatic dimming. When enabled, the screen keeps your selected brightness continuously. When disabled, three minutes without touchscreen interaction dims the backlight to approximately one-fifth of that level, with a 10% floor; touch restores the selected brightness. Both brightness and the always-on choice are saved across restarts. Existing configurations default to automatic dimming until you choose otherwise. The same switch is available in the local browser under **Make it yours**. The application stays active in either mode.
 
 The v1 interface is English and uses metric weather units. Language selection, alternate units, and additional visual themes are not implemented.
 
 ## Local browser management
 
 1. Put the phone or computer on the same router as the device.
-2. Open **Settings → Browser configuration** on the touchscreen.
+2. Open **Settings → Browser** using the button in the header, or scroll to **Browser configuration** on the touchscreen.
 3. Enter the exact displayed `https://` address in your browser. The IP address may change after a router reconnect or reboot.
 4. The device uses its own HTTPS certificate. A browser may require a certificate exception. Apply it only to the local device address displayed on your touchscreen.
 5. Enter the six-digit code shown on **Browser access**, then choose **Pair this browser**.
@@ -106,8 +104,8 @@ The pairing code changes when the application restarts. Browser sessions are hel
 
 For a compatible AURA Desk update, pair the local browser, choose **Firmware update**, and upload the **application image**:
 
-- AuraDesk.ino.bin (`../releases/aura-desk-1.0.0/AuraDesk.ino.bin`; historical local artifact omitted from public history): application image for browser OTA.
-- AuraDesk.ino.merged.bin (`../releases/aura-desk-1.0.0/AuraDesk.ino.merged.bin`; historical local artifact omitted from public history): complete 16 MiB factory image for the serial installation/recovery tooling; not a browser OTA file.
+- [AuraDesk.ino.bin](../releases/aura-desk-1.0.2/AuraDesk.ino.bin): application image for browser OTA.
+- [AuraDesk.ino.merged.bin](../releases/aura-desk-1.0.2/AuraDesk.ino.merged.bin): complete 16 MiB factory image for the serial installation/recovery tooling; not a browser OTA file.
 
 The firmware has two 5 MiB application slots. An update writes to the inactive slot, verifies the image structure/integrity and ESP32-S3 target, selects it for the next boot, and restarts. Startup health checks defer acceptance until the new application is running. If a pending update fails those checks, the rollback mechanism can return to the previous valid custom application. It does not restore the vendor firmware or recover a changed partition layout.
 
@@ -115,8 +113,8 @@ Keep power connected during installation. Use application binaries from the matc
 
 The original 16 MiB firmware snapshot was acquired again before replacement and retained privately at:
 
-- Original full flash (`../backups/pre-aura-20261003/full_flash_original.bin`; historical local artifact omitted from public history)
-- Original backup manifest (`../backups/pre-aura-20261003/manifest.json`; historical local artifact omitted from public history)
+- [Original full flash](../backups/pre-aura-20261003/full_flash_original.bin)
+- [Original backup manifest](../backups/pre-aura-20261003/manifest.json)
 
 Its SHA-256 is:
 
@@ -151,3 +149,9 @@ The target is the firmware-identified Jingcai/Guition ESP32-4848S040C_I_Y_3 prof
 The original Horizon UX and application services are custom source. The platform, drivers, JSON library, and LVGL retain their upstream open-source licenses.
 
 No external sensors or GPIO accessories are required. V1 does not implement BLE integrations, smart-home control, computer monitoring, native USB device functions, multilingual UI, commercial API accounts, cloud synchronization, recurring reminders, or public-internet hosting. Those features should not be inferred from silicon capabilities or earlier proposals. Native USB pins are occupied by this board's display/touch wiring; keep the known USB-UART path for diagnostics and recovery.
+
+## Timer and Browser navigation in 1.0.2
+
+**Tools → Open timer** opens Focus. It resumes an existing Focus session; arriving from Countdown or Stopwatch selects a fresh 25-minute Focus session. Tap **25 min** or **50 min** to select the desired Focus duration, then **Start**. The Countdown page has its own **5 min** and **15 min** presets. Selecting a preset resets elapsed time and pauses until Start.
+
+The **Browser** button remains visible in the Settings header without scrolling. It opens the current local HTTPS address and pairing code. Closing and reopening Browser access works repeatedly. The Browser configuration row also remains available lower in Settings, and returning from detailed pages preserves your Settings scroll position. Pairing codes refresh after a device restart.

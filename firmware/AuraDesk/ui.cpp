@@ -13,7 +13,8 @@ enum Page { HOME, WEATHER, TOOLS, SETTINGS, NETWORK, PASSWORD, LOCATION,
   ABOUT, AIR, RATES, TIMER, WELCOME, BROWSER, API_DATA };
 enum Command { C_SCAN=100, C_CONNECT, C_SHOW_PASSWORD, C_REFRESH, C_BRIGHTNESS, C_ALWAYS_ON,
   C_SAVE_LOCATION, C_EXPLORE, C_TIMER_TOGGLE, C_TIMER_RESET, C_PRESET25,
-  C_PRESET50, C_COUNTDOWN5, C_COUNTDOWN15, C_STOPWATCH, C_FORGET, C_REBOOT };
+  C_PRESET50, C_COUNTDOWN5, C_COUNTDOWN15, C_STOPWATCH, C_FORGET, C_REBOOT,
+  C_OPEN_FOCUS };
 UiActionCallback dispatch=nullptr;
 UiSnapshot model{};
 Page page=WELCOME;
@@ -24,7 +25,8 @@ struct Widgets {
     *condition=nullptr, *feels=nullptr, *aqi=nullptr, *aqi_hint=nullptr,
     *rate=nullptr, *rate_hint=nullptr, *focus=nullptr, *focus_label=nullptr,
     *focus_hint=nullptr, *updated=nullptr,
-    *message=nullptr, *network_list=nullptr, *ssid=nullptr, *password=nullptr,
+    *message=nullptr, *network_list=nullptr, *settings_body=nullptr,
+    *ssid=nullptr, *password=nullptr,
     *keyboard=nullptr, *show=nullptr, *city=nullptr, *brightness=nullptr,
     *brightness_value=nullptr, *always_on=nullptr, *always_on_hint=nullptr,
     *timer_value=nullptr, *timer_state=nullptr,
@@ -33,6 +35,7 @@ struct Widgets {
     *widget_value[2]{}, *widget_age[2]{};
 } w;
 uint32_t network_hash=0;
+lv_coord_t settings_scroll_y=0;
 int last_icon_code=-999;
 enum TimerMode { FOCUS, COUNTDOWN, STOPWATCH };
 TimerMode timer_mode=FOCUS;
@@ -101,9 +104,10 @@ void clickable(lv_obj_t *o,int command) {
   lv_obj_add_event_cb(o,action,LV_EVENT_CLICKED,reinterpret_cast<void *>(static_cast<intptr_t>(command)));
   lv_obj_set_style_bg_color(o,color(0xE9EDF4),LV_STATE_PRESSED);
 }
-void header(const char *title,Page back=HOME) {
+void header(const char *title,Page back=HOME,bool browserShortcut=false) {
   button(lv_scr_act(),12,8,48,48,LV_SYMBOL_LEFT,back,CANVAS,INK,&lv_font_montserrat_20);
-  text(lv_scr_act(),72,19,324,34,title,&lv_font_montserrat_24);
+  text(lv_scr_act(),72,19,browserShortcut?258:324,34,title,&lv_font_montserrat_24);
+  if(browserShortcut) button(lv_scr_act(),350,8,110,48,"Browser",BROWSER,CARD,BLUE);
 }
 void dock(Page selected) {
   lv_obj_t *bar=panel(lv_scr_act(),0,424,480,56,INK);
@@ -229,7 +233,7 @@ void build_tools() {
   lv_obj_t *p=panel(lv_scr_act(),20,119,440,128,INK,20);
   text(p,20,16,380,27,"Focus session",&lv_font_montserrat_24,CARD);
   text(p,20,55,380,22,"25 or 50 minutes, at your pace",&lv_font_montserrat_16,DOCK_MUTED);
-  button(p,278,72,142,48,"Open timer",TIMER,BLUE,CARD);
+  button(p,278,72,142,48,"Open timer",C_OPEN_FOCUS,BLUE,CARD);
   button(lv_scr_act(),20,266,214,76,"5 min countdown",C_COUNTDOWN5,CARD,INK);
   button(lv_scr_act(),246,266,214,76,"15 min countdown",C_COUNTDOWN15,CARD,INK);
   button(lv_scr_act(),20,360,440,48,"Stopwatch",C_STOPWATCH,CARD,INK);
@@ -243,8 +247,9 @@ void row(lv_obj_t *parent,int y,const char *name,const char *value,int command) 
   clickable(o,command);
 }
 void build_settings() {
-  header("Settings");
+  header("Settings",HOME,true);
   lv_obj_t *body=panel(lv_scr_act(),20,72,440,337,CANVAS);
+  w.settings_body=body;
   lv_obj_add_flag(body,LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_scroll_dir(body,LV_DIR_VER);
   lv_obj_set_style_bg_color(body,color(LINE),LV_PART_SCROLLBAR);
@@ -278,6 +283,8 @@ void build_settings() {
   row(body,348,"Browser configuration",model.wifiConnected?model.ip:"Connect to Wi-Fi first",BROWSER);
   row(body,424,"API widgets","Your own public data sources",API_DATA);
   row(body,500,"About & diagnostics","AURA Desk / Horizon interface",ABOUT);
+  lv_obj_update_layout(body);
+  lv_obj_scroll_to_y(body,settings_scroll_y,LV_ANIM_OFF);
   dock(SETTINGS);
 }
 void build_network_list();
@@ -480,6 +487,9 @@ void build_timer() {
   if(timer_mode==FOCUS) {
     button(lv_scr_act(),20,380,214,48,"25 minutes",C_PRESET25,CARD,INK);
     button(lv_scr_act(),246,380,214,48,"50 minutes",C_PRESET50,CARD,INK);
+  } else if(timer_mode==COUNTDOWN) {
+    button(lv_scr_act(),20,380,214,48,"5 minutes",C_COUNTDOWN5,CARD,INK);
+    button(lv_scr_act(),246,380,214,48,"15 minutes",C_COUNTDOWN15,CARD,INK);
   } else text(lv_scr_act(),20,387,440,47,"Timers continue while you browse. A reboot ends the session.",&lv_font_montserrat_14,MUTED);
   timer_display();
 }
@@ -495,6 +505,7 @@ void build_welcome() {
   button(lv_scr_act(),28,423,424,48,"Explore offline",C_EXPLORE,CANVAS,INK);
 }
 void show(Page p) {
+  if(page==SETTINGS && w.settings_body) settings_scroll_y=lv_obj_get_scroll_y(w.settings_body);
   page=p; w=Widgets{}; network_hash=0; last_icon_code=-999;
   lv_obj_clean(lv_scr_act());
   lv_obj_set_style_bg_color(lv_scr_act(),color(CANVAS),0);
@@ -593,6 +604,10 @@ void action(lv_event_t *event) {
       timer_running=!timer_running; timer_last_tick=lv_tick_get(); timer_display(); break;
     case C_TIMER_RESET:
       timer_elapsed=0; timer_running=false; timer_complete=false; timer_display(); break;
+    case C_OPEN_FOCUS:
+      if(timer_mode==FOCUS) show(TIMER);
+      else timer_preset(FOCUS,25);
+      break;
     case C_PRESET25: timer_preset(FOCUS,25); break;
     case C_PRESET50: timer_preset(FOCUS,50); break;
     case C_COUNTDOWN5: timer_preset(COUNTDOWN,5); break;

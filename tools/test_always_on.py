@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Verify persistent display policy and the actual three-minute idle threshold.
 
-Run explicitly against an installed AURA Desk 1.0.1 device. One exclusive UART
+Run explicitly against an installed AURA Desk display-policy firmware. One exclusive UART
 session is used throughout. Pairing screenshots, local addresses, codes, TLS
 pins, cookies and response bodies stay private; only checked numeric display
 state is emitted. Reboots use the normal application command and preserve
@@ -249,7 +249,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port")
     parser.add_argument("--timeout", type=int, default=240, help="Router/idle deadlines in seconds, 200..600")
-    parser.add_argument("--expected-version", default="1.0.1")
+    parser.add_argument("--expected-version", default="1.0.2")
     parser.add_argument("--summary", type=Path, help="Optional non-secret result JSON; must not exist")
     parser.add_argument("--idle-only", action="store_true",
                         help="Skip reboot persistence phases; verify real inactivity and both backlight modes")

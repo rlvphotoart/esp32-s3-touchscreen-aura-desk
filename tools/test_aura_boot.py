@@ -3,10 +3,11 @@
 import argparse,json,os,re,time
 from pathlib import Path
 import esptool
-from backup_device import EXPECTED_MAC
+from backup_device import EXPECTED_MAC,require_expected_mac
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--port',required=True)
     p.add_argument('--count',type=int,default=10);p.add_argument('--directory',type=Path,required=True);a=p.parse_args()
+    require_expected_mac()
     if not 1<=a.count<=10:p.error('count must be 1..10')
     a.directory.mkdir(parents=True,exist_ok=False);a.directory.chmod(0o700);results=[]
     for number in range(1,a.count+1):

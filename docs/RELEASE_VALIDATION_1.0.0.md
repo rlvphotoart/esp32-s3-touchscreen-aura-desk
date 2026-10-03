@@ -1,7 +1,5 @@
 # AURA Desk 1.0.0 — release validation
 
-This source-history snapshot omits local firmware binaries, private recovery backups, and live device captures. Paths to those historical local artifacts are retained as documentation rather than public downloads.
-
 Validated on 2026-10-03 against the connected ESP32-S3 touchscreen. The final application is installed and running; this report separates live device evidence from host UI tests and remaining physical observations.
 
 ## Installed release
@@ -57,13 +55,7 @@ Private raw logs and device snapshots remain under `logs/` and `backups/`, outsi
 
 ## Actual device screens
 
-These images are decoded from the running firmware's checked framebuffer transfer. They contain actual API values, not renderer fixture values.
-
-Home: `../artifacts/device-home.png` (historical local capture; omitted from public history)
-
-Weather: `../artifacts/device-weather.png` (historical local capture; omitted from public history)
-
-Tools: `../artifacts/device-tools.png` (historical local capture; omitted from public history)
+Home, Weather and Tools were captured from the live 1.0.0 firmware and checked for dimensions, framing and pixel SHA-256. Those owner device captures are retained privately. The public repository shows offline host previews; the structured validation retains the original capture integrity conclusions.
 
 ## Corrections made during release testing
 

@@ -27,7 +27,7 @@ The application checksum and appended digest also validate. Both images target c
 ## Decode again without hardware access
 
 ```sh
-cd '<project-root>'
+cd '/absolute/path/to/ESP32'
 .venv/bin/python tools/vendor/gen_esp32part.py --flash-size 16MB --offset 0x8000 --primary-bootloader-offset 0x0 backups/partition_table.bin
 .venv/bin/python -m esptool --chip esp32s3 image-info backups/bootloader_region.bin
 ```

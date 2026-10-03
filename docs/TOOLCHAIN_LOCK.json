@@ -111,7 +111,7 @@
     "sketch": "firmware/AuraDesk",
     "wrapper": "scripts/build.sh",
     "jobs": 4,
-    "output": "releases/aura-desk-1.0.0",
+    "output": "releases/aura-desk-1.0.2",
     "fqbn": "esp32:esp32:esp32s3:PSRAM=opi,FlashMode=dio,FlashSize=16M,CPUFreq=240,LoopCore=1,EventsCore=1,USBMode=hwcdc,CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PartitionScheme=custom,UploadSpeed=115200,DebugLevel=none,EraseFlash=none",
     "optimization": "-O2",
     "defines": [
