@@ -1,5 +1,6 @@
 #include "app_service.h"
 #include "web_service.h"
+#include "firmware_version.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
@@ -380,6 +381,12 @@ void handleCommand(const Command &cmd) {
     case UiAction::ForgetWifi: WiFi.disconnect(false,true); savedSsid=""; savedPassword=""; prefs.remove("ssid"); prefs.remove("pass"); message("Saved network removed."); break;
     case UiAction::RefreshData: forceRefresh=true; break;
     case UiAction::SetBrightness: { int value=atoi(cmd.first); value=constrain(value,10,100); prefs.putUChar("bright",value); lock(); state.brightness=value; unlock(); break; }
+    case UiAction::SetAlwaysOn: {
+      const bool enabled=cmd.first[0]=='1';
+      if(prefs.getBool("alwaysOn",false)!=enabled && !prefs.putBool("alwaysOn",enabled))
+        message("Display mode changed, but could not be saved. Try again.");
+      break;
+    }
     case UiAction::SetLocation: if(strlen(cmd.first)>=2) setLocation(cmd.first); break;
     case UiAction::ExploreOffline: prefs.putBool("explored",true); lock(); state.setupRequired=false; unlock(); message("Offline tools are ready. Connect Wi-Fi in Settings."); break;
     case UiAction::Reboot: message("Restarting..."); delay(2000); ESP.restart(); break;
@@ -397,6 +404,7 @@ void networkWorker(void *) {
   latitude=prefs.getDouble("lat",44.4268); longitude=prefs.getDouble("lon",26.1025);
   lock(); text(state.city,city.c_str()); state.latitude=latitude; state.longitude=longitude;
   state.brightness=constrain(prefs.getUChar("bright",80),10,100); state.setupRequired=savedSsid.isEmpty() && !prefs.getBool("explored",false); unlock();
+  lock(); state.alwaysOnDisplay=prefs.getBool("alwaysOn",false); unlock();
   for(unsigned i=0;i<2;i++) { String config=prefs.getString(i==0?"widget0":"widget1",""); if(!config.isEmpty()) configureWidget(i,config.c_str()); }
   fsReady=LittleFS.begin(true,"/littlefs",10,"storage"); loadCache();
   WiFi.persistent(false);
@@ -442,13 +450,14 @@ void app_dispatch(UiAction action,const char *first,const char *second) {
   if(!commands) return; Command cmd{}; cmd.action=action;
   strlcpy(cmd.first,first?first:"",sizeof(cmd.first)); strlcpy(cmd.second,second?second:"",sizeof(cmd.second));
   if(xQueueSend(commands,&cmd,0)!=pdTRUE) message("One moment. A previous action is still being processed.");
+  else if(action==UiAction::SetAlwaysOn) { lock(); state.alwaysOnDisplay=cmd.first[0]=='1'; unlock(); }
 }
 bool app_get_snapshot(UiSnapshot &out) { if(!stateMutex) return false; lock(); out=state; unlock(); return true; }
 bool app_get_widget_config(unsigned index,char *out,unsigned capacity) { if(index>1 || !out || !capacity || !stateMutex) return false; lock(); strlcpy(out,widgetConfig[index],capacity); unlock(); return out[0]; }
 bool app_service_init() {
   stateMutex=xSemaphoreCreateMutex(); commands=xQueueCreate(8,sizeof(Command));
   if(!stateMutex || !commands) return false;
-  text(state.city,"Bucharest"); text(state.timezone,"Europe/Bucharest"); text(state.firmware,"AURA Desk 1.0.0");
+  text(state.city,"Bucharest"); text(state.timezone,"Europe/Bucharest"); text(state.firmware,"AURA Desk " AURA_VERSION);
   text(state.clock,"--:--"); text(state.date,"Your day, in view."); text(state.connection,"Offline"); text(state.message,"Connect your router to bring your dashboard online.");
   state.setupRequired=true; state.brightness=80; state.latitude=latitude; state.longitude=longitude; state.psramBytes=esp_psram_get_size();
   snprintf(state.adminCode,sizeof(state.adminCode),"%06lu",(unsigned long)(100000+esp_random()%900000));

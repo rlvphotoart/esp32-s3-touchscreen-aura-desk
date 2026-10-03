@@ -3,7 +3,7 @@
 
 enum class UiAction : uint8_t {
   ScanWifi, ConnectWifi, DisconnectWifi, RefreshData, SetBrightness,
-  SetLocation, Reboot, ExploreOffline, OpenBrowser, ForgetWifi, SetApiWidget
+  SetLocation, Reboot, ExploreOffline, OpenBrowser, ForgetWifi, SetApiWidget, SetAlwaysOn
 };
 using UiActionCallback = void (*)(UiAction, const char *, const char *);
 
@@ -17,6 +17,7 @@ struct UiSnapshot {
   char adminCode[12], browserUrl[64];
   bool wifiConnected, timeSynced, internetAvailable, setupRequired;
   bool weatherValid, airValid, ratesValid, fetching, scanning;
+  bool alwaysOnDisplay;
   float temperature, feelsLike, humidity, wind, rain, aqi, pm25, eurRon, eurUsd;
   double latitude, longitude;
   int16_t weatherCode, rssi;

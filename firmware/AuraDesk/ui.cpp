@@ -11,7 +11,7 @@ constexpr uint32_t CANVAS=0xF4F5F0, CARD=0xFFFFFF, INK=0x172B40,
   AMBER=0xB36D13, RED=0xB23D4A, DOCK_MUTED=0x9FAFC0;
 enum Page { HOME, WEATHER, TOOLS, SETTINGS, NETWORK, PASSWORD, LOCATION,
   ABOUT, AIR, RATES, TIMER, WELCOME, BROWSER, API_DATA };
-enum Command { C_SCAN=100, C_CONNECT, C_SHOW_PASSWORD, C_REFRESH, C_BRIGHTNESS,
+enum Command { C_SCAN=100, C_CONNECT, C_SHOW_PASSWORD, C_REFRESH, C_BRIGHTNESS, C_ALWAYS_ON,
   C_SAVE_LOCATION, C_EXPLORE, C_TIMER_TOGGLE, C_TIMER_RESET, C_PRESET25,
   C_PRESET50, C_COUNTDOWN5, C_COUNTDOWN15, C_STOPWATCH, C_FORGET, C_REBOOT };
 UiActionCallback dispatch=nullptr;
@@ -26,7 +26,8 @@ struct Widgets {
     *focus_hint=nullptr, *updated=nullptr,
     *message=nullptr, *network_list=nullptr, *ssid=nullptr, *password=nullptr,
     *keyboard=nullptr, *show=nullptr, *city=nullptr, *brightness=nullptr,
-    *brightness_value=nullptr, *timer_value=nullptr, *timer_state=nullptr,
+    *brightness_value=nullptr, *always_on=nullptr, *always_on_hint=nullptr,
+    *timer_value=nullptr, *timer_state=nullptr,
     *timer_button=nullptr, *connect_button=nullptr, *weather_icon=nullptr,
     *detail=nullptr, *forecast[3]{}, *metrics[4]{}, *widget_title[2]{},
     *widget_value[2]{}, *widget_age[2]{};
@@ -251,7 +252,7 @@ void build_settings() {
   lv_obj_set_style_width(body,3,LV_PART_SCROLLBAR);
   row(body,0,"Network",model.wifiConnected?model.ssid:"Connect to your router",NETWORK);
   row(body,76,"Location",model.city[0]?model.city:"Bucharest (editable default)",LOCATION);
-  lv_obj_t *p=panel(body,0,152,440,112,CARD,14,true);
+  lv_obj_t *p=panel(body,0,152,440,184,CARD,14,true);
   text(p,16,12,310,22,"Display brightness",&lv_font_montserrat_16);
   w.brightness_value=text(p,340,12,80,22,"--",&lv_font_montserrat_16,MUTED);
   w.brightness=lv_slider_create(p);
@@ -263,9 +264,20 @@ void build_settings() {
   lv_obj_set_style_bg_color(w.brightness,color(BLUE),LV_PART_KNOB);
   lv_obj_set_style_pad_all(w.brightness,12,LV_PART_KNOB);
   lv_obj_add_event_cb(w.brightness,action,LV_EVENT_RELEASED,reinterpret_cast<void *>(C_BRIGHTNESS));
-  row(body,276,"Browser configuration",model.wifiConnected?model.ip:"Connect to Wi-Fi first",BROWSER);
-  row(body,352,"API widgets","Your own public data sources",API_DATA);
-  row(body,428,"About & diagnostics","AURA Desk / Horizon interface",ABOUT);
+  panel(p,16,96,408,1,LINE);
+  text(p,16,111,326,23,"Always-on display",&lv_font_montserrat_16);
+  w.always_on_hint=text(p,16,146,408,22,"",&lv_font_montserrat_14,MUTED);
+  w.always_on=lv_switch_create(p);
+  lv_obj_set_pos(w.always_on,358,106); lv_obj_set_size(w.always_on,64,40);
+  lv_obj_set_ext_click_area(w.always_on,4);
+  lv_obj_set_style_bg_color(w.always_on,color(LINE),LV_PART_MAIN);
+  lv_obj_set_style_bg_color(w.always_on,color(BLUE),LV_PART_INDICATOR|LV_STATE_CHECKED);
+  lv_obj_set_style_bg_color(w.always_on,color(CARD),LV_PART_KNOB);
+  if(model.alwaysOnDisplay) lv_obj_add_state(w.always_on,LV_STATE_CHECKED);
+  lv_obj_add_event_cb(w.always_on,action,LV_EVENT_VALUE_CHANGED,reinterpret_cast<void *>(C_ALWAYS_ON));
+  row(body,348,"Browser configuration",model.wifiConnected?model.ip:"Connect to Wi-Fi first",BROWSER);
+  row(body,424,"API widgets","Your own public data sources",API_DATA);
+  row(body,500,"About & diagnostics","AURA Desk / Horizon interface",ABOUT);
   dock(SETTINGS);
 }
 void build_network_list();
@@ -564,6 +576,11 @@ void action(lv_event_t *event) {
       char value[8]; std::snprintf(value,sizeof(value),"%d",lv_slider_get_value(w.brightness));
       send(UiAction::SetBrightness,value); break;
     }
+    case C_ALWAYS_ON:
+      model.alwaysOnDisplay=lv_obj_has_state(w.always_on,LV_STATE_CHECKED);
+      send(UiAction::SetAlwaysOn,model.alwaysOnDisplay?"1":"0");
+      set(w.always_on_hint,model.alwaysOnDisplay?"Keeps your selected brightness.":"Dims after 3 minutes of inactivity.");
+      break;
     case C_SAVE_LOCATION:
       if(w.city && lv_textarea_get_text(w.city)[0]) {
         send(UiAction::SetLocation,lv_textarea_get_text(w.city));
@@ -657,6 +674,9 @@ void refresh_widgets() {
   }
   if(page==SETTINGS && w.brightness_value) {
     std::snprintf(buf,sizeof(buf),"%d%%",lv_slider_get_value(w.brightness)); set(w.brightness_value,buf);
+    if(model.alwaysOnDisplay) lv_obj_add_state(w.always_on,LV_STATE_CHECKED);
+    else lv_obj_clear_state(w.always_on,LV_STATE_CHECKED);
+    set(w.always_on_hint,model.alwaysOnDisplay?"Keeps your selected brightness.":"Dims after 3 minutes of inactivity.");
   }
   if(page==ABOUT && w.detail) {
     std::snprintf(buf,sizeof(buf),

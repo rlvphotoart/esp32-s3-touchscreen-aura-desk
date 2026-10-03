@@ -8,6 +8,7 @@
 #include "lvgl_v8_port.h"
 #include "app_service.h"
 #include "ui.h"
+#include "firmware_version.h"
 
 using namespace esp_panel::drivers;
 using namespace esp_panel::board;
@@ -17,6 +18,7 @@ bool startupFailureHandled;
 uint32_t lastUpdate;
 String serialLine;
 uint8_t appliedBrightness=255;
+uint32_t lastDisplayIdle;
 
 // Keep Arduino from accepting a new image before display, storage and services start.
 extern "C" bool verifyRollbackLater(void) { return true; }
@@ -34,9 +36,11 @@ void handleStartupFailure() {
 
 void printStatus() {
   UiSnapshot s; if(!app_get_snapshot(s)) return;
-  Serial.printf("AURA_STATUS version=1.0.0 uptime=%lu heap=%lu min_heap=%lu psram=%lu wifi=%d internet=%d time=%d weather=%d air=%d rates=%d board=%d\n",
+  Serial.printf("AURA_STATUS version=" AURA_VERSION " uptime=%lu heap=%lu min_heap=%lu psram=%lu wifi=%d internet=%d time=%d weather=%d air=%d rates=%d board=%d always_on=%d backlight=%d idle_ms=%lu dimmed=%d\n",
     (unsigned long)s.uptimeSeconds,(unsigned long)s.freeHeap,(unsigned long)s.minimumHeap,(unsigned long)s.psramBytes,
-    s.wifiConnected,s.internetAvailable,s.timeSynced,s.weatherValid,s.airValid,s.ratesValid,boardHealthy);
+    s.wifiConnected,s.internetAvailable,s.timeSynced,s.weatherValid,s.airValid,s.ratesValid,boardHealthy,
+    s.alwaysOnDisplay,auraBoard->getBacklight()->getBrightness(),(unsigned long)lastDisplayIdle,
+    auraBoard->getBacklight()->getBrightness()<s.brightness);
 }
 void captureScreen() {
   lvgl_port_lock(-1);
@@ -69,7 +73,7 @@ void command(const String &line) {
 void setup() {
   Serial.begin(115200); Serial.setDebugOutput(false); delay(100);
   esp_log_level_set("wifi",ESP_LOG_WARN); esp_log_level_set("httpd",ESP_LOG_WARN);
-  Serial.println("AURA_BOOT firmware=1.0.0 board=Jingcai-4848S040C target=ESP32-S3");
+  Serial.println("AURA_BOOT firmware=" AURA_VERSION " board=Jingcai-4848S040C target=ESP32-S3");
   Serial.printf("AURA_MEMORY physical_psram=%lu usable_psram=%lu flash=%lu sdk=%s\n",(unsigned long)esp_psram_get_size(),(unsigned long)ESP.getPsramSize(),(unsigned long)ESP.getFlashChipSize(),ESP.getSdkVersion());
   if(!psramFound() || esp_psram_get_size()<0x800000) { Serial.println("AURA_FATAL required PSRAM unavailable"); return; }
   auraBoard=new Board();
@@ -90,8 +94,9 @@ void loop() {
     lastUpdate=now; app_service_tick(); UiSnapshot s; app_get_snapshot(s);
     lvgl_port_lock(-1); ui_update(s);
     const uint32_t idle=lv_disp_get_inactive_time(nullptr); lvgl_port_unlock();
-    uint8_t target=idle>180000 ? max(10,(int)s.brightness/5) : s.brightness;
-    if(target!=appliedBrightness) { auraBoard->getBacklight()->setBrightness(target); appliedBrightness=target; }
+    lastDisplayIdle=idle;
+    uint8_t target=!s.alwaysOnDisplay && idle>180000 ? max(10,(int)s.brightness/5) : s.brightness;
+    if(target!=appliedBrightness && auraBoard->getBacklight()->setBrightness(target)) appliedBrightness=target;
   }
   if(!updateConfirmed && now>8000 && app_startup_healthy()) {
     esp_ota_img_states_t imageState;

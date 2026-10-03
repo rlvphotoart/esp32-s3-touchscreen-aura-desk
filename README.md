@@ -29,7 +29,7 @@ Complete instructions and implemented limits: [AURA Desk user manual](docs/AURA_
 
 ## Release and source
 
-releases/aura-desk-1.0.0 (`releases/aura-desk-1.0.0`; historical local artifact omitted from public history) contains:
+releases/aura-desk-1.0.1 (`releases/aura-desk-1.0.1`; historical local artifact omitted from public history) contains:
 
 - `AuraDesk.ino.bin` — application image for browser OTA.
 - `AuraDesk.ino.merged.bin` — complete 16 MiB factory image.
@@ -82,3 +82,6 @@ Bootloader, partition table, NVS, original application, and coredump exports are
 - [Backup evidence](docs/BACKUP.md), [original flash map](docs/FLASH_LAYOUT.md), [security](docs/SECURITY.md), [recovery](docs/RECOVERY.md).
 
 The application and UX are original custom source. Platform and library components retain their upstream licenses. Physical panel appearance and manual touch usability are separate from successful controller initialization and software-rendered screenshot verification.
+
+
+Version 1.0.1 adds a saved Always-on display switch in touchscreen and browser Settings. On retains chosen brightness; Off dims after three minutes. This historical firmware source snapshot is recovered from retained build inputs.

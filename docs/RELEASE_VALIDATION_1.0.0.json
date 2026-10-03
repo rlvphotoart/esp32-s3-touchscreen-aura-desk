@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "product": "AURA Desk",
+  "interface": "Horizon",
+  "version": "1.0.0",
+  "validated_at": "2026-10-03T18:16:38.274976+03:00",
+  "application": {
+    "file": "AuraDesk.ino.bin",
+    "offset": "0x20000",
+    "bytes": 1923024,
+    "sha256": "18a0d6f6646f8bc5c3263bbc472310697774b14a1c7e6972755681f4b797f1b2"
+  },
+  "factory_image": {
+    "file": "AuraDesk.ino.merged.bin",
+    "bytes": 16777216,
+    "sha256": "8ec04019f462b2c6009047476653766d91074e98536bef79aff8f06463a2d6b1"
+  },
+  "checks": {
+    "original_backup": {
+      "passed": true,
+      "bytes": 16777216,
+      "sha256": "18d2f07ee3d3d216ed9a1b2b83accc40d5c925cd2902f9390a8f671c0ca3a1da",
+      "device_md5_verified": true
+    },
+    "serial_installation": {
+      "passed": true,
+      "whole_device_verified": true,
+      "preserved_settings": true,
+      "expected_flash_sha256": "1ad63484f98e6bf61bd0d1601544f7489c0fe60975de0e100c1260b13e5c9a05"
+    },
+    "ten_boots": {
+      "passed": true,
+      "count": 10,
+      "crash_markers": 0,
+      "minimum_reported_heap": 107076
+    },
+    "network": {
+      "passed": true,
+      "checks": [
+        "UART router, clock, display and memory",
+        "Pinned HTTPS, browser shell, authentication and secure cookie",
+        "CSRF rejection",
+        "Internet, weather, air quality, reference rates and data ages",
+        "Configuration export excludes sensitive fields",
+        "Public JSON widget configuration and real reading",
+        "Original widget configuration restored",
+        "OTA image verification and healthy restart"
+      ],
+      "widget_restoration_mode": "disabled-defaults"
+    },
+    "ota_readback": {
+      "passed": true,
+      "active_partition": "ota_1",
+      "active_offset": "0x520000",
+      "active_state": "VALID",
+      "ota_sequence": 2,
+      "metadata": [
+        {
+          "copy": 0,
+          "sequence": 1,
+          "state": 2,
+          "valid": true
+        },
+        {
+          "copy": 1,
+          "sequence": 2,
+          "state": 2,
+          "valid": true
+        }
+      ],
+      "application_bytes": 1923024,
+      "application_sha256": "18a0d6f6646f8bc5c3263bbc472310697774b14a1c7e6972755681f4b797f1b2",
+      "both_application_md5_readbacks_match_release": true,
+      "flash_writes": false,
+      "efuse_writes": false
+    },
+    "screenshots": {
+      "home": {
+        "passed": true,
+        "width": 480,
+        "height": 480,
+        "pixel_sha256": "14b3bd4254863ad0b3b3fa1374e82cacc470084949ebfe43a0c8785f0d1ecfc3",
+        "png_sha256": "fb8e194e7b1beb576a9d703f0387bed8445b5e29a0a4b93d1045d2b0aa7f306d"
+      },
+      "weather": {
+        "passed": true,
+        "width": 480,
+        "height": 480,
+        "pixel_sha256": "6f72f88afceedb1356d41d7db403b03f4c80f44ff7294f6594cba4502de66143",
+        "png_sha256": "c0314202339f62dffc78d517b06b5a7f36cfb9263c4570d6aea475db34eaf92a"
+      },
+      "tools": {
+        "passed": true,
+        "width": 480,
+        "height": 480,
+        "pixel_sha256": "8eda0292742af70ca5544bf18f42df72abde1e44046bc9c43f29f0304796f43b",
+        "png_sha256": "4963735c4e86dfdba191b3ca14d1c02df9e90931b739596b05ad971c902f7a82"
+      }
+    },
+    "host_ui": {
+      "passed": true,
+      "page_count": 14,
+      "fixture_linked_into_target": false
+    },
+    "security": {
+      "efuse_changes": false,
+      "secure_boot": false,
+      "flash_encryption": false
+    }
+  },
+  "limits": [
+    "Physical panel colours, orientation and manual touch accuracy require hands-on review.",
+    "Forced rollback, power-interruption and prolonged burn-in were not tested."
+  ]
+}
