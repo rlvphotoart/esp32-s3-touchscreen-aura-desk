@@ -1,0 +1,756 @@
+{
+  "schema_version": 1,
+  "product": "AURA Desk",
+  "version": "1.0.5",
+  "prepared_at": "2026-10-03T20:19:02.668110+00:00",
+  "status": "validated",
+  "passed": true,
+  "release_ready": true,
+  "scope": "500 browsable service discoveries plus existing and additional bounded scalar reading configurations. This does not imply 500 tested or automatically runnable API integrations.",
+  "catalog": {
+    "services": 500,
+    "categories": 50,
+    "documentation_hosts": 439,
+    "original_reading_profiles": 100,
+    "additional_reading_profiles": 22,
+    "total_reading_profiles": 122,
+    "mapped_reading_profiles": 115,
+    "legacy_reading_profiles": 7,
+    "services_with_reading_profiles": 39,
+    "services_without_reading_profiles": 461,
+    "auth_evidence": {
+      "no_key_reported": 404,
+      "no_key_confirmed": 92,
+      "optional_key": 3,
+      "unknown": 1
+    },
+    "documentation_evidence": {
+      "directory_only": 374,
+      "provider_docs_reviewed": 126
+    },
+    "research_firmware_fit": {
+      "review_required": 380,
+      "direct_candidate": 88,
+      "adapter": 32
+    }
+  },
+  "source_sha256": {
+    "docs/PUBLIC_API_SERVICES.json": "0f633ec753b383421e757610bc8d623d9fc00bb10484fca9f005643f2e28f765",
+    "docs/PUBLIC_API_SERVICE_READINGS.json": "c9462e188d5479b53ad987f88f4e96e65b1c476824efeb36375f2f121ec4eae6",
+    "firmware/AuraDesk/api_services.js.inc": "3572ef46ff02c8334780963aebfaea91a871c263479d5439e9d409b56e8cb1a5"
+  },
+  "checks": {
+    "service_catalog_offline": {
+      "passed": true,
+      "assertions": 25521,
+      "exact_500_services": true,
+      "public_json_runtime_and_license_agreement": true,
+      "duplicate_identifiers_and_unsafe_links_rejected": true,
+      "research_evidence_not_promoted_to_ready_integration": true,
+      "evidence_source": "tools/test_api_services.py current-code validation"
+    },
+    "service_checker_negative_fixtures": {
+      "passed": true,
+      "cases_rejected": 38,
+      "strict_duplicate_key_and_nonfinite_json_rejection": true,
+      "source_and_html_raw_literal_boundaries": true,
+      "evidence_source": "tools/test_api_services.py --self-test"
+    },
+    "new_profiles_cpp_backend": {
+      "passed": true,
+      "assertions": 220,
+      "profiles": 22,
+      "widget_slots": 2,
+      "actual_validation_handler_and_configuration_source": true,
+      "offline_platform_and_network_stubs": true,
+      "evidence_source": "tools/test_api_services.py --backend"
+    },
+    "browser_offline": {
+      "passed": true,
+      "assertions": 16732,
+      "exact_embedded_javascript_with_generated_include": true,
+      "services_in_both_widget_slots": 500,
+      "reading_profiles_in_both_widget_slots": 122,
+      "source_and_access_notes_present": true,
+      "search_and_no_match_feedback": true,
+      "selected_option_retention_and_native_select_semantics": true,
+      "draft_and_enabled_preservation": true,
+      "browse_does_not_save_or_fetch_provider": true,
+      "pairing_polling_saved_config_and_error_regressions": true,
+      "evidence_source": "tools/test_widget_browser.py final frozen harness"
+    },
+    "generated_catalog_in_application": {
+      "passed": true,
+      "runtime_payload_bytes": 493222,
+      "runtime_payload_sha256": "51c9f8844ebb9e0b094fbe0f4eae2a10e36b5851aca3cc1156372594da3b265a",
+      "exact_payload_count_in_application": 1,
+      "private_paths_and_research_bodies_not_embedded": true
+    },
+    "lvgl_offline": {
+      "passed": true,
+      "pages": 14,
+      "home_api_tiles_full_detail_and_true_zero": true,
+      "timers_browser_reentry_display_keyboard_regressions": true,
+      "scope": "Actual LVGL host rendering and pointer fixtures; not manual physical touchscreen operation."
+    },
+    "initial_new_profiles_on_device": {
+      "passed": false,
+      "checked": 22,
+      "successful": 21,
+      "failed": 1,
+      "all_profiles_checked": true,
+      "widget_slot": 0,
+      "profiles": [
+        {
+          "id": "svc_gbif_records",
+          "service_id": "gbif",
+          "passed": false,
+          "http_status": 0,
+          "device_error": "Secure connection failed. Check the clock or try another API."
+        },
+        {
+          "id": "svc_inaturalist_observations",
+          "service_id": "inaturalist",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 9
+        },
+        {
+          "id": "svc_ensembl_status",
+          "service_id": "ensembl-rest",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 1
+        },
+        {
+          "id": "svc_rcsb_resolution",
+          "service_id": "rcsb-protein-data-bank",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_pubchem_caffeine_mass",
+          "service_id": "pubchem-pug-rest",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 6
+        },
+        {
+          "id": "svc_mygene_symbol",
+          "service_id": "mygene-info",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_figshare_upload_date",
+          "service_id": "figshare",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 20
+        },
+        {
+          "id": "svc_clinicaltrials_id",
+          "service_id": "clinicaltrials-gov",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 11
+        },
+        {
+          "id": "svc_rick_character",
+          "service_id": "rick-and-morty-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 12
+        },
+        {
+          "id": "svc_dnd_ability",
+          "service_id": "dungeons-dragons-5e-srd-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 8
+        },
+        {
+          "id": "svc_open5e_spell_count",
+          "service_id": "open5e",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_lichess_blitz_rating",
+          "service_id": "lichess",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_cheapshark_price",
+          "service_id": "cheapshark",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 5
+        },
+        {
+          "id": "svc_valorant_version",
+          "service_id": "valorant-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 16
+        },
+        {
+          "id": "svc_zippopotam_latitude",
+          "service_id": "zippopotam-us",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 7
+        },
+        {
+          "id": "svc_geojs_example_country",
+          "service_id": "geojs",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 13
+        },
+        {
+          "id": "svc_france_paris_population",
+          "service_id": "france-administrative-geography-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 7
+        },
+        {
+          "id": "svc_ibge_state",
+          "service_id": "ibge-data-service",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 14
+        },
+        {
+          "id": "svc_mbta_route",
+          "service_id": "mbta-v3",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 8
+        },
+        {
+          "id": "svc_tfl_victoria_status",
+          "service_id": "transport-for-london-unified-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 12
+        },
+        {
+          "id": "svc_uk_parliament_records",
+          "service_id": "uk-parliament-members-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_fruityvice_banana_calories",
+          "service_id": "fruityvice",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 2
+        }
+      ],
+      "minimum_heap_observed_bytes": 31224,
+      "saved_widgets_restored": true,
+      "display_settings_preserved": true,
+      "settings_temporarily_written": true,
+      "firmware_writes": false,
+      "efuse_writes": false,
+      "physical_touch_tested": false,
+      "scope": "Initial real ESP32 HTTPS fetches of all 22 new profiles; no current values, saved configuration or device identity are published."
+    },
+    "final_new_profiles_on_device": {
+      "firmware": "1.0.5",
+      "passed": true,
+      "profiles": [
+        {
+          "id": "svc_gbif_records",
+          "service_id": "gbif",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 10
+        },
+        {
+          "id": "svc_inaturalist_observations",
+          "service_id": "inaturalist",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 9
+        },
+        {
+          "id": "svc_ensembl_status",
+          "service_id": "ensembl-rest",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 1
+        },
+        {
+          "id": "svc_rcsb_resolution",
+          "service_id": "rcsb-protein-data-bank",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_pubchem_caffeine_mass",
+          "service_id": "pubchem-pug-rest",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 6
+        },
+        {
+          "id": "svc_mygene_symbol",
+          "service_id": "mygene-info",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_figshare_upload_date",
+          "service_id": "figshare",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 20
+        },
+        {
+          "id": "svc_clinicaltrials_id",
+          "service_id": "clinicaltrials-gov",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 11
+        },
+        {
+          "id": "svc_rick_character",
+          "service_id": "rick-and-morty-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 12
+        },
+        {
+          "id": "svc_dnd_ability",
+          "service_id": "dungeons-dragons-5e-srd-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 8
+        },
+        {
+          "id": "svc_open5e_spell_count",
+          "service_id": "open5e",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_lichess_blitz_rating",
+          "service_id": "lichess",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_cheapshark_price",
+          "service_id": "cheapshark",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 5
+        },
+        {
+          "id": "svc_valorant_version",
+          "service_id": "valorant-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 16
+        },
+        {
+          "id": "svc_zippopotam_latitude",
+          "service_id": "zippopotam-us",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 7
+        },
+        {
+          "id": "svc_geojs_example_country",
+          "service_id": "geojs",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 13
+        },
+        {
+          "id": "svc_france_paris_population",
+          "service_id": "france-administrative-geography-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 7
+        },
+        {
+          "id": "svc_ibge_state",
+          "service_id": "ibge-data-service",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 14
+        },
+        {
+          "id": "svc_mbta_route",
+          "service_id": "mbta-v3",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 8
+        },
+        {
+          "id": "svc_tfl_victoria_status",
+          "service_id": "transport-for-london-unified-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 12
+        },
+        {
+          "id": "svc_uk_parliament_records",
+          "service_id": "uk-parliament-members-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_fruityvice_banana_calories",
+          "service_id": "fruityvice",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 2
+        }
+      ],
+      "read_only_transport_retries": 0,
+      "settings_temporarily_written": true,
+      "firmware_writes": false,
+      "efuse_writes": false,
+      "physical_touch_tested": false,
+      "minimum_heap_observed_bytes": 35492,
+      "selected_profiles_checked": true,
+      "all_profiles_checked": true,
+      "saved_widgets_restored": true,
+      "display_settings_preserved": true,
+      "checked": 22,
+      "successful": 22,
+      "failed": 0,
+      "scope": "All 22 additional reading profiles fetched through verified HTTPS on the final firmware in widget slot 0; no current values, saved configurations or identity are published."
+    },
+    "native_safari": {
+      "passed": true,
+      "native_app": "Safari",
+      "firmware": "1.0.5",
+      "pairing_success": true,
+      "both_native_service_menu_total_items": 551,
+      "catalog_services_in_each": 500,
+      "category_groups": 50,
+      "both_unfiltered_reading_template_counts": 122,
+      "case_insensitive_randomdog_matches": 1,
+      "no_match_feedback": true,
+      "enter_does_not_submit": true,
+      "filtered_current_selection_retained": true,
+      "clearing_search_restores_500_count": true,
+      "search_and_service_browsing_preserve_all_form_fields": true,
+      "catalog_only_service_setup_and_format_guidance": true,
+      "documentation_separate_from_saved_reading": true,
+      "representative_new_saves": [
+        {
+          "profile_id": "svc_pubchem_caffeine_mass",
+          "slot": 0,
+          "latest_request_succeeded": true
+        },
+        {
+          "profile_id": "svc_rick_character",
+          "slot": 1,
+          "latest_request_succeeded": true
+        }
+      ],
+      "reload_preserves_session_and_recognizes_new_sources": true,
+      "both_original_widget_forms_restored": true,
+      "restored_sources_latest_request_succeeded": true,
+      "final_reload_recognizes_original_configuration": true,
+      "exact_original_forms_after_reload": true,
+      "selected_brightness": 49,
+      "always_on": true,
+      "display_settings_preserved": true
+    },
+    "device_display_frames": {
+      "passed": true,
+      "baseline_saved_widgets": {
+        "product": "AURA Desk",
+        "firmware": "1.0.5",
+        "passed": true,
+        "read_only_transport_retries": 0,
+        "settings_writes": false,
+        "flash_writes": false,
+        "efuse_writes": false,
+        "physical_touch_tested": false,
+        "latest_refresh_success_required": true,
+        "checks": [
+          "ROM identity, physical PSRAM, firmware version and healthy display startup",
+          "Both existing enabled widgets have verified public API readings with known age and recorded refresh state",
+          "Checked home framebuffer independently matches both configured labels, values and units",
+          "Checked api_details framebuffer independently matches both configured labels, values and units",
+          "API configuration, always-on mode and selected/applied brightness remain unchanged"
+        ],
+        "identity_verified": true,
+        "home_both_labels_values_units_verified": true,
+        "api_details_both_labels_values_units_verified": true,
+        "selected_brightness": 49,
+        "always_on_preserved": true,
+        "brightness_preserved": true,
+        "widget_refresh_states": [
+          {
+            "slot": 0,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 2
+          },
+          {
+            "slot": 1,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 1
+          }
+        ],
+        "home_navigation_command_sent": true,
+        "strict_frame_boundaries_dimensions_pixel_sha256_verified": true,
+        "scope": "Actual device-rendered framebuffer verified over UART with independent regional label, value and unit checks. Not a camera photograph or manual physical touch test."
+      },
+      "representative_new_readings": {
+        "product": "AURA Desk",
+        "firmware": "1.0.5",
+        "passed": true,
+        "read_only_transport_retries": 0,
+        "settings_writes": false,
+        "flash_writes": false,
+        "efuse_writes": false,
+        "physical_touch_tested": false,
+        "latest_refresh_success_required": true,
+        "checks": [
+          "ROM identity, physical PSRAM, firmware version and healthy display startup",
+          "Both existing enabled widgets have verified public API readings with known age and recorded refresh state",
+          "Checked home framebuffer independently matches both configured labels, values and units",
+          "Checked api_details framebuffer independently matches both configured labels, values and units",
+          "API configuration, always-on mode and selected/applied brightness remain unchanged"
+        ],
+        "identity_verified": true,
+        "home_both_labels_values_units_verified": true,
+        "api_details_both_labels_values_units_verified": true,
+        "selected_brightness": 49,
+        "always_on_preserved": true,
+        "brightness_preserved": true,
+        "widget_refresh_states": [
+          {
+            "slot": 0,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 1
+          },
+          {
+            "slot": 1,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 1
+          }
+        ],
+        "home_navigation_command_sent": true,
+        "strict_frame_boundaries_dimensions_pixel_sha256_verified": true,
+        "scope": "Actual device-rendered framebuffer verified over UART with independent regional label, value and unit checks. Not a camera photograph or manual physical touch test.",
+        "new_profile_ids": [
+          "svc_pubchem_caffeine_mass",
+          "svc_rick_character"
+        ],
+        "widget_slots": [
+          0,
+          1
+        ]
+      },
+      "earlier_capture_attempt": {
+        "passed": false,
+        "failure": "Screenshot transfer was truncated",
+        "corrupt_or_incomplete_frame_accepted": false,
+        "unchanged_strict_verifier_repeat_passed": true
+      },
+      "both_original_widget_forms_restored_after_checks": true,
+      "final_browser_reload_recognizes_restored_sources": true,
+      "restored_sources_latest_requests_succeeded": true,
+      "physical_touch_tested": false
+    },
+    "https_tls_policy_offline": {
+      "passed": true,
+      "assertions": 20,
+      "evidence_source": "tools/test_https_tls_policy.py",
+      "actual_attachment_callback_and_get_https_source": true,
+      "certificate_bundle_attachment_failure_propagated": true,
+      "static_zero_terminated_four_modern_suites": true,
+      "default_groups_and_signature_algorithms_preserved": true,
+      "hostname_and_required_authentication_not_overridden": true,
+      "offline_sdk_stubs": true,
+      "scope": "Offline source-policy checks; final physical ESP32 handshake and fetch gates remain separate."
+    },
+    "host_tls_reproduction": {
+      "passed": true,
+      "checked_on": "2026-10-03",
+      "library": "Mbed TLS 3.6.2",
+      "library_source": "https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-3.6.2",
+      "endpoint": "https://api.gbif.org/v1/occurrence/search?limit=0",
+      "required_hostname": "api.gbif.org",
+      "tls_version": "TLS 1.2",
+      "authentication_mode": "MBEDTLS_SSL_VERIFY_REQUIRED",
+      "root": {
+        "name": "ISRG Root X1",
+        "source": "https://letsencrypt.org/certs/isrgrootx1.pem",
+        "pinned_sdk_der_subject_and_public_key_match": true,
+        "public_key_sha256": "0b9fa5a59eed715c26c1020c711b4f6ec42d58b0015e14337a39dad301c5afc3"
+      },
+      "sdk_compiled_cipher_definitions": 121,
+      "sdk_default_group_ids": [
+        29,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "sdk_tls12_signature_algorithm_hex": [
+        "0603",
+        "0806",
+        "0601",
+        "0503",
+        "0805",
+        "0501",
+        "0403",
+        "0804",
+        "0401"
+      ],
+      "initial_offer": {
+        "advertised_cipher_entries_including_scsv": 81,
+        "tls_record_bytes": 289,
+        "result": "peer_fatal_alert",
+        "alert_level": 2,
+        "alert_description": 80,
+        "alert_name": "internal_error",
+        "mbedtls_error": "-0x7780",
+        "server_hello_received": false,
+        "certificate_received": false
+      },
+      "controls": [
+        {
+          "name": "groups_only_narrowed",
+          "advertised_cipher_entries_including_scsv": 81,
+          "group_ids": [
+            23,
+            29,
+            24
+          ],
+          "result": "same_peer_fatal_alert"
+        },
+        {
+          "name": "four_modern_suites_default_groups_and_signatures",
+          "advertised_cipher_entries_including_scsv": 5,
+          "tls_record_bytes": 137,
+          "certificate_verified": true,
+          "http_status": 200
+        },
+        {
+          "name": "repeated_modern_suites_boundary_71",
+          "advertised_cipher_entries_including_scsv": 71,
+          "tls_record_bytes": 269,
+          "certificate_verified": true,
+          "http_status": 200
+        },
+        {
+          "name": "repeated_modern_suites_boundary_72",
+          "advertised_cipher_entries_including_scsv": 72,
+          "tls_record_bytes": 271,
+          "certificate_verified": true,
+          "http_status": 200
+        },
+        {
+          "name": "repeated_modern_suites_boundary_73",
+          "advertised_cipher_entries_including_scsv": 73,
+          "tls_record_bytes": 273,
+          "result": "same_peer_fatal_alert"
+        },
+        {
+          "name": "repeated_modern_suites_boundary_74",
+          "advertised_cipher_entries_including_scsv": 74,
+          "tls_record_bytes": 275,
+          "result": "same_peer_fatal_alert"
+        },
+        {
+          "name": "four_modern_suites_alpn_inflation",
+          "advertised_cipher_entries_including_scsv": 5,
+          "tls_record_bytes": 353,
+          "certificate_verified": true,
+          "http_status": 200
+        }
+      ],
+      "both_cipher_offer_halves_succeeded_independently": true,
+      "observed_cause": "GBIF peer rejects this controlled Mbed TLS cipher vector above 72 advertised entries before ServerHello. Total ClientHello length and default group/signature support do not explain the controlled results.",
+      "selected_cipher_suite_ids": [
+        "C02F",
+        "C030",
+        "C02B",
+        "C02C"
+      ],
+      "selected_cipher_suites": [
+        "TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256",
+        "TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384",
+        "TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256",
+        "TLS-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384"
+      ],
+      "default_groups_and_signature_algorithms_retained": true,
+      "certificate_or_hostname_verification_disabled": false,
+      "http_fallback_used": false,
+      "provider_specific_hostname_exception": false,
+      "reproduction": "Official source build and ssl_client2 TLS commands are documented in API_SERVICES_VALIDATION.md. The cipher-vector and ALPN controls used a native probe with the same required root and hostname; HTTP200 requests included the proper Host header.",
+      "scope": "Native host diagnosis and secure negotiation policy. This does not establish a universal server limit or a final physical-device release pass.",
+      "final_device_gate": "passed_all_22_additional_profiles"
+    },
+    "earlier_cipher_image_fetch_pass": {
+      "passed": false,
+      "checked": 22,
+      "successful": 21,
+      "gbif_passed": true,
+      "failure": {
+        "id": "svc_inaturalist_observations",
+        "http_status": 0,
+        "error": "API request failed or timed out. Try again later."
+      },
+      "minimum_heap_observed_bytes": 52120,
+      "saved_widgets_restored": true,
+      "scope": "An earlier full cipher-image pass returned a generic request-failed-or-timed-out error for iNaturalist with HTTP status 0; its cause was not established. The complete unchanged-check rerun subsequently passed all 22."
+    }
+  },
+  "limitations": [
+    "The 500-service catalog is discovery and configuration guidance, not 500 ready or device-tested integrations.",
+    "39 services currently have reading associations; 461 require custom endpoint selection, review or adapters. Seven existing GitHub/TimeAPI.io readings remain independently available.",
+    "Documentation and access classifications are dated research evidence; 404 no-key reports are not definitive provider confirmation.",
+    "XML, GraphQL, RPC, images, identification, attribution, licence restrictions and longer text can require provider-specific work.",
+    "Provider responses, quotas, policies, payload size and scalar paths can change after a successful check.",
+    "All 22 additional profiles passed on the final ESP32 image in slot 0. Both slots have exhaustive offline backend coverage; representative new readings were saved in both slots through native Safari and checked on device frames.",
+    "The original 100-profile desktop evidence remains dated to 1.0.4; all 100 have not been fetched on the final 1.0.5 ESP32 image.",
+    "API servers must support at least one selected TLS 1.2 ECDHE AES-GCM suite. Trust and hostname checks, SDK groups and signature settings remain enabled.",
+    "Framebuffer checks do not establish manual physical touch or camera-observed optical brightness/color. Earlier failed request and truncated-frame evidence remain recorded separately."
+  ],
+  "privacy": {
+    "owner_paths_published": false,
+    "device_identifiers_published": false,
+    "network_identifiers_published": false,
+    "pairing_or_session_material_published": false,
+    "saved_configurations_published": false,
+    "current_api_values_published": false,
+    "raw_provider_bodies_published": false
+  },
+  "validated_at": "2026-10-03T21:03:23.310578+00:00"
+}

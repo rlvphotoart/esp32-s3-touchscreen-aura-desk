@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "purpose": "Discovery metadata provenance only; directory licences do not license provider data or services.",
+  "sources": [
+    {
+      "name": "public-apis/public-apis",
+      "url": "https://github.com/public-apis/public-apis",
+      "license": "MIT",
+      "license_file": "third_party/catalog-discovery/public-apis-MIT.txt",
+      "snapshot_sha256": "1966f38c54bb9804e9d25f9542767a78f6553b85cec421efea16d9f060ec9023",
+      "license_sha256": "07704fa08e479d81930b0ad53c7c1d634c766736d27f725044949f982c1c9447"
+    },
+    {
+      "name": "public-api-lists/public-api-lists",
+      "url": "https://github.com/public-api-lists/public-api-lists",
+      "license": "MIT",
+      "license_file": "third_party/catalog-discovery/public-api-lists-MIT.txt",
+      "snapshot_sha256": "20b972d9617f3ef5f3419a37f6f7d02f3dbcab8d46cf6f3e510bba3a2415b2f6",
+      "license_sha256": "e9d2e3a3178f1c5fc01285ddf4a5729032f6947a04847237ab48a15c34b767be"
+    }
+  ]
+}

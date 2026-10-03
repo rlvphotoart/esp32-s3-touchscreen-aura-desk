@@ -1,5 +1,15 @@
 # AURA Desk changes
 
+## 1.0.5 — 500-service browser companion
+
+- Adds all 500 distinct reviewed API services across 50 topics to both browser widget selectors, with searchable groups, documentation, access evidence, formats and setup requirements.
+- Separates service browsing from reading selection, preserving drafts and avoiding provider requests while browsing.
+- Adds 22 bounded public JSON scalar profiles, bringing the reading selectors to 122 templates while retaining the original 100 choices. Thirty-nine catalog services have installed readings; 461 retain manual setup and compatibility guidance.
+- Keeps the full catalog in flash-resident browser assets and adds generator freshness, exact embedded JavaScript, catalog evidence, license and production-backend checks.
+- Verifies OTA settings preservation by comparing saved widgets, location, router and display configuration before and after the update.
+- Rejects release packaging when final current-version device, browser or display evidence is incomplete, or report hashes disagree with the packaged firmware/catalog.
+- Uses four standard ECDHE RSA/ECDSA AES-GCM cipher suites for verified public HTTPS requests, resolving GBIF's rejection of the SDK's broad cipher offer without changing trusted roots, hostname checks, groups or signatures.
+
 ## 1.0.4 — 100 public API presets
 
 - Adds exactly 100 verified public HTTPS JSON URL-and-field presets from 19 providers in both Browser dropdowns, with 17 category groups and search.

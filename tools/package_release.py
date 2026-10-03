@@ -23,11 +23,30 @@ RELEASE = f"releases/aura-desk-{VERSION}"
 MANIFEST = f"{RELEASE}/release-manifest.json"
 SUMS = f"{RELEASE}/SHA256SUMS"
 FORBIDDEN = {"backups", "logs", ".toolchains", ".venv", "build", ".git", "__pycache__"}
+RELEASE_REPORT = "docs/RELEASE_VALIDATION.json"
+API_SERVICES_REPORT = "docs/API_SERVICES_VALIDATION.json"
+REPORT_CHECKS = {
+    RELEASE_REPORT: (
+        "fresh_pre_update_backup", "target_build", "paired_pinned_https_application_update",
+        "ota_readback", "three_final_boots", "public_api_services", "public_api_catalog",
+        "generated_catalog_in_application", "final_new_profiles_on_device", "native_safari",
+        "device_home_and_details", "host_checks", "public_source_and_artifacts",
+    ),
+    API_SERVICES_REPORT: (
+        "service_catalog_offline", "service_checker_negative_fixtures", "new_profiles_cpp_backend",
+        "browser_offline", "generated_catalog_in_application", "lvgl_offline",
+        "final_new_profiles_on_device", "native_safari", "device_display_frames",
+        "https_tls_policy_offline", "host_tls_reproduction",
+    ),
+}
 
 REQUIRED = [
     ".gitignore", "README.md", "CHANGELOG.md", "ORIGINAL_CODE_RIGHTS.md", "requirements-tools.lock",
     "docs/AURA_DESK.md", "docs/FIRMWARE_BUILD.md", "docs/UI_QA.md",
-    "docs/RELEASE_VALIDATION.md", "docs/TOOLCHAIN_LOCK.json", "docs/PUBLIC_API_CATALOG.json", "docs/PUBLIC_API_CATALOG.md", "docs/API_CATALOG_VALIDATION.md", "docs/API_CATALOG_VALIDATION.json",
+    "docs/RELEASE_VALIDATION.md", RELEASE_REPORT, "docs/TOOLCHAIN_LOCK.json", "docs/PUBLIC_API_CATALOG.json", "docs/PUBLIC_API_CATALOG.md", "docs/API_CATALOG_VALIDATION.md", "docs/API_CATALOG_VALIDATION.json",
+    "docs/PUBLIC_API_SERVICES.json", "docs/PUBLIC_API_SERVICES.md", "docs/PUBLIC_API_SERVICE_READINGS.json", "docs/PUBLIC_API_SERVICE_READINGS.md",
+    "docs/API_SERVICES_VALIDATION.md", API_SERVICES_REPORT,
+    "third_party/catalog-discovery/public-apis-MIT.txt", "third_party/catalog-discovery/public-api-lists-MIT.txt", "third_party/catalog-discovery/PROVENANCE.json",
     "firmware/ui_preview/render.cpp", "tools/render_ui.py",
     'third_party/licenses/Apache-2.0.txt',
     'third_party/licenses/ArduinoJson-MIT.txt',
@@ -60,15 +79,15 @@ REQUIRED = [
     *[f"firmware/AuraDesk/{name}" for name in (
         "AuraDesk.ino", "firmware_version.h", "app_model.h", "app_service.cpp", "app_service.h",
         "esp_panel_board_supported_conf.h", "lv_conf.h", "lvgl_v8_port.cpp",
-        "lvgl_v8_port.h", "partitions.csv", "ui.cpp", "ui.h", "web_service.cpp", "web_service.h")],
+        "lvgl_v8_port.h", "partitions.csv", "ui.cpp", "ui.h", "web_service.cpp", "web_service.h", "api_services.js.inc")],
     *[f"scripts/{name}" for name in (
         "backup_flash.sh", "build.sh", "common.sh", "detect_device.sh", "flash.sh",
         "monitor.sh", "restore_original.sh", "verify_backup.sh")],
     *[f"tools/{name}" for name in (
         "aura_console.py", "backup_device.py", "capture_serial.py", "capture_release_screens.py", "device_inventory.py",
         "export_backup.py", "flash_aura.py", "read_efuses.py", "reset_and_capture.py",
-        "restore_original.py", "screen_to_png.py", "test_aura_boot.py", "test_aura_network.py",
-        "verify_backup.py", "verify_aura_ota.py", "upload_aura_update.py", "test_always_on.py", "test_navigation_device.py", "test_widgets.py", "test_widget_browser.py", "test_http_response_policy.py", "test_api_device.py", "test_api_catalog.py", "generate_api_catalog.py", "package_release.py", "vendor/gen_esp32part.py", "vendor/PROVENANCE.json")],
+        "restore_original.py", "screen_to_png.py", "test_aura_boot.py", "test_aura_network.py", "test_https_tls_policy.py",
+        "verify_backup.py", "verify_aura_ota.py", "upload_aura_update.py", "test_always_on.py", "test_navigation_device.py", "test_widgets.py", "test_widget_browser.py", "test_http_response_policy.py", "test_api_device.py", "test_api_catalog.py", "generate_api_catalog.py", "generate_api_services.py", "test_api_services.py", "test_api_services_device.py", "test_package_release.py", "package_release.py", "vendor/gen_esp32part.py", "vendor/PROVENANCE.json")],
 ]
 # Additional public reference documents are explicit, not a wildcard over docs/.
 OPTIONAL = [
@@ -76,15 +95,11 @@ OPTIONAL = [
     *[f"docs/{name}" for name in (
         "BACKUP.md", "CAPABILITIES.md", "FLASH_LAYOUT.md", "GPIO_MAP.md", "HARDWARE.md",
         "ORIGINAL_FIRMWARE.md", "RECOVERY.md", "RESEARCH.md", "SECURITY.md", "SETUP.md",
-        "TEST_PLAN.md", "DEVELOPMENT.md", "ENGINEERING_REPORT.md", "hardware_profile.json", "RELEASE_VALIDATION_1.0.0.md", "RELEASE_VALIDATION_1.0.0.json", "RELEASE_VALIDATION_1.0.1.md", "RELEASE_VALIDATION_1.0.1.json", "RELEASE_VALIDATION_1.0.2.md", "RELEASE_VALIDATION_1.0.2.json", "BROWSER_API_VALIDATION.md", "BROWSER_API_VALIDATION.json", "RELEASE_VALIDATION_1.0.3.md", "RELEASE_VALIDATION_1.0.3.json")],
+        "TEST_PLAN.md", "DEVELOPMENT.md", "ENGINEERING_REPORT.md", "hardware_profile.json", "RELEASE_VALIDATION_1.0.0.md", "RELEASE_VALIDATION_1.0.0.json", "RELEASE_VALIDATION_1.0.1.md", "RELEASE_VALIDATION_1.0.1.json", "RELEASE_VALIDATION_1.0.2.md", "RELEASE_VALIDATION_1.0.2.json", "BROWSER_API_VALIDATION.md", "BROWSER_API_VALIDATION.json", "RELEASE_VALIDATION_1.0.3.md", "RELEASE_VALIDATION_1.0.3.json", "RELEASE_VALIDATION_1.0.4.md", "RELEASE_VALIDATION_1.0.4.json")],
     "artifacts/ui-preview/home_offline.png", "artifacts/ui-preview/weather_offline.png",
     "artifacts/ui-preview/tools_offline.png", "artifacts/ui-preview/settings_offline.png",
     "artifacts/ui-preview/settings_always_on_offline.png",
 ]
-VALIDATION_JSON = (
-    "docs/RELEASE_VALIDATION.json", "docs/release_validation.json",
-    f"{RELEASE}/release-validation.json",
-)
 PRIVATE_KEYS = {
     "password", "pass", "passphrase", "psk", "secret", "token", "access_token",
     "refresh_token", "admincode", "admin_code", "pairingcode", "pairing_code",
@@ -131,6 +146,70 @@ def sanitized_checks(value):
     raise ValueError("Unsupported validation JSON value")
 
 
+def validate_release_reports(payload: dict[str, bytes]) -> dict[str, dict]:
+    """Bind completed current-release conclusions to these exact public bytes.
+
+    Historical failed attempts may remain in a report, but all named final gates
+    must pass. A top-level pass cannot hide pending device/browser/display work.
+    """
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Duplicate validation JSON key")
+            result[key] = value
+        return result
+
+    def bad_number(value):
+        raise ValueError("Non-finite validation JSON number")
+
+    documents = {}
+    for name, gates in REPORT_CHECKS.items():
+        if name not in payload:
+            raise ValueError(f"Required current-release validation is missing: {name}")
+        try:
+            report = json.loads(payload[name], object_pairs_hook=unique_object,
+                                parse_constant=bad_number)
+        except (ValueError, TypeError) as exc:
+            raise ValueError(f"Invalid current-release validation JSON: {name}") from exc
+        if not isinstance(report, dict) or type(report.get("schema_version")) is not int or report["schema_version"] != 1:
+            raise ValueError(f"Unsupported current-release validation schema: {name}")
+        if report.get("product") != "AURA Desk" or report.get("version") != VERSION:
+            raise ValueError(f"Validation is for a different product or firmware version: {name}")
+        if report.get("passed") is not True or report.get("release_ready") is not True:
+            raise ValueError(f"Current-release validation is incomplete or failed: {name}")
+        if report.get("status") not in ("validated", "passed"):
+            raise ValueError(f"Current-release validation still has a nonfinal status: {name}")
+        if sanitized_checks(report) != report:
+            raise ValueError(f"Validation contains private fields: {name}")
+        checks = report.get("checks")
+        if not isinstance(checks, dict):
+            raise ValueError(f"Final validation checks are missing: {name}")
+        for gate in gates:
+            conclusion = checks.get(gate)
+            if not isinstance(conclusion, dict) or conclusion.get("passed") is not True:
+                raise ValueError(f"Final validation gate is incomplete or failed: {name} / {gate}")
+        documents[name] = report
+
+    release = documents[RELEASE_REPORT]
+    for key, filename in (("application", "AuraDesk.ino.bin"), ("factory_image", "AuraDesk.ino.merged.bin")):
+        name = f"{RELEASE}/{filename}"
+        record = release.get(key)
+        if name not in payload or not isinstance(record, dict):
+            raise ValueError(f"Validated firmware artifact is missing: {name}")
+        data = payload[name]
+        if (record.get("file") != filename or type(record.get("bytes")) is not int
+                or record["bytes"] != len(data) or record.get("sha256") != digest(data)):
+            raise ValueError(f"Validation does not match the packaged firmware artifact: {name}")
+
+    sources = documents[API_SERVICES_REPORT].get("source_sha256")
+    for name in ("docs/PUBLIC_API_SERVICES.json", "docs/PUBLIC_API_SERVICE_READINGS.json",
+                 "firmware/AuraDesk/api_services.js.inc"):
+        if name not in payload or not isinstance(sources, dict) or sources.get(name) != digest(payload[name]):
+            raise ValueError(f"API validation does not match the packaged catalog source: {name}")
+    return documents
+
+
 def inputs() -> tuple[dict[str, bytes], dict]:
     missing = [name for name in REQUIRED if not allowed(name).is_file()]
     notices = next((name for name in ("THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES")
@@ -149,21 +228,18 @@ def inputs() -> tuple[dict[str, bytes], dict]:
     for name in names:
         if name.endswith(".png") and not payload[name].startswith(b"\x89PNG\r\n\x1a\n"):
             raise ValueError(f"Invalid PNG device capture: {name}")
+    documents = validate_release_reports(payload)
     validation = {
         "report": "docs/RELEASE_VALIDATION.md",
         "report_sha256": digest(payload["docs/RELEASE_VALIDATION.md"]),
-        "checks": None,
+        "version": VERSION,
+        "release_ready": True,
+        "checks": documents[RELEASE_REPORT]["checks"],
+        "check_source": RELEASE_REPORT,
+        "check_source_sha256": digest(payload[RELEASE_REPORT]),
+        "api_services_source": API_SERVICES_REPORT,
+        "api_services_source_sha256": digest(payload[API_SERVICES_REPORT]),
     }
-    evidence = next((name for name in VALIDATION_JSON if allowed(name).is_file()), None)
-    if evidence:
-        raw = json.loads(allowed(evidence).read_text(encoding="utf-8"))
-        checks = raw.get("checks", raw.get("results", {})) if isinstance(raw, dict) else raw
-        validation["checks"] = sanitized_checks(checks)
-        validation["check_source"] = evidence
-        validation["check_source_sha256"] = digest(allowed(evidence).read_bytes())
-        if sanitized_checks(raw)!=raw:
-            raise ValueError("Validation JSON contains private fields; provide a public conclusions-only record")
-        payload[evidence]=allowed(evidence).read_bytes()
     layout = json.loads(payload[f"{RELEASE}/build-layout.json"])
     merged_name = f"{RELEASE}/AuraDesk.ino.merged.bin"
     merged = payload[merged_name]

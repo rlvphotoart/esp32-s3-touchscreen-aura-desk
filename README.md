@@ -16,21 +16,23 @@ These are host-rendered offline previews of the actual LVGL interface. Test fixt
 - Network clock/calendar, editable city and supported daylight-saving rules.
 - Open-Meteo weather, three forecast days, sunrise/sunset, European AQI and PM2.5.
 - Dated ECB EUR/RON and EUR/USD reference rates.
-- Two configurable public HTTPS JSON API widgets, shown directly on Home, with **100 public API presets from 19 providers**, searchable category groups, array-aware dot paths, controlled refresh intervals and clear error feedback.
+- Two configurable public HTTPS JSON API widgets, shown directly on Home, with **500 searchable API services and 122 reading templates**, searchable category groups, array-aware dot paths, controlled refresh intervals and clear error feedback.
 - Focus sessions with 25/50-minute presets, 5/15-minute countdowns and a stopwatch using monotonic time.
 - Saved brightness and **Always-on display** choice. On retains selected brightness; Off dims after three minutes without touch.
 - A visible **Settings → Browser** shortcut for the current local HTTPS address and six-digit pairing code.
 - Authenticated settings export, device health, and verified application OTA updates.
 
+The browser companion includes all 500 reviewed services across 50 topics, with documentation, access evidence and compatibility notes. Thirty-nine listed services have installed reading templates; the other 461 support browsing and manual setup guidance. The original 100 templates remain available, including seven legacy choices outside the 500-service catalog. This does not establish 500 working device integrations.
+
 Cards show source dates and data ages. Invalid data stays unavailable. Open-Meteo hosted free access is for personal, non-commercial use; API/provider scope is documented in the [manual](docs/AURA_DESK.md).
 
 ## Download and setup
 
-**Current version: 1.0.4.** Download verified files from [GitHub Releases](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases).
+**Current version: 1.0.5.** Download verified files from [GitHub Releases](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases).
 
 - `AuraDesk.ino.bin`: application image for the device's browser OTA updater.
 - `AuraDesk.ino.merged.bin`: 16 MiB factory image for the exact supported board/layout.
-- `AURA-Desk-1.0.4.zip`: firmware, source, pinned dependency information and validation report.
+- `AURA-Desk-1.0.5.zip`: firmware, source, pinned dependency information and validation report.
 - SHA-256 files establish integrity; releases are not publisher-signed.
 
 Connect through **Settings → Network** using a 2.4 GHz network. Set your weather city in **Settings → Location**. Open the always-visible **Browser** button in Settings to pair a phone/computer on the same router. The local browser uses the device's own HTTPS certificate.
@@ -49,6 +51,10 @@ The isolated toolchain pins Arduino-ESP32 **3.1.1**, its matching official high-
 .venv/bin/python tools/test_http_response_policy.py
 .venv/bin/python tools/test_api_catalog.py
 .venv/bin/python tools/generate_api_catalog.py --check
+.venv/bin/python tools/generate_api_services.py --check
+.venv/bin/python tools/test_api_services.py --self-test --backend
+.venv/bin/python tools/test_https_tls_policy.py
+.venv/bin/python tools/test_package_release.py
 ```
 
 Follow [FIRMWARE_BUILD.md](docs/FIRMWARE_BUILD.md) and [SETUP.md](docs/SETUP.md) to install the pinned local tools. Export your board's own identity before identity-checked maintenance operations:
@@ -78,8 +84,8 @@ Native USB pins overlap this board's display/touch wiring. Other boards need a r
 
 ## Documentation and history
 
-- [Manual](docs/AURA_DESK.md), [current validation](docs/RELEASE_VALIDATION.md), [100-API catalog](docs/PUBLIC_API_CATALOG.md), [catalog release verification](docs/API_CATALOG_VALIDATION.md), [1.0.3 Safari and API verification](docs/BROWSER_API_VALIDATION.md), [UI QA](docs/UI_QA.md).
-- [Changelog](CHANGELOG.md), [1.0.0 validation](docs/RELEASE_VALIDATION_1.0.0.md), [1.0.1 validation](docs/RELEASE_VALIDATION_1.0.1.md), [1.0.2 validation](docs/RELEASE_VALIDATION_1.0.2.md), [1.0.3 validation](docs/RELEASE_VALIDATION_1.0.3.md).
+- [Manual](docs/AURA_DESK.md), [current validation](docs/RELEASE_VALIDATION.md), [500-service catalog](docs/PUBLIC_API_SERVICES.md), [additional readings](docs/PUBLIC_API_SERVICE_READINGS.md), [original reading templates](docs/PUBLIC_API_CATALOG.md), [500-service release verification](docs/API_SERVICES_VALIDATION.md), [original catalog verification](docs/API_CATALOG_VALIDATION.md), [1.0.3 Safari and API verification](docs/BROWSER_API_VALIDATION.md), [UI QA](docs/UI_QA.md).
+- [Changelog](CHANGELOG.md), [1.0.0 validation](docs/RELEASE_VALIDATION_1.0.0.md), [1.0.1 validation](docs/RELEASE_VALIDATION_1.0.1.md), [1.0.2 validation](docs/RELEASE_VALIDATION_1.0.2.md), [1.0.3 validation](docs/RELEASE_VALIDATION_1.0.3.md), [1.0.4 validation](docs/RELEASE_VALIDATION_1.0.4.md).
 - [Build guide](docs/FIRMWARE_BUILD.md), [dependency lock](docs/TOOLCHAIN_LOCK.json), [third-party notices](THIRD_PARTY_NOTICES.md).
 - [Hardware](docs/HARDWARE.md), [GPIO map](docs/GPIO_MAP.md), [backup](docs/BACKUP.md), [security](docs/SECURITY.md), [recovery](docs/RECOVERY.md).
 

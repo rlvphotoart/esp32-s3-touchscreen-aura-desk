@@ -180,8 +180,11 @@ class PinnedLocal:
                     body = json.dumps(data or {}, separators=(",", ":")).encode()
             connection.request(method, path, body=body, headers=headers)
             response = connection.getresponse()
-            payload = response.read(131073)
-            require(len(payload) <= 131072, "Local HTTPS response exceeded its size limit")
+            # The flash-resident 500-service companion is larger than status
+            # JSON. Keep the larger bound specific to the browser document.
+            response_limit = 1048576 if path == "/" and method == "GET" else 131072
+            payload = response.read(response_limit + 1)
+            require(len(payload) <= response_limit, "Local HTTPS response exceeded its size limit")
             cookie = response.getheader("Set-Cookie", "")
             if cookie:
                 require("HttpOnly" in cookie and "Secure" in cookie and "SameSite=Strict" in cookie, "Pairing cookie lacks required protections")

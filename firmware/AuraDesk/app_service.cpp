@@ -9,6 +9,7 @@
 #include <esp_http_client.h>
 #include <esp_tls.h>
 #include <esp_crt_bundle.h>
+#include <mbedtls/ssl.h>
 #include <esp_heap_caps.h>
 #include <esp_system.h>
 #include <esp_psram.h>
@@ -46,6 +47,21 @@ struct PsramAllocator : ArduinoJson::Allocator {
 } jsonAllocator;
 struct HttpBody { String data; bool tooLarge = false, tlsFailure = false; };
 struct HttpOutcome { const char *error = nullptr; uint16_t status = 0; };
+
+esp_err_t attachApiRoots(void *configuration) {
+  const esp_err_t result=esp_crt_bundle_attach(configuration);
+  if(result!=ESP_OK) return result;
+  // Offer interoperable TLS 1.2 AEAD suites. Some public API frontends reject
+  // the SDK's broad legacy cipher offer before sending a server certificate.
+  // Trust roots, hostname checks, groups and signatures retain SDK defaults.
+  static const int suites[]={
+    MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+    MBEDTLS_TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+    MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+    MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,0};
+  mbedtls_ssl_conf_ciphersuites(static_cast<mbedtls_ssl_config *>(configuration),suites);
+  return ESP_OK;
+}
 
 template<size_t N> void text(char (&target)[N], const char *value) { strlcpy(target, value ? value : "", N); }
 void lock() { xSemaphoreTake(stateMutex, portMAX_DELAY); }
@@ -89,7 +105,7 @@ bool getHttps(const String &url, String &result, HttpOutcome *outcome=nullptr) {
   HttpBody body; body.data.reserve(4096);
   esp_http_client_config_t config{};
   config.url=url.c_str(); config.timeout_ms=12000; config.event_handler=httpEvent;
-  config.user_data=&body; config.crt_bundle_attach=esp_crt_bundle_attach;
+  config.user_data=&body; config.crt_bundle_attach=attachApiRoots;
   config.buffer_size=2048; config.buffer_size_tx=1024; config.disable_auto_redirect=true;
   auto client=esp_http_client_init(&config);
   if (!client) return fail("Unable to prepare the request. Try again later.");

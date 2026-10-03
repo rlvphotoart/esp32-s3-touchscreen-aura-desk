@@ -20,9 +20,11 @@ const fs=require('fs'),vm=require('vm');
 let assertions=0;
 function check(condition,name){assertions++;if(!condition)throw Error('FAIL: '+name)}
 class Element {
-  constructor(id){this.id=id;this.textContent='';this.value='';this.checked=false;this.disabled=false;this.className='';this.type='';this.files=[];this.button={disabled:false};this.children=[];
+  constructor(id){this.id=id;this.textContent='';this._value='';this.checked=false;this.disabled=false;this.className='';this.type='';this.files=[];this.button={disabled:false};this.children=[];
     this.classList={add:(...names)=>{const current=new Set(this.className.split(/\s+/).filter(Boolean));names.forEach(n=>current.add(n));this.className=[...current].join(' ')},remove:(...names)=>{this.className=this.className.split(/\s+/).filter(n=>n&&!names.includes(n)).join(' ')},contains:name=>this.className.split(/\s+/).includes(name)};
   }
+  get value(){return this._value}
+  set value(value){const proposed=String(value);if(/^widget(service|example)[01]$/.test(this.id)){const options=this.children.flatMap(child=>child.id==='option'?[child]:child.children);this._value=options.some(option=>option.value===proposed)?proposed:''}else this._value=proposed}
   querySelector(selector){if(selector==='button')return this.button;throw Error('Unknown DOM selector in offline harness')}
   appendChild(node){this.children.push(node);return node}
   replaceChildren(...nodes){this.children=[...nodes]}
@@ -83,26 +85,33 @@ async function main(){
     if(example==='eurRon')check(node('widgetfield0').value==='rates.RON','Currency example selects the named rate');
     if(example==='humidity')check(node('widgeturl0').value.includes('latitude=12.3457')&&node('widgeturl0').value.includes('longitude=-45.6789'),'City example uses current saved coordinates');
   }
+  const selectOptions=id=>node(id).children.flatMap(child=>child.id==='option'?[child]:child.children);
   const options=i=>node('widgetexample'+i).children.flatMap(child=>child.id==='option'?[child]:child.children);
-  const ids=evaluate('Object.keys(WIDGET_EXAMPLES)');
-  check(ids.length===100,'Reviewed runtime contains exactly100 preset choices');
+  const originalIds=evaluate('Object.keys(WIDGET_EXAMPLES)'),ids=evaluate('Object.keys(WIDGET_READINGS)'),services=evaluate('API_SERVICES');
+  check(originalIds.length===100,'Original runtime retains exactly100 preset choices');
+  check(services.length===500,'Runtime contains exactly500 distinct API services');
+  check(new Set(services.map(service=>service.id)).size===500,'Every service has a distinct selectable ID');
+  check(ids.length>=100,'Merged runtime preserves every original preset');
   for(let i=0;i<2;i++){
-    check(options(i).filter(option=>option.value).length===100,'Each dropdown contains100 selectable presets');
+    node('widgetservice'+i).value='';node('widgetservice'+i).onchange();
+    check(options(i).filter(option=>option.value).length===ids.length,'Each reading dropdown contains the complete merged presets');
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).length===500,'Each service dropdown contains all500 choices');
     check(node('widgetexample'+i).children.some(child=>child.id==='optgroup'),'Catalog is grouped by topic in both slots');
-    check(node('widgetcataloginfo'+i).textContent.startsWith('100 presets'),'Visible catalog count agrees with actual options');
+    check(node('widgetcataloginfo'+i).textContent.startsWith('500 services'),'Visible service count agrees with actual options');
     const requestsBefore=requests.length;
     for(const id of ids){
       context.catalogId=id;context.catalogSlot=i;
       const expected=evaluate('resolvedExample(catalogId)');
+      evaluate('renderServices(catalogSlot,READING_SERVICE_INDEX.get(catalogId)||"");browseService(catalogSlot)');
       node('widgetexample'+i).value=id;node('widgetexample'+i).onchange();
       for(const key of ['label','url','field','unit','interval'])check(String(node('widget'+key+i).value)===String(expected[key]),'Each catalog choice fills its own saved-field mapping');
       check(node('widgetenabled'+i).checked===true,'Every catalog choice enables only its chosen widget');
       check(node('widgetdocs'+i).href===expected.docs&&!node('widgetdocs'+i).classList.contains('hide'),'Each choice exposes its verified provider documentation');
     }
-    check(requests.length===requestsBefore,'Browsing all100 presets never dispatches an API request or save');
+    check(requests.length===requestsBefore,'Browsing all reading templates never dispatches an API request or save');
     const selected=node('widgetexample'+i).value,label=node('widgetlabel'+i).value,url=node('widgeturl'+i).value;
     node('widgetsearch'+i).value='NoAa';node('widgetsearch'+i).oninput();
-    const noaaCount=evaluate('Object.values(WIDGET_EXAMPLES).filter(entry=>[entry.name,entry.category,entry.provider,entry.label].join(" ").toLowerCase().includes("noaa")).length');
+    const noaaCount=evaluate('API_SERVICES.filter(entry=>serviceMatches(entry,"noaa")).length');
     check(noaaCount>0&&node('widgetcataloginfo'+i).textContent.startsWith(noaaCount+' matches'),'Search is case-insensitive across provider names');
     check(node('widgetexample'+i).value===selected&&node('widgetlabel'+i).value===label&&node('widgeturl'+i).value===url,'Search preserves selected preset and current form fields');
     node('widgetsearch'+i).value='no-such-api-fixture';node('widgetsearch'+i).oninput();
@@ -111,8 +120,47 @@ async function main(){
     let prevented=false;node('widgetsearch'+i).onkeydown({key:'Enter',preventDefault(){prevented=true}});
     check(prevented&&requests.length===requestsBefore,'Enter in search cannot accidentally submit the configuration');
     node('widgetsearch'+i).value='';node('widgetsearch'+i).oninput();
-    check(options(i).filter(option=>option.value).length===100,'Clearing search restores all100 choices without duplicates');
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).length===500,'Clearing search restores all500 services without duplicates');
+    node('widgetservice'+i).value='';node('widgetservice'+i).onchange();
+    check(options(i).filter(option=>option.value).length===ids.length,'All services view restores every reading template');
   }
+  for(let i=0;i<2;i++){
+    node('widgetexample'+i).value='';node('widgetsearch'+i).value='';node('widgetsearch'+i).oninput();
+    for(const key of ['label','url','field','unit','interval'])node('widget'+key+i).value=key==='url'?'https://example.org/draft.json':'draft-'+key;
+    node('widgetenabled'+i).checked=false;
+    const draft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+i).value])),before=requests.length;
+    for(const service of services){
+      node('widgetservice'+i).value=service.id;node('widgetservice'+i).onchange();
+      check(node('widgetservice'+i).value===service.id,'All500 service options remain selectable');
+      check(node('widgetservicename'+i).textContent===service.name&&!node('widgetprofile'+i).classList.contains('hide'),'Selected service profile is visible by its own name');
+      check(node('widgetservicedocs'+i).href===service.docs_url,'Service details point to provider documentation');
+      check(node('widgetserviceprovider'+i).textContent===service.provider,'Provider metadata matches selected service');
+      check(node('widgetserviceaccess'+i).textContent.includes(service.auth)&&node('widgetserviceaccess'+i).textContent.includes(service.access),'Authentication and access limitations are visible');
+      check(node('widgetserviceformats'+i).textContent===service.formats&&node('widgetservicefit'+i).textContent===service.current_firmware_fit,'Format and current device support remain explicit');
+      const evidenceText=service.evidence_code==='provider_docs_reviewed'?'Provider documentation reviewed. Access requirements are shown above; each chosen endpoint still needs testing on the device.':service.evidence_code==='directory_only'?'Directory discovery. Confirm current access and endpoint behavior with the provider before configuring a widget.':service.evidence_status;
+      check(node('widgetserviceevidence'+i).textContent===evidenceText,'Provider review versus directory discovery uses human-readable evidence without implying verified authentication');
+      for(const key of Object.keys(draft))check(node('widget'+key+i).value===draft[key],'Service browsing preserves each draft field');
+      check(node('widgetenabled'+i).checked===false,'Service browsing does not enable a widget');
+      const readings=(service.reading_ids||[]).filter(id=>ids.includes(id));
+      check(options(i).filter(option=>option.value).length===readings.length,'Selected service offers exactly its installed reading templates');
+      if(!readings.length)check(node('widgetservicehint'+i).textContent.includes('No reading template'),'A service without readings explains manual endpoint setup');
+    }
+    check(requests.length===before,'Browsing every service in either slot never sends provider requests or configuration saves');
+    const selected=node('widgetservice'+i).value;
+    node('widgetsearch'+i).value='no-such-api-fixture';node('widgetsearch'+i).oninput();
+    check(node('widgetservice'+i).value===selected&&selectOptions('widgetservice'+i).some(option=>option.value===selected),'Filtering retains the selected service outside the result set');
+    node('widgetsearch'+i).value='';node('widgetsearch'+i).oninput();
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).length===500,'Full500 service list returns after search is cleared');
+    node('widgetservice'+i).value='';node('widgetservice'+i).onchange();
+    check(node('widgetprofile'+i).classList.contains('hide')&&!node('widgetservicedocs'+i).href,'Clearing service hides outdated metadata and documentation link');
+  }
+  // Native selects refuse a value absent from their current options. Applying a
+  // reading must insert its associated service even under an unrelated filter.
+  node('widgetsearch0').value='no-such-api-fixture';node('widgetsearch0').oninput();
+  evaluate('applyExample(0,"bitcoin")');
+  check(node('widgetexample0').value==='bitcoin','Applying a reading inserts its selected option under an unrelated search');
+  check(node('widgetservice0').value===evaluate('READING_SERVICE_INDEX.get("bitcoin")'),'Applying a reading inserts its associated service under an unrelated search');
+  node('widgetsearch0').value='';node('widgetsearch0').oninput();
   context.fixtureStatus={...status(),latitude:0,longitude:0};evaluate('showStatus(fixtureStatus)');
   evaluate('applyExample(0,"humidity")');
   check(node('widgeturl0').value.includes('latitude=0.0000')&&node('widgeturl0').value.includes('longitude=0.0000'),'Saved-city presets accept genuine zero coordinates');
@@ -204,6 +252,17 @@ def main():
     parser.add_argument("--node", default="node")
     args = parser.parse_args()
     source = (ROOT / "firmware/AuraDesk/web_service.cpp").read_text()
+    included = (ROOT / "firmware/AuraDesk/api_services.js.inc").read_text()
+    raw_literals = re.findall(r'R"([^ ()\\\t\r\n]{0,16})\(([\s\S]*?)\)\1"', included)
+    if not raw_literals:
+        print("FAIL: Service catalog must contain adjacent raw string literals", file=sys.stderr)
+        return 1
+    include_script = "".join(body for delimiter, body in raw_literals)
+    splice = ')AURA"\n#include "api_services.js.inc"\nR"AURA('
+    if source.count(splice) != 1:
+        print("FAIL: Expected exactly one service catalog string splice", file=sys.stderr)
+        return 1
+    source = source.replace(splice, include_script)
     scripts = re.findall(r"<script>([\s\S]*?)</script>", source)
     if len(scripts) != 1:
         print("FAIL: Exactly one embedded browser script is required", file=sys.stderr)

@@ -2,74 +2,103 @@
   "schema_version": 1,
   "product": "AURA Desk",
   "interface": "Horizon",
-  "version": "1.0.4",
-  "validated_at": "2026-10-03T21:51:23.571582+03:00",
+  "version": "1.0.5",
+  "prepared_at": "2026-10-03T20:29:24.728357+00:00",
+  "validated_at": "2026-10-03T21:03:23.310578+00:00",
+  "status": "validated",
+  "passed": true,
+  "release_ready": true,
+  "scope": "Installed and verified firmware with 500 browsable API services and 122 bounded scalar reading profiles. Final device, native Safari, display-frame, readback and three-boot checks passed.",
   "application": {
     "file": "AuraDesk.ino.bin",
     "offset": "0x20000",
-    "bytes": 1984352,
-    "sha256": "7f7a15c7796b7437598a92a483f0fa370b8a31b318146dfda39e907e203a0f49"
+    "bytes": 2484336,
+    "sha256": "5b061127026773a052d2dcd42823ae4dd746d03163d747614cabcdc3c4527209"
   },
   "factory_image": {
     "file": "AuraDesk.ino.merged.bin",
     "bytes": 16777216,
-    "sha256": "8f64766774d73cc7ce8bd565dac5501f904a783453e268c45bf14977bdfa6e3f"
+    "sha256": "97fb19ca7269bafac6f9a96dd66354b7dfdbc72e2b836c38bd9307d91badf541"
   },
   "checks": {
     "fresh_pre_update_backup": {
       "passed": true,
       "bytes": 16777216,
-      "sha256": "a585b5a51e47b5e163ada91b5c878e56063c11def38567d567e362feb6b246a7",
-      "device_md5_verified": true
+      "sha256": "433da3b762dd44d0f27d88c79fc976132f0f92011888f3d693c1c1b51543cfa7",
+      "device_md5_verified": true,
+      "private_snapshot_excluded_from_public_package": true
     },
     "target_build": {
       "passed": true,
-      "application_bytes": 1984352,
+      "application_bytes": 2484336,
       "fits_both_five_mib_slots": true,
       "image_and_partition_checks": true,
-      "generated_catalog_checked_before_compilation": true
+      "generated_catalog_checked_before_compilation": true,
+      "tls_policy": "four_ecdhe_aes_gcm_suites_only",
+      "factory_application_offset": "0x20000",
+      "owner_paths_in_application_elf_map": 0
     },
     "paired_pinned_https_application_update": {
       "passed": true,
-      "version": "1.0.4",
+      "version": "1.0.5",
       "https_application_update": true,
       "healthy_restart": true,
-      "settings_preserved": true
+      "settings_preserved": true,
+      "saved_configs_and_display_compared": true,
+      "tls_certificate_preserved": true,
+      "selected_brightness": 49,
+      "always_on": true
     },
     "ota_readback": {
       "passed": true,
-      "active_partition": "ota_0",
-      "active_offset": "0x20000",
+      "active_partition": "ota_1",
+      "active_offset": "0x520000",
       "active_state": "VALID",
-      "ota_sequence": 7,
+      "ota_sequence": 10,
       "metadata": [
         {
           "copy": 0,
-          "sequence": 7,
+          "sequence": 9,
           "state": 2,
           "valid": true
         },
         {
           "copy": 1,
-          "sequence": 6,
+          "sequence": 10,
           "state": 2,
           "valid": true
         }
       ],
-      "application_bytes": 1984352,
-      "application_sha256": "7f7a15c7796b7437598a92a483f0fa370b8a31b318146dfda39e907e203a0f49",
-      "previous_application_sha256": "544c77cd798d1ea0f4e43965acd85ef2b9a2d19f623fee94e996de70ab065c9b",
+      "application_bytes": 2484336,
+      "application_sha256": "5b061127026773a052d2dcd42823ae4dd746d03163d747614cabcdc3c4527209",
+      "previous_application_sha256": "0ed0890a4d889083294f3c8cf620a89f41ba98f6fc54974c7049e4fe8a2ea8a9",
       "both_application_md5_readbacks_match_expected_images": true,
       "flash_writes": false,
-      "efuse_writes": false
+      "efuse_writes": false,
+      "previous_image_scope": "An accepted interim 1.0.5 groups-only diagnostic image is retained in the other OTA slot. The pre-update 1.0.4 image remains in the private verified full backup and its historical public release."
     },
     "three_final_boots": {
       "passed": true,
       "count": 3,
       "crash_markers": 0,
-      "minimum_reported_startup_heap": 62592,
+      "minimum_reported_startup_heap": 100936,
       "always_on_enabled_after_all_boots": true,
-      "selected_brightness": 49
+      "selected_brightness": 49,
+      "one_rom_boot_each": true
+    },
+    "public_api_services": {
+      "passed": true,
+      "services": 500,
+      "categories": 50,
+      "total_reading_profiles": 122,
+      "original_reading_profiles": 100,
+      "additional_reading_profiles": 22,
+      "services_with_reading_profiles": 39,
+      "services_without_reading_profiles": 461,
+      "associated_reading_profiles": 115,
+      "independent_legacy_reading_profiles": 7,
+      "report": "API_SERVICES_VALIDATION.json",
+      "all_500_are_device_tested_integrations": false
     },
     "public_api_catalog": {
       "passed": true,
@@ -78,142 +107,412 @@
       "categories": 17,
       "distinct_url_templates": 73,
       "report": "API_CATALOG_VALIDATION.json",
-      "all_100_live_desktop_fields_verified": true,
-      "all_100_offline_forms_and_cpp_handlers_in_both_slots_verified": true
+      "recorded_desktop_evidence_version": "1.0.4",
+      "current_offline_catalog_assertions": 6453,
+      "all_100_fetched_on_final_esp32_image": false
+    },
+    "generated_catalog_in_application": {
+      "passed": true,
+      "runtime_payload_bytes": 493222,
+      "runtime_payload_sha256": "51c9f8844ebb9e0b094fbe0f4eae2a10e36b5851aca3cc1156372594da3b265a",
+      "exact_payload_count_in_application": 1
+    },
+    "final_new_profiles_on_device": {
+      "firmware": "1.0.5",
+      "passed": true,
+      "profiles": [
+        {
+          "id": "svc_gbif_records",
+          "service_id": "gbif",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 10
+        },
+        {
+          "id": "svc_inaturalist_observations",
+          "service_id": "inaturalist",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 9
+        },
+        {
+          "id": "svc_ensembl_status",
+          "service_id": "ensembl-rest",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 1
+        },
+        {
+          "id": "svc_rcsb_resolution",
+          "service_id": "rcsb-protein-data-bank",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_pubchem_caffeine_mass",
+          "service_id": "pubchem-pug-rest",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 6
+        },
+        {
+          "id": "svc_mygene_symbol",
+          "service_id": "mygene-info",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_figshare_upload_date",
+          "service_id": "figshare",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 20
+        },
+        {
+          "id": "svc_clinicaltrials_id",
+          "service_id": "clinicaltrials-gov",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 11
+        },
+        {
+          "id": "svc_rick_character",
+          "service_id": "rick-and-morty-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 12
+        },
+        {
+          "id": "svc_dnd_ability",
+          "service_id": "dungeons-dragons-5e-srd-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 8
+        },
+        {
+          "id": "svc_open5e_spell_count",
+          "service_id": "open5e",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_lichess_blitz_rating",
+          "service_id": "lichess",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_cheapshark_price",
+          "service_id": "cheapshark",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 5
+        },
+        {
+          "id": "svc_valorant_version",
+          "service_id": "valorant-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 16
+        },
+        {
+          "id": "svc_zippopotam_latitude",
+          "service_id": "zippopotam-us",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 7
+        },
+        {
+          "id": "svc_geojs_example_country",
+          "service_id": "geojs",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 13
+        },
+        {
+          "id": "svc_france_paris_population",
+          "service_id": "france-administrative-geography-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 7
+        },
+        {
+          "id": "svc_ibge_state",
+          "service_id": "ibge-data-service",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 14
+        },
+        {
+          "id": "svc_mbta_route",
+          "service_id": "mbta-v3",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 8
+        },
+        {
+          "id": "svc_tfl_victoria_status",
+          "service_id": "transport-for-london-unified-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 12
+        },
+        {
+          "id": "svc_uk_parliament_records",
+          "service_id": "uk-parliament-members-api",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 4
+        },
+        {
+          "id": "svc_fruityvice_banana_calories",
+          "service_id": "fruityvice",
+          "passed": true,
+          "http_status": 200,
+          "scalar_bytes": 2
+        }
+      ],
+      "read_only_transport_retries": 0,
+      "settings_temporarily_written": true,
+      "firmware_writes": false,
+      "efuse_writes": false,
+      "physical_touch_tested": false,
+      "minimum_heap_observed_bytes": 35492,
+      "selected_profiles_checked": true,
+      "all_profiles_checked": true,
+      "saved_widgets_restored": true,
+      "display_settings_preserved": true,
+      "checked": 22,
+      "successful": 22,
+      "failed": 0,
+      "scope": "All 22 additional reading profiles fetched through verified HTTPS on the final firmware in widget slot 0; no current values, saved configurations or identity are published."
     },
     "native_safari": {
       "passed": true,
       "native_app": "Safari",
-      "firmware": "1.0.4",
+      "firmware": "1.0.5",
       "pairing_success": true,
-      "both_native_dropdowns_show_100_choices_and_17_category_groups": true,
-      "both_unfiltered_search_counts_show_100_presets_from_19_providers": true,
-      "case_insensitive_coinbase_search_matches": 7,
-      "noaa_search_matches": 6,
-      "usgs_search_matches": 4,
+      "both_native_service_menu_total_items": 551,
+      "catalog_services_in_each": 500,
+      "category_groups": 50,
+      "both_unfiltered_reading_template_counts": 122,
+      "case_insensitive_randomdog_matches": 1,
       "no_match_feedback": true,
-      "filtered_out_selection_retained": true,
-      "search_preserves_draft_fields": true,
-      "enter_in_search_does_not_submit": true,
-      "clearing_search_restores_catalog": true,
-      "provider_links_and_hints_follow_selection": true,
-      "custom_field_edit_clears_stale_preset_and_link": true,
-      "representative_preset_autofill_save_and_device_fetch": [
+      "enter_does_not_submit": true,
+      "filtered_current_selection_retained": true,
+      "clearing_search_restores_500_count": true,
+      "search_and_service_browsing_preserve_all_form_fields": true,
+      "catalog_only_service_setup_and_format_guidance": true,
+      "documentation_separate_from_saved_reading": true,
+      "representative_new_saves": [
         {
-          "preset_id": "public_carbon_level",
+          "profile_id": "svc_pubchem_caffeine_mass",
           "slot": 0,
-          "provider": "UK Carbon Intensity",
-          "reading": "high",
-          "unit": "",
           "latest_request_succeeded": true
         },
         {
-          "preset_id": "weather_space_geomagnetic",
+          "profile_id": "svc_rick_character",
           "slot": 1,
-          "provider": "NOAA SWPC",
-          "reading": "0",
-          "unit": "G",
-          "latest_request_succeeded": true
-        },
-        {
-          "preset_id": "public_quakes_month_m7",
-          "slot": 0,
-          "provider": "USGS",
-          "reading": "0",
-          "unit": "events",
           "latest_request_succeeded": true
         }
       ],
-      "saved_city_presets_restored": true,
-      "restored_sources": [
-        "Precipitation",
-        "Humidity"
-      ],
-      "restored_intervals_seconds": [
-        1800,
-        1800
-      ],
-      "both_restored_readings_latest_request_succeeded": true,
-      "reload_preserves_paired_session": true,
-      "reload_recognizes_saved_sources": true,
-      "search_fields_left_clear": true,
-      "display_brightness": 49,
+      "reload_preserves_session_and_recognizes_new_sources": true,
+      "both_original_widget_forms_restored": true,
+      "restored_sources_latest_request_succeeded": true,
+      "final_reload_recognizes_original_configuration": true,
+      "exact_original_forms_after_reload": true,
+      "selected_brightness": 49,
       "always_on": true,
-      "minimum_heap_observed_bytes": 60116
+      "display_settings_preserved": true
     },
     "device_home_and_details": {
-      "product": "AURA Desk",
-      "firmware": "1.0.4",
       "passed": true,
-      "read_only_transport_retries": 0,
-      "settings_writes": false,
-      "flash_writes": false,
-      "efuse_writes": false,
-      "physical_touch_tested": false,
-      "latest_refresh_success_required": true,
-      "checks": [
-        "ROM identity, physical PSRAM, firmware version and healthy display startup",
-        "Both existing enabled widgets have verified public API readings with known age and recorded refresh state",
-        "Checked home framebuffer independently matches both configured labels, values and units",
-        "Checked api_details framebuffer independently matches both configured labels, values and units",
-        "API configuration, always-on mode and selected/applied brightness remain unchanged"
-      ],
-      "identity_verified": true,
-      "home_both_labels_values_units_verified": true,
-      "api_details_both_labels_values_units_verified": true,
-      "selected_brightness": 49,
-      "always_on_preserved": true,
-      "brightness_preserved": true,
-      "widget_refresh_states": [
-        {
-          "slot": 0,
-          "verified_reading_valid": true,
-          "latest_refresh_http_status": 200,
-          "latest_refresh_error_present": false,
-          "reading_age_minutes": 2
-        },
-        {
-          "slot": 1,
-          "verified_reading_valid": true,
-          "latest_refresh_http_status": 200,
-          "latest_refresh_error_present": false,
-          "reading_age_minutes": 2
-        }
-      ],
-      "home_navigation_command_sent": true
+      "baseline_saved_widgets": {
+        "product": "AURA Desk",
+        "firmware": "1.0.5",
+        "passed": true,
+        "read_only_transport_retries": 0,
+        "settings_writes": false,
+        "flash_writes": false,
+        "efuse_writes": false,
+        "physical_touch_tested": false,
+        "latest_refresh_success_required": true,
+        "checks": [
+          "ROM identity, physical PSRAM, firmware version and healthy display startup",
+          "Both existing enabled widgets have verified public API readings with known age and recorded refresh state",
+          "Checked home framebuffer independently matches both configured labels, values and units",
+          "Checked api_details framebuffer independently matches both configured labels, values and units",
+          "API configuration, always-on mode and selected/applied brightness remain unchanged"
+        ],
+        "identity_verified": true,
+        "home_both_labels_values_units_verified": true,
+        "api_details_both_labels_values_units_verified": true,
+        "selected_brightness": 49,
+        "always_on_preserved": true,
+        "brightness_preserved": true,
+        "widget_refresh_states": [
+          {
+            "slot": 0,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 2
+          },
+          {
+            "slot": 1,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 1
+          }
+        ],
+        "home_navigation_command_sent": true,
+        "strict_frame_boundaries_dimensions_pixel_sha256_verified": true,
+        "scope": "Actual device-rendered framebuffer verified over UART with independent regional label, value and unit checks. Not a camera photograph or manual physical touch test."
+      },
+      "representative_new_readings": {
+        "product": "AURA Desk",
+        "firmware": "1.0.5",
+        "passed": true,
+        "read_only_transport_retries": 0,
+        "settings_writes": false,
+        "flash_writes": false,
+        "efuse_writes": false,
+        "physical_touch_tested": false,
+        "latest_refresh_success_required": true,
+        "checks": [
+          "ROM identity, physical PSRAM, firmware version and healthy display startup",
+          "Both existing enabled widgets have verified public API readings with known age and recorded refresh state",
+          "Checked home framebuffer independently matches both configured labels, values and units",
+          "Checked api_details framebuffer independently matches both configured labels, values and units",
+          "API configuration, always-on mode and selected/applied brightness remain unchanged"
+        ],
+        "identity_verified": true,
+        "home_both_labels_values_units_verified": true,
+        "api_details_both_labels_values_units_verified": true,
+        "selected_brightness": 49,
+        "always_on_preserved": true,
+        "brightness_preserved": true,
+        "widget_refresh_states": [
+          {
+            "slot": 0,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 1
+          },
+          {
+            "slot": 1,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 1
+          }
+        ],
+        "home_navigation_command_sent": true,
+        "strict_frame_boundaries_dimensions_pixel_sha256_verified": true,
+        "scope": "Actual device-rendered framebuffer verified over UART with independent regional label, value and unit checks. Not a camera photograph or manual physical touch test.",
+        "new_profile_ids": [
+          "svc_pubchem_caffeine_mass",
+          "svc_rick_character"
+        ],
+        "widget_slots": [
+          0,
+          1
+        ]
+      },
+      "earlier_capture_attempt": {
+        "passed": false,
+        "failure": "Screenshot transfer was truncated",
+        "corrupt_or_incomplete_frame_accepted": false,
+        "unchanged_strict_verifier_repeat_passed": true
+      },
+      "both_original_widget_forms_restored_after_checks": true,
+      "final_browser_reload_recognizes_restored_sources": true,
+      "restored_sources_latest_requests_succeeded": true,
+      "physical_touch_tested": false
     },
     "host_checks": {
+      "passed": true,
+      "service_catalog_assertions": 25521,
+      "service_checker_negative_cases_rejected": 38,
+      "new_profiles_cpp_backend_assertions": 220,
       "catalog_assertions": 6453,
       "catalog_checker_self_test_assertions": 5398,
       "invalid_catalog_cases_rejected": 52,
-      "embedded_browser_assertions": 1485,
+      "embedded_browser_assertions": 16732,
       "cpp_widget_assertions": 925,
       "http_response_assertions": 17,
+      "https_tls_policy_assertions": 20,
       "lvgl_pages": 14,
-      "passed": true
+      "scope": "Actual source and embedded data with controlled platform/network stubs; host checks do not establish physical device or live-provider behavior.",
+      "package_gate_assertions": 156,
+      "package_negative_fixtures_rejected": 152,
+      "package_current_reports_bound_to_artifacts": true
+    },
+    "tls_client_policy": {
+      "host_check_passed": true,
+      "live_final_image_check_status": "passed_all_22_additional_profiles",
+      "tls_version": "1.2",
+      "offered_suites": [
+        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
+      ],
+      "certificate_bundle_attachment_retained": true,
+      "hostname_verification_retained": true,
+      "sdk_groups_and_signature_algorithms_retained": true,
+      "verification_disabled": false,
+      "compatibility_limit": "Public API servers must support at least one of these four TLS 1.2 suites. TLS 1.3-only, legacy-CBC-only or otherwise incompatible servers are unsupported."
     },
     "public_source_and_artifacts": {
       "passed": true,
-      "owner_paths_in_application_elf_map": 0,
+      "status": "local_source_and_package_verified",
+      "public_allowlisted_input_files": 145,
+      "build_owner_path_audit_passed": true,
+      "private_backups_captures_credentials_and_owner_paths_excluded": true,
       "runtime_device_identity_required": true,
-      "private_captures_and_backups_excluded": true,
-      "historical_source_privacy_audit": true,
-      "factory_storage_regions_erased": true,
-      "upstream_license_texts": 22
+      "upstream_dependency_license_texts": 22,
+      "catalog_directory_mit_notices": 2,
+      "final_firmware_source_and_layout_hash_agreement": true,
+      "explicit_paths_and_no_symlinks": true,
+      "package_byte_crc_manifest_verification_required_before_publication": true,
+      "github_delivery_verified_after_upload_separately": true,
+      "package_byte_crc_manifest_verification_passed": true,
+      "verified_package_members": 147
     }
   },
   "baseline_validation": [
     "RELEASE_VALIDATION_1.0.0.md",
     "RELEASE_VALIDATION_1.0.1.md",
     "RELEASE_VALIDATION_1.0.2.md",
-    "RELEASE_VALIDATION_1.0.3.md"
+    "RELEASE_VALIDATION_1.0.3.md",
+    "RELEASE_VALIDATION_1.0.4.md"
   ],
   "limits": [
-    "All 100 fields have live desktop HTTPS evidence and exhaustive offline Browser/C++ configuration coverage. The ESP32 fetched representative sources during Safari testing; all 100 were not fetched on the ESP32.",
-    "Saved-city live research probes used public example coordinates; provider coverage at every coordinate is not established.",
-    "Actual device page navigation used UART and checked framebuffer/OCR, rather than physical finger taps.",
-    "Public services may change, rate-limit or withdraw APIs after the recorded verification date.",
-    "Forced rollback, deliberate power/network interruption, optical quality and prolonged burn-in were not measured in this release run."
+    "All 500 entries are service discovery/configuration guidance. Only 39 have associated reading templates; 461 require endpoint selection, review or adapters. This is not 500 validated device integrations.",
+    "The 122 profiles comprise 100 original readings and 22 additional readings. Seven original GitHub/TimeAPI.io readings remain available independently of the 500-service catalog.",
+    "Provider documentation review and directory authentication reports are dated evidence, not a guarantee of free access, current availability or arbitrary endpoint compatibility.",
+    "Original 100-profile desktop evidence remains dated to 1.0.4; all 100 have not been fetched on the final 1.0.5 ESP32 image.",
+    "Actual device frame checks use UART and independent region matching. They do not establish manual physical touch, optical brightness/color or camera-observed display behavior.",
+    "API servers must offer at least one configured TLS 1.2 ECDHE AES-GCM suite. Certificate bundle and hostname verification remain required; SDK group and signature settings are unchanged.",
+    "Forced rollback, deliberate power/network interruption and prolonged burn-in are not covered by the current release gates.",
+    "Public APIs can change, rate-limit or withdraw after the recorded verification date. SHA-256 checks establish integrity rather than a publisher signature.",
+    "All 22 additional live profile checks cover slot 0; native Safari and actual device frames additionally verify representative new readings in both slots."
   ],
-  "verification_note": "Two earlier UART screenshot transfers were rejected for interrupted framing. A complete repeat with private raw-transfer diagnostics passed all original framing and SHA-256 checks, then independently matched both widget regions on Home and Your data with private regional OCR. The diagnostic wrapper returned the original bytes unchanged. No damaged capture was accepted, no framing/hash check was relaxed, and no transfer cause is claimed."
+  "privacy": {
+    "device_identifiers_published": false,
+    "network_identifiers_published": false,
+    "owner_paths_published": false,
+    "pairing_or_session_material_published": false,
+    "saved_configurations_published": false,
+    "current_api_values_published": false,
+    "raw_provider_bodies_published": false
+  },
+  "verification_note": "The installed final cipher-only application passed hardware, browser and display acceptance. Historical 1.0.4 evidence and earlier failed checks remain separately dated. Public reports contain conclusions only; public GitHub delivery is verified after upload."
 }
