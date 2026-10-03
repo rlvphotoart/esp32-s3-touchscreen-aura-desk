@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "product": "AURA Desk",
+  "interface": "Horizon",
+  "version": "1.0.3",
+  "validated_at": "2026-10-03T20:55:34.944388+03:00",
+  "application": {
+    "file": "AuraDesk.ino.bin",
+    "offset": "0x20000",
+    "bytes": 1939536,
+    "sha256": "544c77cd798d1ea0f4e43965acd85ef2b9a2d19f623fee94e996de70ab065c9b"
+  },
+  "factory_image": {
+    "file": "AuraDesk.ino.merged.bin",
+    "bytes": 16777216,
+    "sha256": "e45b4395c472401369933f1faeab10f6d23605ad48f695720d566e8a74f1e0d4"
+  },
+  "checks": {
+    "fresh_pre_update_backup": {
+      "passed": true,
+      "bytes": 16777216,
+      "sha256": "f97ea258bdf338d207deee7cf196ce67df2ebb90180f854f3a5427449fabb12b",
+      "device_md5_verified": true
+    },
+    "target_build": {
+      "passed": true,
+      "application_bytes": 1939536,
+      "fits_both_five_mib_slots": true,
+      "image_and_partition_checks": true
+    },
+    "native_safari_application_update": {
+      "passed": true,
+      "version": "1.0.3",
+      "https_application_update": true,
+      "verified_reply_observed": true,
+      "healthy_restart": true
+    },
+    "ota_readback": {
+      "passed": true,
+      "active_partition": "ota_1",
+      "active_offset": "0x520000",
+      "active_state": "VALID",
+      "ota_sequence": 6,
+      "metadata": [
+        {
+          "copy": 0,
+          "sequence": 5,
+          "state": 2,
+          "valid": true
+        },
+        {
+          "copy": 1,
+          "sequence": 6,
+          "state": 2,
+          "valid": true
+        }
+      ],
+      "application_bytes": 1939536,
+      "application_sha256": "544c77cd798d1ea0f4e43965acd85ef2b9a2d19f623fee94e996de70ab065c9b",
+      "previous_application_sha256": "0999f1c5413819076044a5dcb3d9577783471dd52581e18b5b6de2bb02667dc5",
+      "both_application_md5_readbacks_match_expected_images": true,
+      "flash_writes": false,
+      "efuse_writes": false
+    },
+    "three_final_boots": {
+      "passed": true,
+      "count": 3,
+      "crash_markers": 0,
+      "minimum_reported_heap": 101296,
+      "always_on_enabled_after_all_boots": true,
+      "selected_brightness": 49
+    },
+    "browser_and_api": {
+      "native_safari_final": {
+        "passed": true,
+        "native_app": "Safari",
+        "pairing_success": true,
+        "wrong_code_message_preserved_after_poll_interval": true,
+        "paired_firmware_verified": true,
+        "coinbase_configuration_saved": true,
+        "humidity_configuration_preserved": true,
+        "malformed_path_rejected_inline": true,
+        "invalid_submission_preserves_last_reading": true,
+        "settings_save_accepted": true,
+        "settings_export_download_json_verified": true,
+        "export_excludes_authentication_fields": true,
+        "display_brightness": 49,
+        "always_on": true,
+        "application_ota_upload_verified_and_restarted": true,
+        "manual_refresh_updated_both_readings": true,
+        "reload_preserves_paired_session_and_saved_configurations": true
+      },
+      "earlier_private_candidate": {
+        "version": "1.0.3",
+        "application_sha256": "0999f1c5413819076044a5dcb3d9577783471dd52581e18b5b6de2bb02667dc5",
+        "ready_coinmarketcap_and_humidity_presets_saved": true,
+        "both_values_fetched": true,
+        "missing_json_field_reported": true,
+        "real_http_429_retains_prior_value_and_age": true,
+        "other_widget_remained_valid": true
+      },
+      "device_home_and_details": {
+        "product": "AURA Desk",
+        "firmware": "1.0.3",
+        "passed": true,
+        "read_only_transport_retries": 0,
+        "settings_writes": false,
+        "flash_writes": false,
+        "efuse_writes": false,
+        "physical_touch_tested": false,
+        "latest_refresh_success_required": true,
+        "checks": [
+          "ROM identity, physical PSRAM, firmware version and healthy display startup",
+          "Both existing enabled widgets have verified public API readings with known age and recorded refresh state",
+          "Checked home framebuffer independently matches both configured labels, values and units",
+          "Checked api_details framebuffer independently matches both configured labels, values and units",
+          "API configuration, always-on mode and selected/applied brightness remain unchanged"
+        ],
+        "identity_verified": true,
+        "home_both_labels_values_units_verified": true,
+        "api_details_both_labels_values_units_verified": true,
+        "selected_brightness": 49,
+        "always_on_preserved": true,
+        "brightness_preserved": true,
+        "widget_refresh_states": [
+          {
+            "slot": 0,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 1
+          },
+          {
+            "slot": 1,
+            "verified_reading_valid": true,
+            "latest_refresh_http_status": 200,
+            "latest_refresh_error_present": false,
+            "reading_age_minutes": 3
+          }
+        ],
+        "home_navigation_command_sent": true
+      },
+      "cpp_actual_source_host": {
+        "passed": true,
+        "assertions": 125,
+        "https_platform_stubs": true
+      },
+      "embedded_browser_js_host": {
+        "passed": true,
+        "assertions": 56,
+        "offline_dom_harness": true
+      },
+      "http_response_actual_source_host": {
+        "passed": true,
+        "assertions": 17,
+        "offline_sdk_stubs": true
+      },
+      "actual_lvgl_host": {
+        "passed": true,
+        "pages": 14,
+        "pointer_hit_tests": true,
+        "both_home_tiles": true,
+        "numeric_zero": true,
+        "compact_home_full_detail": true,
+        "saved_value_and_error_indicators": true,
+        "home_and_settings_back_origins": true,
+        "model_updates_preserve_active_objects": true,
+        "disabled_configuration_shortcut": true
+      }
+    },
+    "public_source_and_artifacts": {
+      "passed": true,
+      "owner_paths_in_application_elf_map": 0,
+      "runtime_device_identity_required": true,
+      "private_captures_and_backups_excluded": true,
+      "historical_source_privacy_audit": true,
+      "factory_storage_regions_erased": true,
+      "upstream_license_texts": 22
+    }
+  },
+  "baseline_validation": [
+    "RELEASE_VALIDATION_1.0.0.md",
+    "RELEASE_VALIDATION_1.0.1.md",
+    "RELEASE_VALIDATION_1.0.2.md"
+  ],
+  "limits": [
+    "Actual device page navigation uses UART and SHA256-checked framebuffer transfers with regional OCR, rather than physical finger taps.",
+    "Frankfurter and carbon-intensity presets have offline form/configuration coverage; live fetches were not claimed in this run.",
+    "Physical optical quality, forced rollback, prolonged burn-in and deliberate network interruption were not measured."
+  ],
+  "verification_note": "The screen-verifier first stopped because its prior80% display baseline differed from the current49% setting. The complete verification with49% passed, preserving it and Always-on. No physical touch or forced rollback claim is made."
+}

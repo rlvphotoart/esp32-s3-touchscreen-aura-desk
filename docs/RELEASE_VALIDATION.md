@@ -1,55 +1,55 @@
-# AURA Desk 1.0.3 — release validation
+# AURA Desk 1.0.4 — release validation
 
-Validated on 2026-10-03 against the connected ESP32-S3 / Jingcai ESP32-4848S040C_I_Y_3 touchscreen. The final 1.0.3 image is installed, read back and accepted. Both custom API readings appear directly on Home and in Your data. Native Safari pairing, configuration, error feedback, refresh, export and OTA were exercised.
+Validated on 2026-10-03 against the connected ESP32-S3 / Jingcai ESP32-4848S040C_I_Y_3 touchscreen. The final **1.0.4** image is installed, read back and accepted. Both Browser dropdowns contain 100 searchable public API presets from 19 providers in 17 categories. Native Safari Save actions produced successful real ESP32 readings from representative new sources, and both configured widgets are visible on Home and in Your data.
 
 ## Installed images
 
 | Item | Result |
 | --- | --- |
-| Application | 1,939,536 bytes; fits both 5 MiB slots |
-| Active image | ota_1, offset 0x520000, sequence 6, VALID |
-| Previous image | ota_0, accepted private preliminary 1.0.3 candidate retained |
-| Backup | Fresh complete 16 MiB pre-final-update snapshot; full device MD5 verified |
-| Installation | Native Safari paired HTTPS application OTA; verified reply and restart observed |
-| Configuration | Both saved widgets, current brightness 49% and Always-on retained |
+| Application | 1,984,352 bytes; fits both 5 MiB slots |
+| Active image | ota_0, offset 0x20000, sequence 7, VALID |
+| Previous image | ota_1, accepted final public 1.0.3 image retained |
+| Backup | Fresh complete 16 MiB pre-update snapshot; full device MD5 verified |
+| Installation | Paired, certificate-pinned local HTTPS application OTA; healthy restart and preserved settings verified |
+| Configuration | Current Precipitation/Humidity widgets, original units and intervals, brightness 49%, Always-on and router configuration retained/restored |
 | Irreversible security changes | No eFuse writes; Secure Boot and flash encryption unchanged |
 
-Application SHA-256: `544c77cd798d1ea0f4e43965acd85ef2b9a2d19f623fee94e996de70ab065c9b`.
+Application SHA-256: `7f7a15c7796b7437598a92a483f0fa370b8a31b318146dfda39e907e203a0f49`.
 
-Factory merged-image SHA-256: `e45b4395c472401369933f1faeab10f6d23605ad48f695720d566e8a74f1e0d4`.
+Factory merged-image SHA-256: `8f64766774d73cc7ce8bd565dac5501f904a783453e268c45bf14977bdfa6e3f`.
 
-Pre-final-update backup SHA-256: `f97ea258bdf338d207deee7cf196ce67df2ebb90180f854f3a5427449fabb12b`. Full backups and device captures remain private.
+Pre-update backup SHA-256: `a585b5a51e47b5e163ada91b5c878e56063c11def38567d567e362feb6b246a7`. Full backups and raw device captures remain private.
 
 ## Behavior and checks
 
 | Check | Result and scope |
 | --- | --- |
-| API Home visibility | Two real Home regions independently match each saved label, current scalar value and unit |
-| Full API detail values | Two real Your data regions independently match full values/units; both latest refreshes HTTP 200, no error |
-| Device display/settings | Authenticated HTTPS and UART confirm unchanged widget configurations, Always-on and current 49% backlight; verifier leaves Home displayed |
-| Native Safari | Final pairing and persistent wrong-code error; saved Bitcoin/humidity forms; malformed-path inline rejection; refresh, reload, settings save/export and final application OTA |
-| Real provider errors | Earlier private candidate reports missing JSON fields and real HTTP 429; retains the last successful value/age while the other widget remains valid |
-| C++ widget host tests | 125 actual-source assertions with controlled platform/HTTPS stubs: validation, arrays/scalars/zero, request/errors and retained readings |
-| Browser host tests | 56 assertions against exact embedded JavaScript: ready examples, edits, feedback, session expiry, polling and fetch/body deadlines |
-| HTTP response host tests | 17 actual-source assertions for headers, complete-send-before-close and failure propagation |
-| Actual LVGL host | All 14 pages and both display modes; Home tile pointer targets, full/compact values, Saved/error states, Home/Settings return routes, disabled shortcut and model updates |
-| Earlier regressions retained | Timer countdown-to-Focus/presets, five Browser reopen cycles, Settings scroll, credentials/keyboard and monotonic timers pass |
-| Flash readback | Both OTA-slot MD5 readbacks match the final and private preliminary images; active sequence 6 is CRC valid and accepted |
-| Final startup checks | Three consecutive boots; one ROM boot each; display/UI/startup health pass; zero crash markers; lowest reported startup minimum heap 101,296 bytes |
-| Public image hygiene | Owner home paths absent from application/merged/ELF/map; factory image storage gaps are erased |
-| Public source/package | Explicit public allowlist; no private device configuration, backup, raw capture or owner identity in published files |
+| Catalog research | 100 unique URL/field choices, 73 URL templates, 19 providers; every field has dated direct HTTP 200 evidence over normal verified TLS without authentication or redirects |
+| Catalog consistency | 6,453 assertions; exact reviewed JSON matches embedded data and actual compiled application; firmware limits checked before build |
+| Browser host | 1,485 exact embedded-JavaScript assertions; all presets in both forms, search, source guidance, draft preservation, custom edits, saved-source recognition and prior session/poll/deadline regressions |
+| C++ widget host | 925 actual-source assertions; all presets in both slots through validator, HTTP widget handler and configuration; controlled platform/HTTPS stubs |
+| HTTP response host | 17 send/header/close/failure assertions against actual source with SDK stubs |
+| Actual LVGL host | All 14 pages; API Home/full detail, countdown-to-Focus switching, Browser reopen/scroll, Always-on, credentials, keyboard and monotonic timers pass |
+| Native Safari | Paired 1.0.4, both full native dropdowns, case-insensitive search/counts, retained current choice, no-match/clear/Enter, autofill, provider links, custom edit attribution, Save and reload |
+| Real representative ESP32 feeds | UK carbon level `high`, NOAA geomagnetic scale `0 G`, USGS M7+ monthly count `0 events`; current Precipitation/Humidity restored and refreshed successfully |
+| API display visibility | SHA-256-checked actual Home and Your data frames independently match both configured labels, current scalar values and units; both latest refreshes HTTP 200 without errors |
+| Display/settings | Authenticated HTTPS and UART confirm Always-on and current 49% backlight; verifier leaves Home displayed; native Safari tests restore both widget configurations |
+| Flash readback | Both OTA-slot MD5 readbacks match the final 1.0.4 and public 1.0.3 images; active sequence 7 is CRC valid and accepted |
+| Startup | Three consecutive healthy display/UI boots; one ROM boot each; no crash markers; lowest reported startup minimum heap 62,592 bytes |
+| Native-browser heap | Lowest reported minimum heap observed during preset tests: 60,116 bytes |
+| Public hygiene | Owner home paths absent from application/merged/ELF/map; factory storage gaps erased; explicit public allowlist excludes backups, raw logs/captures and authentication material |
 | Licenses | 22 full upstream texts and font/notice provenance included; original source/UX rights retained |
 
-The first screen-verification attempt used the prior 80% baseline and stopped when the device reported its current 49% brightness. A waiting retry using 80% was stopped; the complete verification using the current 49% setting passed. No display-policy firmware change was made. The final saved Bitcoin source uses Coinbase because CoinMarketCap returned HTTP 429 after the test reboots. The CoinMarketCap preset remains available.
+Two earlier UART screenshot transfers were rejected for interrupted framing. The complete diagnostic repeat passed the unchanged framing and SHA-256 checks, then both independent regional OCR matches. Its wrapper saved raw data privately and returned the original bytes unchanged. No corrupted image was accepted; no check was relaxed; the interruption cause remains unestablished. Native Safari tests subsequently restored the same configured weather sources and verified fresh results and reload persistence.
 
-Native Safari interactions, earlier candidate failure checks and final device evidence are distinguished in [BROWSER_API_VALIDATION.md](BROWSER_API_VALIDATION.md) and [its structured conclusions](BROWSER_API_VALIDATION.json). The final read-only screen verifier performs ROM identity checks, pinned HTTPS pairing, SHA-256-framed pixel transfer and private regional OCR. Its report contains conclusions only. Concurrent Safari interactions exercise the web interface; the verifier itself does not write settings, flash or eFuses.
+[Catalog and Safari verification](API_CATALOG_VALIDATION.md) and [its structured conclusions](API_CATALOG_VALIDATION.json) distinguish live provider research, exhaustive offline form/backend tests and representative real ESP32 fetches. [Structured release conclusions](RELEASE_VALIDATION.json) retain installed-image and validation details without credentials or local network identity.
 
-[Structured release conclusions](RELEASE_VALIDATION.json). Historical reports for [1.0.0](RELEASE_VALIDATION_1.0.0.md), [1.0.1](RELEASE_VALIDATION_1.0.1.md) and [1.0.2](RELEASE_VALIDATION_1.0.2.md) retain the earlier ten-boot, full network/API, real three-minute dim/Always-on and timer/Browser results.
+Historical reports for [1.0.0](RELEASE_VALIDATION_1.0.0.md), [1.0.1](RELEASE_VALIDATION_1.0.1.md), [1.0.2](RELEASE_VALIDATION_1.0.2.md) and [1.0.3](RELEASE_VALIDATION_1.0.3.md) preserve their original ten-boot, network/API, three-minute idle, timer/Browser and native Safari OTA evidence. The earlier [1.0.3 Browser/API report](BROWSER_API_VALIDATION.md) remains dated to that release.
 
 ## Public previews and limits
 
-Public previews are offline host renders of the real LVGL source. Live screen images, local addresses, pairing material, certificates and sessions are excluded from source and release packages.
+Public previews are offline host renders of actual LVGL source. Live screen images, local addresses, pairing material, certificates and sessions are excluded from source and release packages.
 
 ![Offline Home](../artifacts/ui-preview/home_offline.png)
 
-Host tests exercise actual LVGL pointer hit-testing. Device checks use UART page navigation and actual framebuffer/HTTPS data. Physical finger taps, optical brightness/color, forced rollback, deliberate power interruption and prolonged burn-in were not measured in this release run. SHA-256 files establish integrity and are not publisher signatures.
+All 100 fields were checked by desktop HTTPS research and exercised in both forms/backend slots offline. Live ESP32 fetches cover representative new sources and the restored weather readings; all 100 were not fetched on the ESP32. Device navigation uses UART with strict checked framebuffer/OCR; physical finger taps and optical brightness/color were not measured. Forced rollback, deliberate power/network interruption and prolonged burn-in were not performed in this run. Public providers can change or rate-limit their APIs. SHA-256 sums establish integrity and are not publisher signatures.

@@ -25,6 +25,8 @@ class Element {
   }
   querySelector(selector){if(selector==='button')return this.button;throw Error('Unknown DOM selector in offline harness')}
   appendChild(node){this.children.push(node);return node}
+  replaceChildren(...nodes){this.children=[...nodes]}
+  removeAttribute(name){delete this[name]}
   click(){}
 }
 const nodes=new Map();
@@ -76,11 +78,64 @@ async function main(){
     check(!/api[_-]?key|token=|password=|\/\/[^/]*@/i.test(node('widgeturl0').value),'Examples require no keys or embedded credentials');
     check(node('widgetenabled0').checked===true&&Number(node('widgetinterval0').value)>=300,'Examples produce enabled configuration and supported interval');
     check(node('widget0feedback').textContent.includes('save'),'Selecting an example asks the user to save without dispatching it');
-    if(example==='bitcoin')check(node('widgetfield0').value==='data.0.quotes.0.price','Public price example selects nested arrays correctly');
+    if(example==='bitcoin')check(node('widgetfield0').value==='data.amount','Public Coinbase spot example selects the amount scalar');
     if(example==='carbon')check(node('widgetfield0').value==='data.0.intensity.forecast','Carbon example selects array item zero');
     if(example==='eurRon')check(node('widgetfield0').value==='rates.RON','Currency example selects the named rate');
     if(example==='humidity')check(node('widgeturl0').value.includes('latitude=12.3457')&&node('widgeturl0').value.includes('longitude=-45.6789'),'City example uses current saved coordinates');
   }
+  const options=i=>node('widgetexample'+i).children.flatMap(child=>child.id==='option'?[child]:child.children);
+  const ids=evaluate('Object.keys(WIDGET_EXAMPLES)');
+  check(ids.length===100,'Reviewed runtime contains exactly100 preset choices');
+  for(let i=0;i<2;i++){
+    check(options(i).filter(option=>option.value).length===100,'Each dropdown contains100 selectable presets');
+    check(node('widgetexample'+i).children.some(child=>child.id==='optgroup'),'Catalog is grouped by topic in both slots');
+    check(node('widgetcataloginfo'+i).textContent.startsWith('100 presets'),'Visible catalog count agrees with actual options');
+    const requestsBefore=requests.length;
+    for(const id of ids){
+      context.catalogId=id;context.catalogSlot=i;
+      const expected=evaluate('resolvedExample(catalogId)');
+      node('widgetexample'+i).value=id;node('widgetexample'+i).onchange();
+      for(const key of ['label','url','field','unit','interval'])check(String(node('widget'+key+i).value)===String(expected[key]),'Each catalog choice fills its own saved-field mapping');
+      check(node('widgetenabled'+i).checked===true,'Every catalog choice enables only its chosen widget');
+      check(node('widgetdocs'+i).href===expected.docs&&!node('widgetdocs'+i).classList.contains('hide'),'Each choice exposes its verified provider documentation');
+    }
+    check(requests.length===requestsBefore,'Browsing all100 presets never dispatches an API request or save');
+    const selected=node('widgetexample'+i).value,label=node('widgetlabel'+i).value,url=node('widgeturl'+i).value;
+    node('widgetsearch'+i).value='NoAa';node('widgetsearch'+i).oninput();
+    const noaaCount=evaluate('Object.values(WIDGET_EXAMPLES).filter(entry=>[entry.name,entry.category,entry.provider,entry.label].join(" ").toLowerCase().includes("noaa")).length');
+    check(noaaCount>0&&node('widgetcataloginfo'+i).textContent.startsWith(noaaCount+' matches'),'Search is case-insensitive across provider names');
+    check(node('widgetexample'+i).value===selected&&node('widgetlabel'+i).value===label&&node('widgeturl'+i).value===url,'Search preserves selected preset and current form fields');
+    node('widgetsearch'+i).value='no-such-api-fixture';node('widgetsearch'+i).oninput();
+    check(node('widgetcataloginfo'+i).textContent.startsWith('0 matches'),'An empty result set has explicit feedback');
+    check(options(i).some(option=>option.value===selected),'A selected choice remains reachable when filtered out');
+    let prevented=false;node('widgetsearch'+i).onkeydown({key:'Enter',preventDefault(){prevented=true}});
+    check(prevented&&requests.length===requestsBefore,'Enter in search cannot accidentally submit the configuration');
+    node('widgetsearch'+i).value='';node('widgetsearch'+i).oninput();
+    check(options(i).filter(option=>option.value).length===100,'Clearing search restores all100 choices without duplicates');
+  }
+  context.fixtureStatus={...status(),latitude:0,longitude:0};evaluate('showStatus(fixtureStatus)');
+  evaluate('applyExample(0,"humidity")');
+  check(node('widgeturl0').value.includes('latitude=0.0000')&&node('widgeturl0').value.includes('longitude=0.0000'),'Saved-city presets accept genuine zero coordinates');
+  context.fixtureStatus=status();evaluate('showStatus(fixtureStatus)');
+  context.saved=status();context.saved.widgetConfig[0]={...context.saved.widgetConfig[0],url:'https://api.coinbase.com/v2/prices/BTC-USD/spot',field:'data.amount'};
+  evaluate('first=true;showStatus(saved)');
+  check(node('widgetexample0').value==='bitcoin','Reload recognizes an existing saved catalog source without rewriting it');
+  check(node('widgetlabel0').value==='Original one','Recognizing a preset preserves a custom display label');
+  evaluate('applyExample(0,"bitcoin")');node('widgetexample0').value='bitcoin';
+  node('widgetsearch0').value='Coinbase';node('widgetsearch0').oninput();
+  node('widgeturl0').value='https://example.org/custom.json';node('widgeturl0').oninput();
+  check(node('widgetexample0').value===''&&node('widgetdocs0').classList.contains('hide'),'Editing a source URL clears misleading provider attribution');
+  check(node('widgetsearch0').value==='Coinbase'&&node('widgeturl0').value==='https://example.org/custom.json','Clearing source attribution preserves search and custom edits');
+  evaluate('applyExample(0,"bitcoin")');node('widgetexample0').value='bitcoin';
+  node('widgetfield0').value='data.custom';node('widgetfield0').oninput();
+  check(node('widgetexample0').value===''&&node('widgetfield0').value==='data.custom','Editing the selected field clears preset association without discarding it');
+  const priorUrl=node('widgeturl0').value,priorLabel=node('widgetlabel0').value;
+  context.fixtureStatus={...status(),latitude:91,longitude:0};evaluate('showStatus(fixtureStatus);applyExample(0,"humidity")');
+  check(node('widgeturl0').value===priorUrl&&node('widgetlabel0').value===priorLabel&&node('widget0feedback').classList.contains('bad'),'Out-of-range saved-city latitude rejects selection without mutating fields');
+  context.fixtureStatus={...status(),latitude:0,longitude:-181};evaluate('showStatus(fixtureStatus);applyExample(0,"humidity")');
+  check(node('widgeturl0').value===priorUrl,'Out-of-range saved-city longitude also preserves fields');
+  context.fixtureStatus=status();evaluate('showStatus(fixtureStatus)');
+  node('widgetsearch0').value='';node('widgetsearch0').oninput();
   const unchangedTwo=node('widgeturl1').value;
   evaluate('applyExample(0,"bitcoin")');
   check(node('widgeturl1').value===unchangedTwo,'Example assignment does not change the other slot');

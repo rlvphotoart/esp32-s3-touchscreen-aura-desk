@@ -1,4 +1,4 @@
-# AURA Desk 1.0.3
+# AURA Desk 1.0.4
 
 AURA Desk turns the 480 × 480 touchscreen into an internet dashboard with weather, regional air quality, currency reference rates, your own public API readings, and focus tools. Its original Horizon interface uses an ivory canvas, ink-blue cards, cobalt actions, and large touch controls.
 
@@ -78,6 +78,8 @@ Use a public API that returns HTTP 200 JSON directly. API keys, authentication h
 
 Home compacts long numeric readings to fit the tiles; **Your data** shows their full values. Failed refreshes mark retained values as **Saved** and show the error in the detail page. Back returns to the page you used to open Your data. When neither widget is enabled, Home shows a **Your data · Configure your APIs** shortcut.
 
+The two Browser dropdowns each offer **100 public API presets from 19 providers**. Search by name, provider or topic; category groups narrow the list. Selecting a choice fills the form and provider documentation, and **Save widget** applies it. Searching or browsing does not fetch providers or discard edits. The [complete catalog](PUBLIC_API_CATALOG.md) records the fields, source links and check results.
+
 Numbers including zero are supported. Array indices start at zero: `data.0.price` selects the first price in a `data` array. Select a scalar field, not the entire object or array. Text/boolean values are supported; image URLs are displayed only as text, and image-only endpoints cannot be used as numeric/text JSON widgets. The [Browser/API verification report](BROWSER_API_VALIDATION.md) includes working endpoints and tested behavior.
 
 ## Focus, countdown and stopwatch
@@ -108,8 +110,8 @@ The pairing code changes when the application restarts. Browser sessions are hel
 
 For a compatible AURA Desk update, pair the local browser, choose **Firmware update**, and upload the **application image**:
 
-- [AuraDesk.ino.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.3/AuraDesk.ino.bin): application image for browser OTA.
-- [AuraDesk.ino.merged.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.3/AuraDesk.ino.merged.bin): complete 16 MiB factory image for the serial installation/recovery tooling; not a browser OTA file.
+- [AuraDesk.ino.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.4/AuraDesk.ino.bin): application image for browser OTA.
+- [AuraDesk.ino.merged.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.4/AuraDesk.ino.merged.bin): complete 16 MiB factory image for the serial installation/recovery tooling; not a browser OTA file.
 
 The firmware has two 5 MiB application slots. An update writes to the inactive slot, verifies the image structure/integrity and ESP32-S3 target, selects it for the next boot, and restarts. Startup health checks defer acceptance until the new application is running. If a pending update fails those checks, the rollback mechanism can return to the previous valid custom application. It does not restore the vendor firmware or recover a changed partition layout.
 

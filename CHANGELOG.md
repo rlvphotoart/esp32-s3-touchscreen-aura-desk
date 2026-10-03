@@ -1,5 +1,13 @@
 # AURA Desk changes
 
+## 1.0.4 — 100 public API presets
+
+- Adds exactly 100 verified public HTTPS JSON URL-and-field presets from 19 providers in both Browser dropdowns, with 17 category groups and search.
+- Presets fill valid labels, URLs, fields, units and refresh intervals; saved-city choices use the saved location. Each choice has provider documentation and source guidance.
+- Search preserves selection and edits, Enter does not submit, matching saved sources are recognized, and custom URL/field edits clear stale preset attribution.
+- Replaces the rate-limited CoinMarketCap dropdown example with Coinbase Bitcoin; preserves existing saved custom sources and the manual API option.
+- Adds per-preset live verification records and exhaustive browser/C++ catalog checks, plus live Safari/device release evidence.
+
 ## 1.0.3 — Custom API readings on Home and Safari reliability
 
 - Shows both enabled custom API readings directly on Home. Each tile opens Your data with full values, update ages and independent errors; returning goes back to the originating page.

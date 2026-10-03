@@ -12,7 +12,7 @@ From the workspace root:
 ./scripts/build.sh
 ```
 
-The wrapper reads the release version from `firmware/AuraDesk/firmware_version.h`. It runs compilation with four workers and writes intermediate files to `build/AuraDesk/` and exported artifacts to `releases/aura-desk-1.0.2/`. It requires complete sources, a custom partition table, the correct supported-board configuration, and the matching high-performance SDK with XIP from PSRAM. It does not open a serial connection, erase, upload, or reset a device. Hardware installation and release verification are separate operations.
+The wrapper reads the release version from `firmware/AuraDesk/firmware_version.h`. It runs compilation with four workers and writes intermediate files to `build/AuraDesk/` and exported artifacts to `releases/aura-desk-<version>/`. It requires complete sources, a custom partition table, the correct supported-board configuration, and the matching high-performance SDK with XIP from PSRAM. It does not open a serial connection, erase, upload, or reset a device. Hardware installation and release verification are separate operations.
 
 Generated ELF/map files support crash diagnosis. The wrapper replaces Arduino3.1.1's incorrect default merged image with an explicitly verified16MiB image: bootloader at0x0, partition table at0x8000, and application at0x20000. It checks the compiled table against the source CSV, partition ranges, both OTA-slot capacities, image checksums/digests, and the complete merged contents. `build-layout.json` records offsets and SHA-256 hashes. No `boot_app0.bin` is included; the OTA metadata remains erased, and the bootloader selects the first OTA slot.
 

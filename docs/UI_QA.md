@@ -55,3 +55,11 @@ Home has two 48-pixel API tiles above the dock for enabled widgets, or a Your da
 Fresh and retained-reading fixtures verify genuine zero, long numeric Home compaction, full detail precision, fetching, clock/network prerequisites and independent two-line error messages. Retained Home values use an amber Saved label and an error indicator. These test fixtures remain outside the target sketch and public release previews.
 
 The exact embedded browser JavaScript passes 56 offline DOM assertions for ready examples, form edits, validation feedback, expiry, wrong-code preservation, shared polling and bounded fetch/body deadlines. Actual C++ widgets pass 125 controlled assertions, and HTTP response policy passes 17 send/header/close assertions. Actual Safari/API and checked device Home/detail outcomes are documented in [BROWSER_API_VALIDATION.md](BROWSER_API_VALIDATION.md).
+
+## 1.0.4 searchable public API catalog
+
+Both Browser widget forms contain the complete 100-choice catalog in native dropdown category groups, with a separate labeled search field and an accessible match count. Every choice is exercised in both forms by the exact embedded-JavaScript regression. Selecting a preset only fills the form; Save applies it. The source hint and provider documentation update with the chosen reading.
+
+Search is case-insensitive across names, providers, topics and labels. It preserves both the selected choice and draft fields, retains a filtered-out choice under Current selection, and restores all 100 choices when cleared. Enter cannot submit the form from the search field. Initial pairing/reload recognizes matching saved URL/field pairs without rewriting customized labels, units or intervals. Editing a URL/field clears the old provider association. Out-of-range saved coordinates reject a city preset without changing fields.
+
+The reviewed catalog and embedded data are checked for exactly 100 unique URL/field pairs, direct HTTP 200 verification evidence, firmware byte limits and current generation. Actual C++ backend and HTTP-handler tests accept every expanded choice in both slots. [Catalog release verification](API_CATALOG_VALIDATION.md) records the final Safari and device observations separately.

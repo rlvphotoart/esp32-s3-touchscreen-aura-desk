@@ -16,7 +16,7 @@ These are host-rendered offline previews of the actual LVGL interface. Test fixt
 - Network clock/calendar, editable city and supported daylight-saving rules.
 - Open-Meteo weather, three forecast days, sunrise/sunset, European AQI and PM2.5.
 - Dated ECB EUR/RON and EUR/USD reference rates.
-- Two configurable public HTTPS JSON API widgets, shown directly on Home, with ready-to-use source examples, array-aware dot paths, controlled refresh intervals and clear error feedback.
+- Two configurable public HTTPS JSON API widgets, shown directly on Home, with **100 public API presets from 19 providers**, searchable category groups, array-aware dot paths, controlled refresh intervals and clear error feedback.
 - Focus sessions with 25/50-minute presets, 5/15-minute countdowns and a stopwatch using monotonic time.
 - Saved brightness and **Always-on display** choice. On retains selected brightness; Off dims after three minutes without touch.
 - A visible **Settings → Browser** shortcut for the current local HTTPS address and six-digit pairing code.
@@ -26,11 +26,11 @@ Cards show source dates and data ages. Invalid data stays unavailable. Open-Mete
 
 ## Download and setup
 
-**Current version: 1.0.3.** Download verified files from [GitHub Releases](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases).
+**Current version: 1.0.4.** Download verified files from [GitHub Releases](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases).
 
 - `AuraDesk.ino.bin`: application image for the device's browser OTA updater.
 - `AuraDesk.ino.merged.bin`: 16 MiB factory image for the exact supported board/layout.
-- `AURA-Desk-1.0.3.zip`: firmware, source, pinned dependency information and validation report.
+- `AURA-Desk-1.0.4.zip`: firmware, source, pinned dependency information and validation report.
 - SHA-256 files establish integrity; releases are not publisher-signed.
 
 Connect through **Settings → Network** using a 2.4 GHz network. Set your weather city in **Settings → Location**. Open the always-visible **Browser** button in Settings to pair a phone/computer on the same router. The local browser uses the device's own HTTPS certificate.
@@ -47,6 +47,8 @@ The isolated toolchain pins Arduino-ESP32 **3.1.1**, its matching official high-
 .venv/bin/python tools/test_widgets.py
 .venv/bin/python tools/test_widget_browser.py
 .venv/bin/python tools/test_http_response_policy.py
+.venv/bin/python tools/test_api_catalog.py
+.venv/bin/python tools/generate_api_catalog.py --check
 ```
 
 Follow [FIRMWARE_BUILD.md](docs/FIRMWARE_BUILD.md) and [SETUP.md](docs/SETUP.md) to install the pinned local tools. Export your board's own identity before identity-checked maintenance operations:
@@ -76,8 +78,8 @@ Native USB pins overlap this board's display/touch wiring. Other boards need a r
 
 ## Documentation and history
 
-- [Manual](docs/AURA_DESK.md), [current validation](docs/RELEASE_VALIDATION.md), [Safari and API verification](docs/BROWSER_API_VALIDATION.md), [UI QA](docs/UI_QA.md).
-- [Changelog](CHANGELOG.md), [1.0.0 validation](docs/RELEASE_VALIDATION_1.0.0.md), [1.0.1 validation](docs/RELEASE_VALIDATION_1.0.1.md), [1.0.2 validation](docs/RELEASE_VALIDATION_1.0.2.md).
+- [Manual](docs/AURA_DESK.md), [current validation](docs/RELEASE_VALIDATION.md), [100-API catalog](docs/PUBLIC_API_CATALOG.md), [catalog release verification](docs/API_CATALOG_VALIDATION.md), [1.0.3 Safari and API verification](docs/BROWSER_API_VALIDATION.md), [UI QA](docs/UI_QA.md).
+- [Changelog](CHANGELOG.md), [1.0.0 validation](docs/RELEASE_VALIDATION_1.0.0.md), [1.0.1 validation](docs/RELEASE_VALIDATION_1.0.1.md), [1.0.2 validation](docs/RELEASE_VALIDATION_1.0.2.md), [1.0.3 validation](docs/RELEASE_VALIDATION_1.0.3.md).
 - [Build guide](docs/FIRMWARE_BUILD.md), [dependency lock](docs/TOOLCHAIN_LOCK.json), [third-party notices](THIRD_PARTY_NOTICES.md).
 - [Hardware](docs/HARDWARE.md), [GPIO map](docs/GPIO_MAP.md), [backup](docs/BACKUP.md), [security](docs/SECURITY.md), [recovery](docs/RECOVERY.md).
 

@@ -37,3 +37,6 @@ __pycache__/
 *.key
 *.p12
 *.pfx
+
+# Intermediate research inputs; reviewed catalog/evidence are published in docs.
+/docs/catalog-research/

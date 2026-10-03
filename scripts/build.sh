@@ -11,6 +11,8 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     exit 1
 fi
 OUTPUT="$ROOT/releases/aura-desk-$VERSION"
+"$ROOT/.venv/bin/python" "$ROOT/tools/generate_api_catalog.py" --check
+"$ROOT/.venv/bin/python" "$ROOT/tools/test_api_catalog.py"
 FQBN='esp32:esp32:esp32s3:PSRAM=opi,FlashMode=dio,FlashSize=16M,CPUFreq=240,LoopCore=1,EventsCore=1,USBMode=hwcdc,CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PartitionScheme=custom,UploadSpeed=115200,DebugLevel=none,EraseFlash=none'
 if [[ ! -x "$CLI" || ! -f "$CONFIG" ]]; then
     echo 'Pinned local Arduino toolchain missing. See docs/FIRMWARE_BUILD.md.' >&2

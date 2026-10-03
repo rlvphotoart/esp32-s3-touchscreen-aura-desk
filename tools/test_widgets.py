@@ -8,6 +8,7 @@ hardware, user configuration or credentials are accessed. Temporary generated
 source/binaries are removed on completion. Output contains fixed test labels.
 """
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -251,7 +252,21 @@ def main():
     with tempfile.TemporaryDirectory(prefix="aura-widget-host-") as directory:
         source = Path(directory) / "widget_checks.cpp"
         binary = Path(directory) / "widget_checks"
-        source.write_text(HOST_PREFIX + "\n\n".join(chunks) + HOST_TESTS)
+        presets = json.loads((ROOT / "docs/PUBLIC_API_CATALOG.json").read_text())["presets"]
+        catalog_checks = []
+        for item in presets:
+            config = {key: item[key] for key in ("label", "url", "field", "unit", "interval")}
+            config["url"] = config["url"].replace("{latitude}", "-90.0000").replace("{longitude}", "-180.0000")
+            config["enabled"] = True
+            encoded = json.dumps(config, ensure_ascii=False, separators=(",", ":"))
+            for slot in (0, 1):
+                catalog_checks.append('{const char *encoded=R"PRESET(' + encoded + ')PRESET";char problem[96]={};'
+                    'check(app_validate_widget_config(encoded,problem,sizeof(problem)),"Catalog fits actual backend validation");'
+                    'JsonDocument request;deserializeJson(request,encoded);request["index"]=' + str(slot) + ';'
+                    'request_check(request,202,"Catalog is accepted by actual HTTP widget handler");'
+                    'check(configureWidget(' + str(slot) + ',encoded),"Catalog persists in either actual widget slot");}')
+        tests = HOST_TESTS.replace('  std::printf("PASS:', "\n".join(catalog_checks) + '\n  std::printf("PASS:')
+        source.write_text(HOST_PREFIX + "\n\n".join(chunks) + tests)
         source.chmod(0o600)
         compiled = subprocess.run([args.compiler, "-std=c++17", "-O1", "-Wall", "-Wextra",
                                    "-I" + str(ROOT / ".toolchains/arduino/user/libraries/ArduinoJson/src"),

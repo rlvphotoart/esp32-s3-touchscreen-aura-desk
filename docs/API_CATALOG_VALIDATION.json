@@ -1,85 +1,72 @@
 {
   "schema_version": 1,
   "product": "AURA Desk",
-  "interface": "Horizon",
   "version": "1.0.4",
   "validated_at": "2026-10-03T21:51:23.571582+03:00",
-  "application": {
-    "file": "AuraDesk.ino.bin",
-    "offset": "0x20000",
-    "bytes": 1984352,
-    "sha256": "7f7a15c7796b7437598a92a483f0fa370b8a31b318146dfda39e907e203a0f49"
-  },
-  "factory_image": {
-    "file": "AuraDesk.ino.merged.bin",
-    "bytes": 16777216,
-    "sha256": "8f64766774d73cc7ce8bd565dac5501f904a783453e268c45bf14977bdfa6e3f"
+  "passed": true,
+  "catalog": {
+    "choices": 100,
+    "distinct_url_field_pairs": 100,
+    "distinct_url_templates": 73,
+    "providers": 19,
+    "categories": 17,
+    "scope": "100 public HTTPS JSON data presets; multiple readings may come from the same provider.",
+    "number_fields": 70,
+    "short_string_fields": 30,
+    "canonical_file": "PUBLIC_API_CATALOG.json",
+    "browser_slots": 2
   },
   "checks": {
-    "fresh_pre_update_backup": {
+    "live_catalog_probes": {
       "passed": true,
-      "bytes": 16777216,
-      "sha256": "a585b5a51e47b5e163ada91b5c878e56063c11def38567d567e362feb6b246a7",
-      "device_md5_verified": true
-    },
-    "target_build": {
-      "passed": true,
-      "application_bytes": 1984352,
-      "fits_both_five_mib_slots": true,
-      "image_and_partition_checks": true,
-      "generated_catalog_checked_before_compilation": true
-    },
-    "paired_pinned_https_application_update": {
-      "passed": true,
-      "version": "1.0.4",
-      "https_application_update": true,
-      "healthy_restart": true,
-      "settings_preserved": true
-    },
-    "ota_readback": {
-      "passed": true,
-      "active_partition": "ota_0",
-      "active_offset": "0x20000",
-      "active_state": "VALID",
-      "ota_sequence": 7,
-      "metadata": [
-        {
-          "copy": 0,
-          "sequence": 7,
-          "state": 2,
-          "valid": true
-        },
-        {
-          "copy": 1,
-          "sequence": 6,
-          "state": 2,
-          "valid": true
-        }
-      ],
-      "application_bytes": 1984352,
-      "application_sha256": "7f7a15c7796b7437598a92a483f0fa370b8a31b318146dfda39e907e203a0f49",
-      "previous_application_sha256": "544c77cd798d1ea0f4e43965acd85ef2b9a2d19f623fee94e996de70ab065c9b",
-      "both_application_md5_readbacks_match_expected_images": true,
-      "flash_writes": false,
-      "efuse_writes": false
-    },
-    "three_final_boots": {
-      "passed": true,
-      "count": 3,
-      "crash_markers": 0,
-      "minimum_reported_startup_heap": 62592,
-      "always_on_enabled_after_all_boots": true,
-      "selected_brightness": 49
-    },
-    "public_api_catalog": {
-      "passed": true,
-      "choices": 100,
-      "providers": 19,
-      "categories": 17,
+      "date": "2026-10-03",
+      "fields": 100,
       "distinct_url_templates": 73,
-      "report": "API_CATALOG_VALIDATION.json",
-      "all_100_live_desktop_fields_verified": true,
-      "all_100_offline_forms_and_cpp_handlers_in_both_slots_verified": true
+      "http_status": 200,
+      "normal_tls_verification": true,
+      "redirects_followed": false,
+      "authentication_used": false,
+      "related_fields_share_cached_response": true,
+      "response_limit_bytes": 32768,
+      "location_templates_verified_at_public_example_coordinates": true,
+      "evidence": "PUBLIC_API_CATALOG.json per-preset verification records"
+    },
+    "catalog_host": {
+      "passed": true,
+      "assertions": 6453,
+      "exact_count_and_unique_ids_and_url_field_pairs": true,
+      "firmware_byte_limits": true,
+      "embedded_data_matches_canonical": true
+    },
+    "catalog_checker_self_test": {
+      "passed": true,
+      "invalid_or_drift_cases_rejected": 52,
+      "assertions": 5398
+    },
+    "browser_host": {
+      "passed": true,
+      "assertions": 1485,
+      "exact_embedded_javascript": true,
+      "all_100_choices_in_both_slots": true,
+      "offline_dom_fixtures": true
+    },
+    "cpp_widget_host": {
+      "passed": true,
+      "assertions": 925,
+      "actual_validation_and_http_handler_and_configuration_source": true,
+      "all_100_choices_in_both_slots": true,
+      "platform_and_https_stubs": true
+    },
+    "http_response_host": {
+      "passed": true,
+      "assertions": 17,
+      "actual_source_with_sdk_stubs": true
+    },
+    "lvgl_host": {
+      "passed": true,
+      "pages": 14,
+      "home_api_tiles_and_full_detail": true,
+      "timers_browser_reentry_and_display_regressions": true
     },
     "native_safari": {
       "passed": true,
@@ -141,7 +128,7 @@
       "always_on": true,
       "minimum_heap_observed_bytes": 60116
     },
-    "device_home_and_details": {
+    "actual_device_home_and_details": {
       "product": "AURA Desk",
       "firmware": "1.0.4",
       "passed": true,
@@ -182,38 +169,19 @@
       ],
       "home_navigation_command_sent": true
     },
-    "host_checks": {
-      "catalog_assertions": 6453,
-      "catalog_checker_self_test_assertions": 5398,
-      "invalid_catalog_cases_rejected": 52,
-      "embedded_browser_assertions": 1485,
-      "cpp_widget_assertions": 925,
-      "http_response_assertions": 17,
-      "lvgl_pages": 14,
-      "passed": true
-    },
-    "public_source_and_artifacts": {
+    "target_image": {
       "passed": true,
-      "owner_paths_in_application_elf_map": 0,
-      "runtime_device_identity_required": true,
-      "private_captures_and_backups_excluded": true,
-      "historical_source_privacy_audit": true,
-      "factory_storage_regions_erased": true,
-      "upstream_license_texts": 22
+      "application_bytes": 1984352,
+      "application_sha256": "7f7a15c7796b7437598a92a483f0fa370b8a31b318146dfda39e907e203a0f49",
+      "installed_and_accepted": true,
+      "both_ota_slot_readbacks_match": true
     }
   },
-  "baseline_validation": [
-    "RELEASE_VALIDATION_1.0.0.md",
-    "RELEASE_VALIDATION_1.0.1.md",
-    "RELEASE_VALIDATION_1.0.2.md",
-    "RELEASE_VALIDATION_1.0.3.md"
-  ],
+  "verification_note": "Two earlier UART screenshot transfers were rejected for interrupted framing. A complete repeat with private raw-transfer diagnostics passed all original framing and SHA-256 checks, then independently matched both widget regions on Home and Your data with private regional OCR. The diagnostic wrapper returned the original bytes unchanged. No damaged capture was accepted, no framing/hash check was relaxed, and no transfer cause is claimed.",
   "limits": [
     "All 100 fields have live desktop HTTPS evidence and exhaustive offline Browser/C++ configuration coverage. The ESP32 fetched representative sources during Safari testing; all 100 were not fetched on the ESP32.",
     "Saved-city live research probes used public example coordinates; provider coverage at every coordinate is not established.",
     "Actual device page navigation used UART and checked framebuffer/OCR, rather than physical finger taps.",
-    "Public services may change, rate-limit or withdraw APIs after the recorded verification date.",
-    "Forced rollback, deliberate power/network interruption, optical quality and prolonged burn-in were not measured in this release run."
-  ],
-  "verification_note": "Two earlier UART screenshot transfers were rejected for interrupted framing. A complete repeat with private raw-transfer diagnostics passed all original framing and SHA-256 checks, then independently matched both widget regions on Home and Your data with private regional OCR. The diagnostic wrapper returned the original bytes unchanged. No damaged capture was accepted, no framing/hash check was relaxed, and no transfer cause is claimed."
+    "Public services may change, rate-limit or withdraw APIs after the recorded verification date."
+  ]
 }

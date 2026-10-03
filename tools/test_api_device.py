@@ -160,7 +160,7 @@ def self_test():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port")
-    parser.add_argument("--expected-version", default="1.0.3")
+    parser.add_argument("--expected-version", default="1.0.4")
     parser.add_argument("--expected-brightness", type=int, default=80)
     parser.add_argument("--timeout", type=int, default=300)
     parser.add_argument("--summary", type=Path)
