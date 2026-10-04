@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "product": "AURA Desk",
+  "version": "1.0.6",
+  "validation_date": "2026-10-04",
+  "timezone": "Europe/Bucharest",
+  "scope": "Browser companion maintenance update delivered through existing Wi-Fi application OTA; full 1.0.5 hardware/API baseline remains separately dated.",
+  "application": {
+    "application_bytes": 2489168,
+    "application_sha256": "f4fe4a101402fee4c4ce772141229f3c08d7c29ccae81b5156da81317ee925cb"
+  },
+  "source_sha256": {
+    "firmware/AuraDesk/web_service.cpp": "d0e244dce6650b0e68cef5c3fbecabeb603d9a54d17883eb71aff10516e6a610",
+    "firmware/AuraDesk/firmware_version.h": "6758e1e68c16930766ebe1cb0d5eac55fce3d9e75d660e4c2dfab61118cbcfa4",
+    "firmware/AuraDesk/api_services.js.inc": "3572ef46ff02c8334780963aebfaea91a871c263479d5439e9d409b56e8cb1a5",
+    "firmware/AuraDesk/app_service.cpp": "830b8b2345d35661ee5587bd5c679f548464a378363a7124c26f525b182f0617",
+    "firmware/AuraDesk/ui.cpp": "ad2e7ca8a03e631d14f0bc110b5a82c9cd7cf2dc65323e848514ea80c34d3009",
+    "tools/test_widget_browser.py": "6e81260f2be17988a5d1052878f7431539d448e5f5a045a7f1a37ac45526aabe"
+  },
+  "checks": {
+    "target_build": {
+      "passed": true,
+      "esp32s3_checksum_and_digest": true,
+      "fits_existing_5_mib_slots": true,
+      "public_artifact_path_audit": true,
+      "same_backend_and_other_firmware_sources": true
+    },
+    "browser_offline": {
+      "passed": true,
+      "assertions": 29432,
+      "all_500_services_both_slots": true
+    },
+    "native_safari_fixture": {
+      "passed": true,
+      "manual_use_clean_draft": true,
+      "mismatched_previous_source_save_blocked": true,
+      "manual_endpoint_and_field_save": true,
+      "template_use_and_nearby_save": true,
+      "both_slots_tested": true,
+      "reload_saved_custom_fields_and_template_recognition": true,
+      "fixture_only_no_provider_or_device_calls": true
+    },
+    "wireless_application_upload": {
+      "passed": true,
+      "verified_and_restarting_feedback": true,
+      "serial_cable_used": false
+    },
+    "post_restart_pairing": {
+      "passed": true,
+      "user_entered_new_code_directly": true,
+      "native_safari_version_confirmed": "1.0.6"
+    },
+    "live_save_and_fetch": {
+      "passed": true,
+      "template_slot_0": {
+        "service": "Coinbase Prices API",
+        "field": "data.amount",
+        "nearby_save": true,
+        "configuration_export_matches": true,
+        "device_success_feedback_and_reading": true
+      },
+      "manual_slot_1": {
+        "service": "isEven (humor)",
+        "endpoint": "https://api.isevenapi.xyz/api/iseven/42/",
+        "field": "iseven",
+        "use_clears_previous_endpoint_and_field": true,
+        "empty_enabled_source_save_blocked": true,
+        "nearby_save": true,
+        "configuration_export_matches": true,
+        "device_success_feedback_and_boolean_reading": true
+      },
+      "reload_saved_fields": true,
+      "manual_source_recognized_as_own_api": true
+    },
+    "saved_settings_comparison": {
+      "passed": true,
+      "post_ota_preserved_original_configuration": true,
+      "test_widgets_restored_to_original": true,
+      "final_reload_export_matches_original": true,
+      "compared_fields": [
+        "city",
+        "latitude",
+        "longitude",
+        "timezone",
+        "brightness",
+        "alwaysOnDisplay",
+        "widgets"
+      ],
+      "restored_widgets_device_fetches_succeeded": true
+    },
+    "http_response_policy": {
+      "passed": true,
+      "checks": 17
+    },
+    "build_prerequisites": {
+      "passed": true,
+      "catalog_checks": 6453,
+      "service_evidence_checks": 25521,
+      "tls_source_checks": 20,
+      "generated_catalog_current": true
+    }
+  },
+  "release_ready": true,
+  "limits": [
+    "The 500-service catalog and 122 installed reading templates are unchanged. A discovery service without a template still needs a compatible public HTTPS JSON endpoint and scalar field.",
+    "This maintenance run does not repeat full-flash readback, three forced restarts, all provider requests or device-frame capture from the 1.0.5 baseline.",
+    "Saved configuration, raw Safari/device captures, local identity and authentication material remain private."
+  ]
+}

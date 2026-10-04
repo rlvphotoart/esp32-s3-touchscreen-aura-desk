@@ -20,22 +20,26 @@ const fs=require('fs'),vm=require('vm');
 let assertions=0;
 function check(condition,name){assertions++;if(!condition)throw Error('FAIL: '+name)}
 class Element {
-  constructor(id){this.id=id;this.textContent='';this._value='';this.checked=false;this.disabled=false;this.className='';this.type='';this.files=[];this.button={disabled:false};this.children=[];
+  constructor(id){this.id=id;this.textContent='';this._value='';this.checked=false;this.disabled=false;this.className='';this.type='';this.files=[];this.button={disabled:false};this.children=[];this.dataset={};
     this.classList={add:(...names)=>{const current=new Set(this.className.split(/\s+/).filter(Boolean));names.forEach(n=>current.add(n));this.className=[...current].join(' ')},remove:(...names)=>{this.className=this.className.split(/\s+/).filter(n=>n&&!names.includes(n)).join(' ')},contains:name=>this.className.split(/\s+/).includes(name)};
   }
   get value(){return this._value}
   set value(value){const proposed=String(value);if(/^widget(service|example)[01]$/.test(this.id)){const options=this.children.flatMap(child=>child.id==='option'?[child]:child.children);this._value=options.some(option=>option.value===proposed)?proposed:''}else this._value=proposed}
   querySelector(selector){if(selector==='button')return this.button;throw Error('Unknown DOM selector in offline harness')}
+  querySelectorAll(selector){if(selector==='button')return /^widget[01]$/.test(this.id)?[node('widgetuse'+this.id.slice(-1)),node('widgetsavetop'+this.id.slice(-1)),this.button]:[this.button];throw Error('Unknown DOM selector in offline harness')}
   appendChild(node){this.children.push(node);return node}
   replaceChildren(...nodes){this.children=[...nodes]}
   removeAttribute(name){delete this[name]}
+  focus(){focusedId=this.id}
+  scrollIntoView(){scrolledId=this.id}
   click(){}
 }
 const nodes=new Map();
 const node=id=>{if(!nodes.has(id))nodes.set(id,new Element(id));return nodes.get(id)};
+let focusedId='',scrolledId='';
 let requests=[],reply=async()=>({status:401,ok:false,json:async()=>({error:'Pair again.'})});
 let nextTimer=1;const timers=new Map(),intervals=[];
-const context={document:{getElementById:node,createElement:tag=>new Element(tag)},fetch:async(path,options)=>{requests.push({path,options});return reply(path,options)},AbortController,setInterval:callback=>{intervals.push(callback);return intervals.length},setTimeout:(callback,delay)=>{const id=nextTimer++;timers.set(id,{callback,delay});return id},clearTimeout:id=>timers.delete(id),Blob:class {},URL:{createObjectURL:()=>'',revokeObjectURL:()=>{}},XMLHttpRequest:class {}};
+const context={document:{getElementById:node,createElement:tag=>new Element(tag)},fetch:async(path,options)=>{requests.push({path,options});return reply(path,options)},AbortController,TextEncoder,setInterval:callback=>{intervals.push(callback);return intervals.length},setTimeout:(callback,delay)=>{const id=nextTimer++;timers.set(id,{callback,delay});return id},clearTimeout:id=>timers.delete(id),Blob:class {},URL:{createObjectURL:()=>'',revokeObjectURL:()=>{}},XMLHttpRequest:class {}};
 vm.createContext(context);
 const evaluate=source=>vm.runInContext(source,context,{filename:'AURA embedded browser checks'});
 const clone=value=>JSON.parse(JSON.stringify(value));
@@ -143,7 +147,7 @@ async function main(){
       check(node('widgetenabled'+i).checked===false,'Service browsing does not enable a widget');
       const readings=(service.reading_ids||[]).filter(id=>ids.includes(id));
       check(options(i).filter(option=>option.value).length===readings.length,'Selected service offers exactly its installed reading templates');
-      if(!readings.length)check(node('widgetservicehint'+i).textContent.includes('No reading template'),'A service without readings explains manual endpoint setup');
+      if(!readings.length&&service.auth_code!=='requires_key'&&service.fit_code!=='adapter')check(node('widgetservicehint'+i).textContent.includes('No reading template'),'A supported service without readings explains manual endpoint setup');
     }
     check(requests.length===before,'Browsing every service in either slot never sends provider requests or configuration saves');
     const selected=node('widgetservice'+i).value;
@@ -153,6 +157,86 @@ async function main(){
     check(selectOptions('widgetservice'+i).filter(option=>option.value).length===500,'Full500 service list returns after search is cleared');
     node('widgetservice'+i).value='';node('widgetservice'+i).onchange();
     check(node('widgetprofile'+i).classList.contains('hide')&&!node('widgetservicedocs'+i).href,'Clearing service hides outdated metadata and documentation link');
+  }
+  // Browsing is intentionally read-only. The explicit Use action must turn each
+  // catalog entry into either a real reading draft or a clean manual draft.
+  for(let i=0;i<2;i++){
+    const before=requests.length,other=i===0?1:0;
+    const otherDraft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+other).value]));
+    check(node('widgetuse'+i).disabled,'Use API is disabled when no service is selected');
+    for(const service of services){
+      node('widgetservice'+i).value=service.id;node('widgetservice'+i).onchange();
+      const readings=(service.reading_ids||[]).filter(id=>ids.includes(id));
+      node('widgetexample'+i).value='';
+      if(!readings.length&&(service.auth_code==='requires_key'||service.fit_code==='adapter')){
+        const priorDraft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+i).value]));
+        check(node('widgetuse'+i).disabled,'Unsupported credential or adapter service has no misleading Use API action');
+        node('widgetuse'+i).onclick();
+        for(const key of Object.keys(priorDraft))check(node('widget'+key+i).value===priorDraft[key],'Unsupported service action cannot overwrite the current draft');
+        check(/key|credential|support|format/i.test(node('widgetservicehint'+i).textContent),'Unsupported service shows its access or format limitation');
+        continue;
+      }
+      check(!node('widgetuse'+i).disabled,'Every selected service has an explicit Use API action');
+      node('widgetuse'+i).onclick();
+      context.catalogSlot=i;
+      check(evaluate('WIDGET_DRAFT_SERVICE[catalogSlot]')===service.id,'Using a service associates that service with its draft');
+      check(node('widgetenabled'+i).checked===true,'Using a service prepares an enabled custom widget');
+      if(readings.length){
+        context.catalogId=readings[0];const expected=evaluate('resolvedExample(catalogId)');
+        check(node('widgetexample'+i).value===readings[0],'Use API chooses the first installed reading when none is selected');
+        for(const key of ['label','url','field','unit','interval'])check(String(node('widget'+key+i).value)===String(expected[key]),'Use API fills the actual reading endpoint and field mapping');
+      }else{
+        const label=node('widgetlabel'+i).value;
+        check(Boolean(label)&&Buffer.byteLength(label,'utf8')<=27&&service.name.startsWith(label),'Manual service draft has a nonempty provider label within the firmware byte limit');
+        check(node('widgeturl'+i).value===''&&node('widgetfield'+i).value===''&&node('widgetunit'+i).value==='','A service without a reading clears unrelated endpoint, field and unit');
+        check(node('widgetexample'+i).value===''&&node('widgetinterval'+i).value==='1800','Manual service draft clears the old reading and uses a supported refresh interval');
+        check(node('widgetservicedocs'+i).href===service.docs_url,'Manual service retains documentation solely as its provider link');
+        check(focusedId==='widgeturl'+i,'Manual service setup puts focus on the required endpoint');
+      }
+      for(const key of Object.keys(otherDraft))check(node('widget'+key+other).value===otherDraft[key],'Use API does not change the other custom widget');
+    }
+    check(requests.length===before,'Actions across all500 services never POST saves or contact providers');
+    const multiReadingService=services.find(service=>(service.reading_ids||[]).filter(id=>ids.includes(id)).length>1);
+    const lastReading=multiReadingService.reading_ids.filter(id=>ids.includes(id)).at(-1);
+    node('widgetservice'+i).value=multiReadingService.id;node('widgetservice'+i).onchange();
+    node('widgetexample'+i).value=lastReading;node('widgetexample'+i).onchange();
+    node('widgetuse'+i).onclick();
+    check(node('widgetexample'+i).value===lastReading,'Use API preserves an explicitly selected reading belonging to that service');
+    const draft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+i).value]));
+    const mismatchedService=services.find(service=>service.id!==multiReadingService.id);
+    node('widgetservice'+i).value=mismatchedService.id;node('widgetservice'+i).onchange();
+    for(const key of Object.keys(draft))check(node('widget'+key+i).value===draft[key],'Browsing a different API preserves the current draft');
+    check(node('widgetdraft'+i).classList.contains('bad'),'A browsed API that differs from the draft has an explicit warning');
+    node('widgetsearch'+i).value='no-such-api-fixture';node('widgetsearch'+i).oninput();
+    context.fixtureStatus=status();evaluate('showStatus(fixtureStatus)');
+    for(const key of Object.keys(draft))check(node('widget'+key+i).value===draft[key],'Search and status polling preserve a pending draft');
+    check(node('widgetservice'+i).value===mismatchedService.id&&node('widgetdraft'+i).classList.contains('bad'),'Search and polling preserve the service mismatch warning');
+    const beforeBlocked=requests.length;
+    await node('widget'+i).onsubmit({preventDefault(){}});
+    check(requests.length===beforeBlocked&&node('widget'+i+'feedback').classList.contains('bad'),'Saving a different browsed service is blocked before network dispatch');
+    check(/use|reading/i.test(node('widget'+i+'feedback').textContent),'Blocked save explains how to assign the browsed API to the custom widget');
+    node('widgetsearch'+i).value='';node('widgetsearch'+i).oninput();
+    const manualService=services.find(service=>!(service.reading_ids||[]).some(id=>ids.includes(id))&&service.auth_code!=='requires_key'&&service.fit_code!=='adapter');
+    node('widgetservice'+i).value=manualService.id;node('widgetservice'+i).onchange();node('widgetuse'+i).onclick();
+    node('widgeturl'+i).value='https://example.org/manual-'+i+'.json';node('widgeturl'+i).oninput();
+    node('widgetfield'+i).value='data.0.reading';node('widgetfield'+i).oninput();
+    requests=[];reply=async(path,options)=>path==='/api/widget'?{status:202,ok:true,json:async()=>({accepted:true})}:{status:200,ok:true,json:async()=>clone(status())};
+    const manualSave=node('widget'+i).onsubmit({preventDefault(){}});
+    check(node('widget'+i).querySelectorAll('button').every(button=>button.disabled),'Saving either widget disables all three of its actions');
+    node('widgetuse'+i).onclick();
+    check(node('widgeturl'+i).value==='https://example.org/manual-'+i+'.json','Use API cannot overwrite a draft while that widget is saving');
+    await node('widget'+i).onsubmit({preventDefault(){}});
+    check(requests.filter(request=>request.path==='/api/widget').length===1,'Repeated Save actions in either widget produce only one POST');
+    await manualSave;
+    const manualSubmission=requests.find(request=>request.path==='/api/widget');
+    check(Boolean(manualSubmission),'A manual endpoint and field can be saved after Use API');
+    const manualPayload=JSON.parse(manualSubmission.options.body);
+    check(manualPayload.index===i&&manualPayload.url==='https://example.org/manual-'+i+'.json'&&manualPayload.field==='data.0.reading','Manual save submits the chosen widget and explicit endpoint and field');
+    check(!node('widget'+i+'feedback').classList.contains('bad'),'Manual service save receives successful local feedback');
+    check(node('widget'+i).querySelectorAll('button').every(button=>!button.disabled),'A successful save restores all eligible actions in either widget');
+    check(node('widget'+i+'selectionfeedback').textContent===node('widget'+i+'feedback').textContent,'Save feedback appears beside the selector and detailed form in both widgets');
+    node('widgetexample'+i).value='';node('widgetexample'+i).onchange();
+    check(node('widgetservice'+i).value===''&&!evaluate('WIDGET_DRAFT_SERVICE[catalogSlot]'),'Choosing your own API clears catalog association');
   }
   // Native selects refuse a value absent from their current options. Applying a
   // reading must insert its associated service even under an unrelated filter.
@@ -234,12 +318,18 @@ async function main(){
   check(evaluate('csrf')==='offline-new-session-placeholder','Old-session response retains the current session token');
 
   reply=async(path,options)=>new Promise((resolve,reject)=>options.signal.addEventListener('abort',()=>reject(Object.assign(Error('offline abort fixture'),{name:'AbortError'})),{once:true}));
+  requests=[];
   const timedOutSave=node('widget1').onsubmit({preventDefault(){}});
-  check(node('widget1').button.disabled,'Pending save prevents duplicate submissions');
+  check(node('widget1').querySelectorAll('button').every(button=>button.disabled),'Pending save disables Use API and both Save actions');
+  await node('widget1').onsubmit({preventDefault(){}});
+  check(requests.length===1,'Two submissions from the same widget share one configuration request');
+  check(!node('widget0').button.disabled,'Saving one widget does not disable the other widget');
   const deadlineTimer=[...timers.values()].find(timer=>timer.delay===15000);
   check(Boolean(deadlineTimer),'Fetch receives the configured bounded timeout');
   deadlineTimer.callback();await timedOutSave;
   check(node('widget1feedback').textContent.includes('timed out')&&!node('widget1').button.disabled,'Abort timeout produces a readable form error and releases the button');
+  check(!node('widgetsavetop1').disabled&&node('widget1selectionfeedback').textContent===node('widget1feedback').textContent,'Timeout releases the nearby Save action and mirrors its error beside the selector');
+  check(node('widget1').dataset.busy==='false','Timeout clears the form submission guard');
   check(timers.size===0,'All request deadline timers are cleaned up');
   console.log('PASS: '+assertions+' exact embedded-JS DOM assertions (offline fixtures; Safari/device checks separate)');
 }
@@ -252,6 +342,25 @@ def main():
     parser.add_argument("--node", default="node")
     args = parser.parse_args()
     source = (ROOT / "firmware/AuraDesk/web_service.cpp").read_text()
+    for slot in range(2):
+        form = re.search(rf'<form id="widget{slot}"[^>]*>([\s\S]*?)</form>', source)
+        if not form:
+            print(f"FAIL: Widget {slot + 1} form is missing", file=sys.stderr)
+            return 1
+        buttons = [dict(re.findall(r'([\w-]+)="([^"]*)"', attrs))
+                   for attrs in re.findall(r'<button\b([^>]*)>', form.group(1))]
+        use = next((button for button in buttons if button.get("id") == f"widgetuse{slot}"), {})
+        top_save = next((button for button in buttons if button.get("id") == f"widgetsavetop{slot}"), {})
+        if len(buttons) != 3 or use.get("type") != "button" or top_save.get("type") != "submit":
+            print(f"FAIL: Widget {slot + 1} requires explicit Use and two native Save actions", file=sys.stderr)
+            return 1
+        if sum(button.get("type") == "submit" for button in buttons) != 2:
+            print(f"FAIL: Widget {slot + 1} Save actions must share its native submit handler", file=sys.stderr)
+            return 1
+        if not all(f'id="{identifier}"' in form.group(1)
+                   for identifier in (f"widgetdraft{slot}", f"widget{slot}selectionfeedback")):
+            print(f"FAIL: Widget {slot + 1} requires draft and nearby Save feedback", file=sys.stderr)
+            return 1
     included = (ROOT / "firmware/AuraDesk/api_services.js.inc").read_text()
     raw_literals = re.findall(r'R"([^ ()\\\t\r\n]{0,16})\(([\s\S]*?)\)\1"', included)
     if not raw_literals:

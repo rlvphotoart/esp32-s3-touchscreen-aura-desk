@@ -2,7 +2,7 @@
 
 [Browse completed GitHub Issues](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues?q=is%3Aissue%20is%3Aclosed%20label%3Ahistory).
 
-Issues #1–#9 were recorded retrospectively on **4 October 2026 (Europe/Bucharest)** from retained release evidence. The dates below refer to validation of the delivered fixes. Final 1.0.5 acceptance and publication occurred after midnight on 4 October locally; earlier release evidence is dated 3 October. Issue #10 records the current documentation request and its completion. Each linked issue contains the symptom, diagnosis, change, fixed-version source and acceptance checks.
+Issues #1–#9 were recorded retrospectively on **4 October 2026 (Europe/Bucharest)** from retained release evidence. The dates below refer to validation of the delivered fixes. Final 1.0.5 acceptance and publication occurred after midnight on 4 October locally; earlier release evidence is dated 3 October. Issue #10 records the documentation refresh, and #11 records the browser selection/Save fix. Each linked issue contains the symptom, diagnosis, change, fixed-version source and acceptance checks.
 
 | Issue | Problem or request | How it was resolved | Delivered in | Validated locally |
 | --- | --- | --- | --- | --- |
@@ -16,8 +16,9 @@ Issues #1–#9 were recorded retrospectively on **4 October 2026 (Europe/Buchare
 | [#8](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/8) | Expand Browser discovery to 500 services and keep browsing separate from saving | Add 500 services and 122 separate readings with search and setup guidance. | 1.0.5 | 2026-10-04 |
 | [#9](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/9) | GBIF rejected the SDK’s broad TLS cipher offer | Offer four ECDHE AES-GCM suites while retaining certificate and hostname verification. | 1.0.5 | 2026-10-04 |
 | [#10](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/10) | Outdated front page and missing issue history | Refresh the gallery/README and publish linked issue records with evidence. | Documentation | 2026-10-04 |
+| [#11](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/11) | Browsing a public API did not offer a clear way to apply and save it | Add Use this API and a nearby Save to both widgets; prepare a template or clean manual draft and guard against saving an unrelated source. | 1.0.6 | 2026-10-04 |
 
-The [changelog](../CHANGELOG.md) records release contents. [Current release validation](RELEASE_VALIDATION.md) and [API services validation](API_SERVICES_VALIDATION.md) separate native browser behavior, actual ESP32 requests/display frames and offline renderer/backend checks. Earlier reports remain dated to their own releases. Recovered 1.0.0/1.0.1 source snapshots retain their real publication provenance.
+The [changelog](../CHANGELOG.md) records release contents. The [1.0.5 full baseline](RELEASE_VALIDATION.md), [API services validation](API_SERVICES_VALIDATION.md), and [1.0.6 browser maintenance validation](BROWSER_SELECTION_FIX_1.0.6.md) separate native browser behavior, actual ESP32 requests/display frames and offline renderer/backend checks. Earlier reports remain dated to their own releases. Recovered 1.0.0/1.0.1 source snapshots retain their real publication provenance.
 
 ## Earlier failed checks
 

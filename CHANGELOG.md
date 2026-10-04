@@ -1,5 +1,14 @@
 # AURA Desk changes
 
+## 1.0.6 — Explicit browser API selection and saving
+
+- Adds **Use this API in widget 1/2** beside the public-service selector and a **Save widget 1/2** button beside the reading selector. Both Save buttons share the existing form submission path.
+- Using a service with installed readings fills its selected matching template, or its first available template. Using a service without a reading starts a clean manual draft, including a label limited to 27 UTF-8 bytes, empty endpoint/field/unit, and a 30-minute interval.
+- Shows which service owns the current draft. Browsing preserves edits; saving while browsing an unrelated service requires an explicit Use action, reading selection, or return to **All services / your own API**.
+- Keeps service documentation separate from API configuration. Manual sources require a compatible public HTTPS JSON endpoint and scalar field; documentation links are never automatically copied into the endpoint. Services needing credentials or additional format support cannot be prepared unless a compatible reading is installed.
+- Adds feedback near the selectors, guards empty enabled endpoint/field submissions, and disables all widget action buttons during a save while rejecting duplicate submissions.
+- Adds exhaustive host regressions for all 500 services in both slots, template/manual selection, UTF-8 labels, source mismatch protection, independent widget drafts and the shared save/busy path. Device controls, data-fetching behavior, pairing and transport security are unchanged.
+
 ## Documentation refresh — 4 October 2026
 
 - Refreshes the front page for the current 1.0.5 interface with a reviewed actual-device Home frame and current-source Your data, Always-on and 500-service companion previews.

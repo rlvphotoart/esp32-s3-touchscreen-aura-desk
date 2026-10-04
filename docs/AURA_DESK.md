@@ -1,4 +1,4 @@
-# AURA Desk 1.0.4
+# AURA Desk 1.0.6
 
 AURA Desk turns the 480 × 480 touchscreen into an internet dashboard with weather, regional air quality, currency reference rates, your own public API readings, and focus tools. Its original Horizon interface uses an ivory canvas, ink-blue cards, cobalt actions, and large touch controls.
 
@@ -62,7 +62,14 @@ Open-Meteo's hosted free access is intended for personal, non-commercial use. Pr
 
 ## Your own API widgets
 
-Connect your phone or computer to the same router, pair the browser as described below, and scroll to **Your data, your way**. Each of the two widgets has a source-example selector, Enabled checkbox, display label, public HTTPS API address, JSON field path, optional unit, and refresh interval. Choosing an example fills the form; **Save widget** applies it. The same API can be used in either slot, or configure your own public JSON source.
+Connect your phone or computer to the same router, pair the browser as described below, and scroll to **Your data, your way**. Each widget has public-service and reading selectors, an Enabled checkbox, display label, public HTTPS API address, JSON field path, optional unit, and refresh interval. The same API can be used in either slot, or configure your own public JSON source.
+
+1. Search by service, provider or topic and select a service under **Browse public APIs**. Its access, formats, support notes and documentation appear below. Browsing keeps your existing widget fields.
+2. Choose **Use this API in widget 1/2** to prepare that source. If readings are installed, this fills the selected reading for that service or its first available reading. You can choose another reading from the reading selector.
+3. For a service without an installed reading, **Use this API** starts a clean manual draft: its name becomes the display label, endpoint/field/unit are empty, Enabled is checked, and the interval is 1800 seconds. Enter a compatible public HTTPS JSON endpoint and an exact scalar field path. The documentation link provides guidance; it is not automatically used as the endpoint.
+4. Review the fields, then choose **Save widget 1/2** beside the reading selector or at the bottom of the card. Both buttons save the same form. An enabled widget needs an endpoint and field path before it can be saved. The device then requests the configured API and reports its result at the top of that widget card.
+
+The draft status identifies the source you have prepared. If you browse a different service, saving is blocked until you use that service, choose a reading, or return to **All services / your own API** to save your current draft. This prevents saving a previous provider accidentally. Manually editing a prepared source remains supported. Save feedback appears near the selectors and at the bottom; the widget's actions are disabled while a save is in progress.
 
 A dot path selects a value from a JSON response. For example, this illustrative response:
 
@@ -80,11 +87,11 @@ Home compacts long numeric readings to fit the tiles; **Your data** shows their 
 
 Each widget has a **500-service catalog** across 50 topics and a separate **reading selector with 122 templates**. Search by name, provider or topic. Selecting a service shows its purpose, authentication, formats, integration notes and evidence while keeping your current fields. Thirty-nine listed services have installed reading templates; the remaining 461 offer documentation and manual setup guidance. The selector clearly reports when no reading is installed.
 
-Choosing a reading fills the form; **Save widget** applies it. Clear the service selection with **All services / your own API** to browse every reading, including legacy choices outside the service catalog. Searching or browsing does not fetch providers or discard edits. Custom URL/field changes remove stale reading attribution. Service documentation and the selected reading's documentation are displayed separately.
+Choosing a reading fills the form and selects its associated catalog service where one exists; **Save widget** applies it. Clear the service selection with **All services / your own API** to browse every reading, including legacy choices outside the service catalog, or to save your current custom draft. Searching or browsing does not fetch providers or discard edits. Custom URL/field changes remove stale reading attribution while preserving the prepared service association. Service documentation and the selected reading's documentation are displayed separately.
 
-The [500-service catalog](PUBLIC_API_SERVICES.md) records access evidence and integration requirements. The [22 additional readings](PUBLIC_API_SERVICE_READINGS.md) and [original 100 templates](PUBLIC_API_CATALOG.md) record exact URLs, fields and dated checks. Provider documentation was reviewed for 126 services; 374 remain directory discoveries with access and usage terms needing confirmation. Listing a service does not imply an installed adapter or guarantee current availability. Images, audio, XML, keyed services and large responses still require additional support.
+The [500-service catalog](PUBLIC_API_SERVICES.md) records access evidence and integration requirements. The [22 additional readings](PUBLIC_API_SERVICE_READINGS.md) and [original 100 templates](PUBLIC_API_CATALOG.md) record exact URLs, fields and dated checks. Provider documentation was reviewed for 126 services; 374 remain directory discoveries with access and usage terms needing confirmation. Listing a service does not imply an installed adapter or guarantee current availability. A service without a reading still needs manual setup and confirmation that its endpoint returns a supported scalar within the device limits. **Use this API** remains unavailable for services that require API keys/account credentials or additional format support unless a compatible installed reading exists. Images, audio, XML, keyed services and large responses still require additional support.
 
-Numbers including zero are supported. Array indices start at zero: `data.0.price` selects the first price in a `data` array. Select a scalar field, not the entire object or array. Text/boolean values are supported; image URLs are displayed only as text, and image-only endpoints cannot be used as numeric/text JSON widgets. The [Browser/API verification report](BROWSER_API_VALIDATION.md) includes working endpoints and tested behavior.
+Numbers including zero are supported. Array indices start at zero: `data.0.price` selects the first price in a `data` array. Select a scalar field, not the entire object or array. Text/boolean values are supported; image URLs are displayed only as text, and image-only endpoints cannot be used as numeric/text JSON widgets. The [earlier Browser/API verification report](BROWSER_API_VALIDATION.md) records dated endpoint and behavior checks; it does not establish current availability for every catalog service.
 
 ## Focus, countdown and stopwatch
 
@@ -114,8 +121,8 @@ The pairing code changes when the application restarts. Browser sessions are hel
 
 For a compatible AURA Desk update, pair the local browser, choose **Firmware update**, and upload the **application image**:
 
-- [AuraDesk.ino.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.4/AuraDesk.ino.bin): application image for browser OTA.
-- [AuraDesk.ino.merged.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.4/AuraDesk.ino.merged.bin): complete 16 MiB factory image for the serial installation/recovery tooling; not a browser OTA file.
+- [AuraDesk.ino.bin](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.6/AuraDesk.ino.bin): application image for browser OTA.
+- [AuraDesk.ino.merged.bin · 1.0.5 baseline](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/releases/download/v1.0.5/AuraDesk.ino.merged.bin): complete 16 MiB factory image for the serial installation/recovery tooling; not a browser OTA file. Release 1.0.6 supplies an application update for an existing AURA Desk installation.
 
 The firmware has two 5 MiB application slots. An update writes to the inactive slot, verifies the image structure/integrity and ESP32-S3 target, selects it for the next boot, and restarts. Startup health checks defer acceptance until the new application is running. If a pending update fails those checks, the rollback mechanism can return to the previous valid custom application. It does not restore the vendor firmware or recover a changed partition layout.
 
