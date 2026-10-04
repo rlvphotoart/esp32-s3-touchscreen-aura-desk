@@ -2,7 +2,7 @@
 
 [Browse completed GitHub Issues](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues?q=is%3Aissue%20is%3Aclosed%20label%3Ahistory).
 
-Issues #1–#9 were recorded retrospectively on **4 October 2026 (Europe/Bucharest)** from retained release evidence. The dates below refer to validation of the delivered fixes. Final 1.0.5 acceptance and publication occurred after midnight on 4 October locally; earlier release evidence is dated 3 October. Issue #10 records the documentation refresh, and #11 records the browser selection/Save fix. Each linked issue contains the symptom, diagnosis, change, fixed-version source and acceptance checks.
+Issues #1–#9 were recorded retrospectively on **4 October 2026 (Europe/Bucharest)** from retained release evidence. The dates below refer to validation of the delivered fixes. Final 1.0.5 acceptance and publication occurred after midnight on 4 October locally; earlier release evidence is dated 3 October. Issue #10 records the documentation refresh, #11 the browser selection/Save fix, and #12 automatic field completion. Each linked issue contains the symptom, diagnosis, change, fixed-version source and acceptance checks.
 
 | Issue | Problem or request | How it was resolved | Delivered in | Validated locally |
 | --- | --- | --- | --- | --- |
@@ -17,8 +17,9 @@ Issues #1–#9 were recorded retrospectively on **4 October 2026 (Europe/Buchare
 | [#9](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/9) | GBIF rejected the SDK’s broad TLS cipher offer | Offer four ECDHE AES-GCM suites while retaining certificate and hostname verification. | 1.0.5 | 2026-10-04 |
 | [#10](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/10) | Outdated front page and missing issue history | Refresh the gallery/README and publish linked issue records with evidence. | Documentation | 2026-10-04 |
 | [#11](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/11) | Browsing a public API did not offer a clear way to apply and save it | Add Use this API and a nearby Save to both widgets; prepare a template or clean manual draft and guard against saving an unrelated source. | 1.0.6 | 2026-10-04 |
+| [#12](https://github.com/rlvphotoart/esp32-s3-touchscreen-aura-desk/issues/12) | Selected APIs did not autocomplete the address and JSON field | Automatically fill ready-service readings, default to a ready-only view, and add verified Meteo.lt/Jolpica defaults. | 1.0.7 | 2026-10-04 |
 
-The [changelog](../CHANGELOG.md) records release contents. The [1.0.5 full baseline](RELEASE_VALIDATION.md), [API services validation](API_SERVICES_VALIDATION.md), and [1.0.6 browser maintenance validation](BROWSER_SELECTION_FIX_1.0.6.md) separate native browser behavior, actual ESP32 requests/display frames and offline renderer/backend checks. Earlier reports remain dated to their own releases. Recovered 1.0.0/1.0.1 source snapshots retain their real publication provenance.
+The [changelog](../CHANGELOG.md) records release contents. The [1.0.5 full baseline](RELEASE_VALIDATION.md), [API services validation](API_SERVICES_VALIDATION.md), [1.0.6 browser maintenance validation](BROWSER_SELECTION_FIX_1.0.6.md), and [1.0.7 autocomplete validation](BROWSER_AUTOCOMPLETE_1.0.7.md) separate native browser behavior, actual ESP32 requests/display frames and offline renderer/backend checks. Earlier reports remain dated to their own releases. Recovered 1.0.0/1.0.1 source snapshots retain their real publication provenance.
 
 ## Earlier failed checks
 
@@ -26,7 +27,7 @@ An earlier 1.0.5 iNaturalist request failed without an HTTP response, and a sepa
 
 ## Scope of completion
 
-The catalog contains 500 searchable services and 122 reading templates. Thirty-nine catalog services have 115 associated readings, with seven original choices available independently. The other 461 services provide discovery/custom-configuration guidance. The catalog issue records completion of that browser feature; it does not assert 500 working ESP32 integrations.
+The catalog contains 500 searchable services and 124 reading templates. Forty-one catalog services have 117 associated readings, with seven original choices available independently. The other 459 services provide discovery/custom-configuration guidance. The catalog issue records completion of that browser feature; it does not assert 500 working ESP32 integrations.
 
 The GBIF repair keeps certificate and hostname verification enabled. Public servers must support at least one configured TLS 1.2 ECDHE AES-GCM suite. A provider's later quota, schema or availability change can require a new issue and new evidence.
 

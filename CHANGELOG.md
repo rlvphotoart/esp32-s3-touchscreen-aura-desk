@@ -1,5 +1,13 @@
 # AURA Desk changes
 
+## 1.0.7 — Automatic API endpoint and field completion
+
+- Selecting a ready-to-use service immediately fills its matching or first installed reading, including the public HTTPS address and JSON field. Save remains explicit; Use is available to reapply the reading.
+- Defaults both widgets to a Ready-to-use APIs only view. Turn it off to explore all 500 discovery services; manual setup and access requirements remain visible for entries without compatible readings.
+- Adds a verified Meteo.lt Vilnius forecast temperature and a Jolpica F1 championship leader reading, bringing the total to 124 templates across 41 catalog services plus retained independent readings. Jolpica explicitly replaces the legacy F1 Data endpoint that returned HTTP 404.
+- Preserves drafts during search/filter changes and manual/own API selection. Locks and restores picker state during Save to keep the selected service and submitted source consistent.
+- Adds endpoint/field-specific autocomplete regressions in both slots and coverage for the ready filter, explicit Save, existing-source recognition and busy-state isolation. The API backend, touchscreen source, settings format, pairing and TLS implementation are unchanged.
+
 ## 1.0.6 — Explicit browser API selection and saving
 
 - Adds **Use this API in widget 1/2** beside the public-service selector and a **Save widget 1/2** button beside the reading selector. Both Save buttons share the existing form submission path.

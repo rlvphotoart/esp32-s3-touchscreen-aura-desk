@@ -95,7 +95,28 @@ async function main(){
   check(originalIds.length===100,'Original runtime retains exactly100 preset choices');
   check(services.length===500,'Runtime contains exactly500 distinct API services');
   check(new Set(services.map(service=>service.id)).size===500,'Every service has a distinct selectable ID');
-  check(ids.length>=100,'Merged runtime preserves every original preset');
+  check(ids.length===124,'Merged runtime provides exactly124 reading templates');
+  const readyServices=services.filter(service=>(service.reading_ids||[]).some(id=>ids.includes(id)));
+  check(readyServices.length===41,'Catalog exposes exactly41 providers with installed readings');
+  for(let i=0;i<2;i++){
+    check(node('widgetready'+i).checked,'Ready-to-use API filtering is enabled by default in both slots');
+    node('widgetservice'+i).value='';node('widgetservice'+i).onchange();
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).length===readyServices.length,'Default service list contains exactly the services with installed reading templates');
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).every(option=>readyServices.some(service=>service.id===option.value)),'Default service list excludes entries that need manual or unsupported setup');
+    const draft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+i).value])),before=requests.length;
+    node('widgetready'+i).checked=false;node('widgetready'+i).onchange();
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).length===500,'Turning off ready-only filtering exposes all500 services');
+    node('widgetready'+i).checked=true;node('widgetready'+i).onchange();
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).length===readyServices.length,'Turning on ready-only filtering restores only ready services');
+    node('widgetsearch'+i).value='NoAa';node('widgetsearch'+i).oninput();
+    const readyMatches=readyServices.filter(service=>[service.name,service.category,service.provider,service.use_case,service.formats,service.auth,service.current_firmware_fit].join(' ').toLowerCase().includes('noaa'));
+    check(readyMatches.length>0&&selectOptions('widgetservice'+i).filter(option=>option.value).length===readyMatches.length,'Search in ready-only mode returns exactly the eligible matching providers');
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).every(option=>readyMatches.some(service=>service.id===option.value)),'Ready-only search cannot reveal an unconfigured service');
+    node('widgetsearch'+i).value='';node('widgetsearch'+i).oninput();
+    for(const key of Object.keys(draft))check(node('widget'+key+i).value===draft[key],'Changing the service filter preserves the current draft');
+    check(requests.length===before,'Changing the service filter never saves or contacts an API');
+    node('widgetready'+i).checked=false;node('widgetready'+i).onchange();
+  }
   for(let i=0;i<2;i++){
     node('widgetservice'+i).value='';node('widgetservice'+i).onchange();
     check(options(i).filter(option=>option.value).length===ids.length,'Each reading dropdown contains the complete merged presets');
@@ -132,8 +153,10 @@ async function main(){
     node('widgetexample'+i).value='';node('widgetsearch'+i).value='';node('widgetsearch'+i).oninput();
     for(const key of ['label','url','field','unit','interval'])node('widget'+key+i).value=key==='url'?'https://example.org/draft.json':'draft-'+key;
     node('widgetenabled'+i).checked=false;
-    const draft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+i).value])),before=requests.length;
+    const before=requests.length;
     for(const service of services){
+      node('widgetexample'+i).value='';
+      const priorDraft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+i).value])),priorEnabled=node('widgetenabled'+i).checked;
       node('widgetservice'+i).value=service.id;node('widgetservice'+i).onchange();
       check(node('widgetservice'+i).value===service.id,'All500 service options remain selectable');
       check(node('widgetservicename'+i).textContent===service.name&&!node('widgetprofile'+i).classList.contains('hide'),'Selected service profile is visible by its own name');
@@ -143,13 +166,20 @@ async function main(){
       check(node('widgetserviceformats'+i).textContent===service.formats&&node('widgetservicefit'+i).textContent===service.current_firmware_fit,'Format and current device support remain explicit');
       const evidenceText=service.evidence_code==='provider_docs_reviewed'?'Provider documentation reviewed. Access requirements are shown above; each chosen endpoint still needs testing on the device.':service.evidence_code==='directory_only'?'Directory discovery. Confirm current access and endpoint behavior with the provider before configuring a widget.':service.evidence_status;
       check(node('widgetserviceevidence'+i).textContent===evidenceText,'Provider review versus directory discovery uses human-readable evidence without implying verified authentication');
-      for(const key of Object.keys(draft))check(node('widget'+key+i).value===draft[key],'Service browsing preserves each draft field');
-      check(node('widgetenabled'+i).checked===false,'Service browsing does not enable a widget');
       const readings=(service.reading_ids||[]).filter(id=>ids.includes(id));
+      if(readings.length){
+        context.catalogId=readings[0];const expected=evaluate('resolvedExample(catalogId)');
+        for(const key of ['label','url','field','unit','interval'])check(String(node('widget'+key+i).value)===String(expected[key]),'Selecting a ready API automatically fills its actual endpoint, field and remaining settings');
+        check(node('widgetexample'+i).value===readings[0]&&node('widgetenabled'+i).checked,'Selecting a ready API automatically prepares an enabled first reading');
+        check(!node('widgetdraft'+i).classList.contains('bad'),'An automatically prepared API has no stale-source mismatch warning');
+      }else{
+        for(const key of Object.keys(priorDraft))check(node('widget'+key+i).value===priorDraft[key],'A service without installed readings preserves the intentional current draft');
+        check(node('widgetenabled'+i).checked===priorEnabled,'A service without installed readings preserves the current enabled choice');
+      }
       check(options(i).filter(option=>option.value).length===readings.length,'Selected service offers exactly its installed reading templates');
-      if(!readings.length&&service.auth_code!=='requires_key'&&service.fit_code!=='adapter')check(node('widgetservicehint'+i).textContent.includes('No reading template'),'A supported service without readings explains manual endpoint setup');
+      if(!readings.length&&service.auth_code!=='requires_key'&&service.fit_code!=='adapter')check(node('widgetservicehint'+i).textContent.toLowerCase().includes('no reading template'),'A supported service without readings explains manual endpoint setup');
     }
-    check(requests.length===before,'Browsing every service in either slot never sends provider requests or configuration saves');
+    check(requests.length===before,'Selecting any of500 services in either slot never sends provider requests or configuration saves');
     const selected=node('widgetservice'+i).value;
     node('widgetsearch'+i).value='no-such-api-fixture';node('widgetsearch'+i).oninput();
     check(node('widgetservice'+i).value===selected&&selectOptions('widgetservice'+i).some(option=>option.value===selected),'Filtering retains the selected service outside the result set');
@@ -158,8 +188,8 @@ async function main(){
     node('widgetservice'+i).value='';node('widgetservice'+i).onchange();
     check(node('widgetprofile'+i).classList.contains('hide')&&!node('widgetservicedocs'+i).href,'Clearing service hides outdated metadata and documentation link');
   }
-  // Browsing is intentionally read-only. The explicit Use action must turn each
-  // catalog entry into either a real reading draft or a clean manual draft.
+  // Selection prepares ready sources automatically. Use remains available to
+  // reset a ready draft or explicitly start a permitted manual setup.
   for(let i=0;i<2;i++){
     const before=requests.length,other=i===0?1:0;
     const otherDraft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+other).value]));
@@ -200,10 +230,12 @@ async function main(){
     const lastReading=multiReadingService.reading_ids.filter(id=>ids.includes(id)).at(-1);
     node('widgetservice'+i).value=multiReadingService.id;node('widgetservice'+i).onchange();
     node('widgetexample'+i).value=lastReading;node('widgetexample'+i).onchange();
+    node('widgetservice'+i).onchange();
+    check(node('widgetexample'+i).value===lastReading,'Automatic service selection retains the selected reading when it belongs to that service');
     node('widgetuse'+i).onclick();
     check(node('widgetexample'+i).value===lastReading,'Use API preserves an explicitly selected reading belonging to that service');
     const draft=Object.fromEntries(['label','url','field','unit','interval'].map(key=>[key,node('widget'+key+i).value]));
-    const mismatchedService=services.find(service=>service.id!==multiReadingService.id);
+    const mismatchedService=services.find(service=>!(service.reading_ids||[]).some(id=>ids.includes(id)));
     node('widgetservice'+i).value=mismatchedService.id;node('widgetservice'+i).onchange();
     for(const key of Object.keys(draft))check(node('widget'+key+i).value===draft[key],'Browsing a different API preserves the current draft');
     check(node('widgetdraft'+i).classList.contains('bad'),'A browsed API that differs from the draft has an explicit warning');
@@ -220,9 +252,22 @@ async function main(){
     node('widgetservice'+i).value=manualService.id;node('widgetservice'+i).onchange();node('widgetuse'+i).onclick();
     node('widgeturl'+i).value='https://example.org/manual-'+i+'.json';node('widgeturl'+i).oninput();
     node('widgetfield'+i).value='data.0.reading';node('widgetfield'+i).oninput();
+    node('widgetready'+i).checked=true;node('widgetready'+i).onchange();
+    check(node('widgetservice'+i).value===manualService.id&&selectOptions('widgetservice'+i).some(option=>option.value===manualService.id),'Ready-only mode retains an intentionally selected manual service as current selection');
+    check(selectOptions('widgetservice'+i).filter(option=>option.value).length===readyServices.length+1,'Ready-only mode adds only the current manual selection outside the ready list');
+    check(node('widgeturl'+i).value==='https://example.org/manual-'+i+'.json'&&node('widgetfield'+i).value==='data.0.reading','Ready-only mode preserves explicit manual endpoint and field edits');
+    node('widgetready'+i).checked=false;node('widgetready'+i).onchange();
     requests=[];reply=async(path,options)=>path==='/api/widget'?{status:202,ok:true,json:async()=>({accepted:true})}:{status:200,ok:true,json:async()=>clone(status())};
     const manualSave=node('widget'+i).onsubmit({preventDefault(){}});
     check(node('widget'+i).querySelectorAll('button').every(button=>button.disabled),'Saving either widget disables all three of its actions');
+    check(['service','example','search','ready'].every(key=>node('widget'+key+i).disabled),'Saving either widget disables API selection, reading, search and ready filter');
+    node('widgetservice'+i).value=multiReadingService.id;node('widgetservice'+i).onchange();
+    check(node('widgetservice'+i).value===manualService.id&&node('widgeturl'+i).value==='https://example.org/manual-'+i+'.json','A direct service-change event during Save restores the pending source and preserves its draft');
+    node('widgetready'+i).checked=true;node('widgetready'+i).onchange();
+    node('widgetsearch'+i).value='NoAa';node('widgetsearch'+i).oninput();
+    check(!node('widgetready'+i).checked&&node('widgetsearch'+i).value==='','Direct filter changes during Save restore the pending picker state');
+    context.catalogSlot=i;context.catalogId=lastReading;evaluate('applyExample(catalogSlot,catalogId)');
+    check(node('widgetservice'+i).value===manualService.id&&node('widgetexample'+i).value===''&&node('widgeturl'+i).value==='https://example.org/manual-'+i+'.json','Direct reading assignment during Save cannot alter source association or fields');
     node('widgetuse'+i).onclick();
     check(node('widgeturl'+i).value==='https://example.org/manual-'+i+'.json','Use API cannot overwrite a draft while that widget is saving');
     await node('widget'+i).onsubmit({preventDefault(){}});
@@ -234,9 +279,35 @@ async function main(){
     check(manualPayload.index===i&&manualPayload.url==='https://example.org/manual-'+i+'.json'&&manualPayload.field==='data.0.reading','Manual save submits the chosen widget and explicit endpoint and field');
     check(!node('widget'+i+'feedback').classList.contains('bad'),'Manual service save receives successful local feedback');
     check(node('widget'+i).querySelectorAll('button').every(button=>!button.disabled),'A successful save restores all eligible actions in either widget');
+    check(['service','example','search','ready'].every(key=>!node('widget'+key+i).disabled),'A successful save restores source selectors and filters in either widget');
     check(node('widget'+i+'selectionfeedback').textContent===node('widget'+i+'feedback').textContent,'Save feedback appears beside the selector and detailed form in both widgets');
     node('widgetexample'+i).value='';node('widgetexample'+i).onchange();
     check(node('widgetservice'+i).value===''&&!evaluate('WIDGET_DRAFT_SERVICE[catalogSlot]'),'Choosing your own API clears catalog association');
+  }
+  // These are the two providers shown in the reported screenshots. Assert their
+  // verified mappings explicitly, rather than trusting catalog self-consistency.
+  const reportedProviders=[
+    {service:'meteo-lt-api',reading:'svc_meteo_lt_vilnius_forecast',url:'https://api.meteo.lt/v1/places/vilnius/forecasts/long-term',field:'forecastTimestamps.0.airTemperature',unit:'°C',label:'Vilnius forecast (LHMT)',interval:10800},
+    {service:'f1-data-api',reading:'svc_jolpica_f1_leader',url:'https://api.jolpi.ca/ergast/f1/current/driverStandings.json?limit=1',field:'MRData.StandingsTable.StandingsLists.0.DriverStandings.0.Driver.familyName',unit:'',label:'F1 championship leader',interval:1800}
+  ];
+  check(services.find(service=>service.id==='f1-data-api').name.includes('Jolpica'),'F1 catalog identifies the actual replacement provider explicitly');
+  for(let i=0;i<2;i++){
+    node('widgetready'+i).checked=true;node('widgetready'+i).onchange();
+    for(const expected of reportedProviders){
+      const other=i===0?1:0,otherUrl=node('widgeturl'+other).value;
+      requests=[];
+      node('widgetservice'+i).value=expected.service;node('widgetservice'+i).onchange();
+      check(node('widgetexample'+i).value===expected.reading,'Selecting either reported provider automatically chooses its installed reading in either widget');
+      for(const key of ['url','field','unit','label','interval'])check(node('widget'+key+i).value===String(expected[key]),'Reported provider selection completes the exact verified endpoint, field and display settings');
+      check(node('widgeturl'+other).value===otherUrl,'Automatic completion for a reported provider preserves the other widget');
+      check(requests.length===0,'Automatic provider completion does not POST or contact providers before explicit Save');
+      reply=async(path,options)=>path==='/api/widget'?{status:202,ok:true,json:async()=>({accepted:true})}:{status:200,ok:true,json:async()=>clone(status())};
+      await node('widget'+i).onsubmit({preventDefault(){}});
+      const posts=requests.filter(request=>request.path==='/api/widget');
+      check(posts.length===1,'Explicit Save sends exactly one reported-provider configuration');
+      const payload=JSON.parse(posts[0].options.body);
+      check(payload.index===i&&payload.url===expected.url&&payload.field===expected.field&&payload.enabled===true,'Explicit Save sends the automatically completed provider mapping for the correct widget');
+    }
   }
   // Native selects refuse a value absent from their current options. Applying a
   // reading must insert its associated service even under an unrelated filter.
@@ -249,6 +320,14 @@ async function main(){
   evaluate('applyExample(0,"humidity")');
   check(node('widgeturl0').value.includes('latitude=0.0000')&&node('widgeturl0').value.includes('longitude=0.0000'),'Saved-city presets accept genuine zero coordinates');
   context.fixtureStatus=status();evaluate('showStatus(fixtureStatus)');
+  context.saved=status();
+  for(let i=0;i<2;i++)context.saved.widgetConfig[i]={label:'Saved custom '+i,url:'https://example.org/saved-custom-'+i+'.json',field:'custom.value',unit:'items',interval:900,enabled:true};
+  const beforeCustomRestore=requests.length;evaluate('first=true;showStatus(saved)');
+  for(let i=0;i<2;i++){
+    check(node('widgeturl'+i).value==='https://example.org/saved-custom-'+i+'.json'&&node('widgetfield'+i).value==='custom.value'&&node('widgetlabel'+i).value==='Saved custom '+i,'Restoring saved custom sources preserves their endpoint, field and custom label in both slots');
+    check(node('widgetservice'+i).value===''&&node('widgetexample'+i).value===''&&node('widgetready'+i).checked,'Restoring an unknown saved endpoint keeps it as your own API without auto-filling a ready provider');
+  }
+  check(requests.length===beforeCustomRestore,'Restoring saved custom sources never triggers a configuration POST');
   context.saved=status();context.saved.widgetConfig[0]={...context.saved.widgetConfig[0],url:'https://api.coinbase.com/v2/prices/BTC-USD/spot',field:'data.amount'};
   evaluate('first=true;showStatus(saved)');
   check(node('widgetexample0').value==='bitcoin','Reload recognizes an existing saved catalog source without rewriting it');
@@ -360,6 +439,10 @@ def main():
         if not all(f'id="{identifier}"' in form.group(1)
                    for identifier in (f"widgetdraft{slot}", f"widget{slot}selectionfeedback")):
             print(f"FAIL: Widget {slot + 1} requires draft and nearby Save feedback", file=sys.stderr)
+            return 1
+        ready_input = re.search(rf'<input\b[^>]*\bid="widgetready{slot}"[^>]*>', form.group(1))
+        if not ready_input or not re.search(r'\bchecked(?:\s|=|>)', ready_input.group(0)):
+            print(f"FAIL: Widget {slot + 1} ready-to-use filter must be enabled in native HTML", file=sys.stderr)
             return 1
     included = (ROOT / "firmware/AuraDesk/api_services.js.inc").read_text()
     raw_literals = re.findall(r'R"([^ ()\\\t\r\n]{0,16})\(([\s\S]*?)\)\1"', included)

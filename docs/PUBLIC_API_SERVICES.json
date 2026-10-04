@@ -7,19 +7,19 @@
   "source_frozen_sha256": "57371d701e7492a7ef01eca8a293d6e74142699d6ab9dca32535f16011b403b3",
   "category_count": 50,
   "auth_counts": {
-    "no_key_reported": 404,
-    "no_key_confirmed": 92,
+    "no_key_reported": 403,
+    "no_key_confirmed": 93,
     "optional_key": 3,
     "unknown": 1
   },
   "fit_counts": {
-    "review_required": 380,
-    "direct_candidate": 88,
+    "review_required": 379,
+    "direct_candidate": 89,
     "adapter": 32
   },
   "evidence_counts": {
-    "directory_only": 374,
-    "provider_docs_reviewed": 126
+    "directory_only": 373,
+    "provider_docs_reviewed": 127
   },
   "source_directories": [
     {
@@ -45,7 +45,8 @@
     "Provider documentation review and any live endpoint checks are recorded separately on individual records.",
     "No full firmware integration or all-500 live endpoint verification has been performed.",
     "Current firmware requires direct HTTPS 200 GET JSON, no auth headers, URL <=200 bytes, body <=32768 bytes, short scalar <=47 bytes, refresh >=300 seconds.",
-    "One service may offer many readings. No coin/country/field variants were used to reach the 500 count."
+    "One service may offer many readings. No coin/country/field variants were used to reach the 500 count.",
+    "On 2026-10-04, one Meteo.lt reading was added and the unavailable Jacobbrewer1 F1 service slot was explicitly replaced with Jolpica plus a bounded standings reading. Original discovery evidence and dates are retained; exact fresh profile evidence is in PUBLIC_API_SERVICE_READINGS.json."
   ],
   "reading_mappings": [
     {
@@ -649,8 +650,8 @@
       "provider": "NOAA SWPC"
     }
   ],
-  "reading_profile_count": 122,
-  "mapped_reading_count": 115,
+  "reading_profile_count": 124,
+  "mapped_reading_count": 117,
   "legacy_reading_count": 7,
   "services": [
     {
@@ -15315,40 +15316,61 @@
     },
     {
       "id": "f1-data-api",
-      "name": "F1 Data API",
-      "provider": "Jacobbrewer1 (repository maintainer)",
+      "name": "F1 Data API · Jolpica",
+      "provider": "jolpica-f1 contributors",
       "category": "Sports & Fitness",
-      "use_case": "Show a selected fixture, result or published sport statistic from F1 Data API.",
-      "docs_url": "https://github.com/Jacobbrewer1/f1-data",
-      "auth": "Directory reports no authentication; provider requirement not reviewed.",
-      "auth_code": "no_key_reported",
-      "access": "Listed in a free public API directory. Current quotas, licence and permitted display use are unverified.",
-      "formats": "Not confirmed from provider documentation.",
-      "current_firmware_fit": "Review required: choose a public HTTPS GET JSON endpoint and scalar field; check URL/body/text limits and provider terms.",
-      "fit_code": "review_required",
-      "evidence_status": "Directory discovery plus documentation-link reachability; API endpoint not tested.",
-      "evidence_code": "directory_only",
-      "source_url": "https://github.com/public-api-lists/public-api-lists",
-      "directory_claims": {
-        "auth": "No",
-        "https": "Yes",
-        "cors": "No"
-      },
-      "documentation_check": {
-        "name": "F1 Data API",
-        "docs_url": "https://github.com/Jacobbrewer1/f1-data",
-        "http_status": 200,
-        "final_url": "https://github.com/Jacobbrewer1/f1-data",
-        "tls_verification_result": "0",
-        "curl_exit": 0,
-        "method": "HEAD",
-        "checked_at": "2026-10-03T19:10:10.355031+00:00",
-        "scope": "Documentation URL reachability only; no API endpoint, authentication, quota or licensing check"
-      },
-      "notes": "This is a service discovery, not an installed preset. A reachable documentation URL does not verify API availability, pricing or compatibility.",
+      "use_case": "Show the published current-season Formula 1 driver championship leader.",
+      "docs_url": "https://github.com/jolpica/jolpica-f1/blob/main/docs/README.md",
+      "auth": "No authentication for the documented public Ergast-compatible read endpoints.",
+      "auth_code": "no_key_confirmed",
+      "access": "Public unauthenticated scope; provider quotas and data terms apply. Optional token plans may change.",
+      "formats": "JSON",
+      "current_firmware_fit": "One bounded championship-leader reading included; current transport already sends the identifying app/version User-Agent required by Jolpica.",
+      "fit_code": "direct_candidate",
+      "evidence_status": "Provider documentation reviewed; included championship standings JSON endpoint and scalar path checked on desktop 2026-10-04.",
+      "evidence_code": "provider_docs_reviewed",
+      "source_url": "https://github.com/jolpica/jolpica-f1/blob/main/docs/README.md",
+      "notes": "Replaces the unavailable Jacobbrewer1 F1 Data API endpoint (HTTP 404 on 2026-10-04) with Jolpica; these are different providers. Jolpica is the Ergast-compatible successor. An identifying app/version User-Agent is required and already present in AURA transport. Anonymous limits at review: 4 requests/second and 500/hour. Included reading is published standings, not live lap timing; empty-season results may have no scalar.",
       "ready_preset": false,
       "device_tested": false,
-      "reading_ids": []
+      "reading_ids": [
+        "svc_jolpica_f1_leader"
+      ],
+      "superseded_discovery": {
+        "name": "F1 Data API",
+        "provider": "Jacobbrewer1 (repository maintainer)",
+        "docs_url": "https://github.com/Jacobbrewer1/f1-data",
+        "documentation_check": {
+          "name": "F1 Data API",
+          "docs_url": "https://github.com/Jacobbrewer1/f1-data",
+          "http_status": 200,
+          "final_url": "https://github.com/Jacobbrewer1/f1-data",
+          "tls_verification_result": "0",
+          "curl_exit": 0,
+          "method": "HEAD",
+          "checked_at": "2026-10-03T19:10:10.355031+00:00",
+          "scope": "Documentation URL reachability only; no API endpoint, authentication, quota or licensing check"
+        },
+        "source_url": "https://github.com/public-api-lists/public-api-lists",
+        "directory_claims": {
+          "auth": "No",
+          "https": "Yes",
+          "cors": "No"
+        }
+      },
+      "replacement": {
+        "replaced_on": "2026-10-04",
+        "timezone": "Europe/Bucharest",
+        "reason": "The original Jacobbrewer1 F1 Data API documented driver endpoint returned HTTP 404. This catalog slot now explicitly uses Jolpica, a different current provider; the stable service ID is retained.",
+        "previous_endpoint": "https://api.bthree.uk/f1/v1/drivers?limit=1",
+        "previous_http_status": 404,
+        "previous_response_bytes": 19,
+        "previous_response_sha256": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "previous_tls_verified": true,
+        "previous_redirects_followed": false
+      },
+      "reviewed_on": "2026-10-04",
+      "keyless_provider_evidence": true
     },
     {
       "id": "fanline-wire",
@@ -17684,21 +17706,23 @@
       "category": "Weather",
       "use_case": "Lithuanian weather and hydrological observations",
       "docs_url": "https://api.meteo.lt/",
-      "auth": "none",
-      "access": "public data",
+      "auth": "No authentication for the documented public JSON endpoints.",
+      "access": "Public data under CC BY-SA 4.0; attribute the Lithuanian Hydrometeorological Service (LHMT).",
       "formats": "JSON",
-      "current_firmware_fit": "candidate scalar JSON; endpoint, body size and scalar path need live verification",
-      "evidence_status": "provider documentation reviewed; endpoint not live-probed",
+      "current_firmware_fit": "One bounded forecast-temperature reading included; direct HTTPS JSON request and scalar field checked on desktop.",
+      "evidence_status": "Provider documentation reviewed; included Vilnius forecast JSON endpoint and scalar path checked on desktop 2026-10-04.",
       "source_url": "https://api.meteo.lt/",
-      "notes": "Single station/forecast JSON can supply scalar readings; check current attribution and rate terms.",
-      "reviewed_on": "2026-10-03",
+      "notes": "The included example is the first hourly temperature in the latest published Vilnius forecast, not current measured weather or the saved device city. Source attribution: LHMT. CC BY-SA 4.0; provider limits 180 requests/minute and 20,000/day per IP. Template refresh is 3 hours.",
+      "reviewed_on": "2026-10-04",
       "keyless_provider_evidence": true,
       "auth_code": "no_key_confirmed",
       "fit_code": "direct_candidate",
       "evidence_code": "provider_docs_reviewed",
       "ready_preset": false,
       "device_tested": false,
-      "reading_ids": []
+      "reading_ids": [
+        "svc_meteo_lt_vilnius_forecast"
+      ]
     },
     {
       "id": "msc-geomet-api",
@@ -18011,5 +18035,7 @@
       "device_tested": false,
       "reading_ids": []
     }
-  ]
+  ],
+  "maintained_on": "2026-10-04",
+  "maintenance_timezone": "Europe/Bucharest"
 }

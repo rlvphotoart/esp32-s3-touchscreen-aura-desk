@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "product": "AURA Desk",
+  "version": "1.0.7",
+  "validation_date": "2026-10-04",
+  "timezone": "Europe/Bucharest",
+  "scope": "API autocomplete browser maintenance and two verified defaults; complete 1.0.5 hardware baseline remains separately dated",
+  "application": {
+    "bytes": 2494304,
+    "sha256": "4b0eee4d9d0de7c43d11f739b6b02e376dcc47559b2e79b9425c6f054ee93e41"
+  },
+  "source_sha256": {
+    "firmware/AuraDesk/web_service.cpp": "2cf1066f506988a809b681f70b3a2600e4b38fd718e1626516a388c939cb13b0",
+    "firmware/AuraDesk/firmware_version.h": "a141938c5c59be477fa9c69158cd2e8aca95ea3c555be2f09aef50422b35b3af",
+    "firmware/AuraDesk/api_services.js.inc": "b3ff27bb97aa4ac3d32bcb65404a3e63e107a719b50473a413d628746a965ca1",
+    "firmware/AuraDesk/app_service.cpp": "830b8b2345d35661ee5587bd5c679f548464a378363a7124c26f525b182f0617",
+    "firmware/AuraDesk/ui.cpp": "ad2e7ca8a03e631d14f0bc110b5a82c9cd7cf2dc65323e848514ea80c34d3009",
+    "tools/test_widget_browser.py": "df74d7c94dd984d28f0e166fcbd200d6efbe5dd7f324036ae8ea7fc36c7394a9",
+    "docs/PUBLIC_API_SERVICES.json": "2f7f70b357c13f4c28d6db2415c15d4e074260023749556186b990e3611e9be3",
+    "docs/PUBLIC_API_SERVICE_READINGS.json": "ddfb2444c1f75255258c1cd254818a515d52f3559be0054169dcaf7542af18a1"
+  },
+  "catalog": {
+    "services": 500,
+    "readings": 124,
+    "ready_services": 41,
+    "mapped_readings": 117,
+    "independent_readings": 7,
+    "discovery_without_readings": 459
+  },
+  "checks": {
+    "target_build": {
+      "passed": true,
+      "esp32s3_checksum_and_digest": true,
+      "fits_5_mib_slots": true,
+      "runtime_version_present": true,
+      "public_artifact_path_audit": true,
+      "backend_unchanged": true
+    },
+    "host_browser": {
+      "passed": true,
+      "assertions": 29633
+    },
+    "host_profiles_and_transport": {
+      "passed": true,
+      "service_evidence": 25636,
+      "negative_fixtures": 38,
+      "production_cpp_profiles": 240,
+      "http_response_policy": 17,
+      "tls_policy": 20
+    },
+    "native_safari_fixture": {
+      "passed": true,
+      "automatic_meteo_endpoint_and_field": true,
+      "automatic_f1_endpoint_and_field": true,
+      "no_use_click_required": true,
+      "both_slots_nearby_save_accepted": true,
+      "full_500_catalog_filter_access": true,
+      "reload_saved_template_recognition": true,
+      "fixture_only_no_provider_or_device_calls": true
+    },
+    "independent_browser_review": {
+      "passed": true
+    },
+    "wireless_application_upload": {
+      "passed": true,
+      "native_safari_file_picker_verified_application_path": true,
+      "upload_submitted": true,
+      "post_restart_runtime_version_confirmed": "1.0.7",
+      "serial_cable_used": false,
+      "full_flash_readback_repeated": false
+    },
+    "post_restart_pairing": {
+      "passed": true,
+      "native_safari_paired_page_observed": true,
+      "authentication_material_handled_by_agent": false
+    },
+    "live_autocomplete_save_and_fetch": {
+      "passed": true,
+      "meteo_slot_0": {
+        "url_and_field_filled_by_selection": true,
+        "use_click_required": false,
+        "label_unit_interval_filled": true,
+        "nearby_save_accepted": true,
+        "device_success_feedback": true,
+        "reading_observed": "14.4 \u00b0C"
+      },
+      "jolpica_slot_1": {
+        "url_and_field_filled_by_selection": true,
+        "use_click_required": false,
+        "label_unit_interval_filled": true,
+        "nearby_save_accepted": true,
+        "device_success_feedback": true,
+        "reading_observed": "Antonelli"
+      },
+      "saved_export_matches_profiles_exactly": true,
+      "selection_before_save_export_retains_original_widgets": true,
+      "reload_saved_sources_recognized": true
+    },
+    "saved_settings_and_restoration": {
+      "passed": true,
+      "post_ota_export_matches_original": true,
+      "compared_fields": [
+        "city",
+        "latitude",
+        "longitude",
+        "timezone",
+        "brightness",
+        "alwaysOnDisplay",
+        "widgets"
+      ],
+      "original_widgets_restored": true,
+      "restored_both_device_fetches_succeeded": true,
+      "final_reload_recognizes_original_sources": true,
+      "final_reload_export_matches_original": true
+    }
+  },
+  "release_ready": true,
+  "limits": [
+    "This maintenance run does not repeat full-flash readback, forced restarts, all provider requests or physical display capture.",
+    "500 catalog services are distinct from 124 installed readings; endpoints for discovery-only entries are not fabricated.",
+    "Private settings, local identity, raw captures and authentication material remain excluded."
+  ]
+}

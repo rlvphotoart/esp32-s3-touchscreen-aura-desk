@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "count": 22,
-  "scope": "Additional bounded scalar reading profiles derived from anonymous desktop JSON checks. They are optional configuration examples, not proof that all 500 services are device-ready. Fresh desktop and representative ESP32 validation are release gates.",
+  "count": 24,
+  "scope": "Additional bounded scalar reading profiles derived from anonymous desktop JSON checks. They are optional configuration examples, not proof that all 500 services are device-ready. Original evidence dates are retained; additions have per-profile timestamps. Fresh desktop and representative ESP32 validation are release gates.",
   "verified_on": "2026-10-03",
   "source_service_catalog": "docs/PUBLIC_API_SERVICES.json",
   "profiles": [
@@ -620,6 +620,66 @@
         "scalarPathValidated": true
       },
       "deviceTested": false
+    },
+    {
+      "id": "svc_meteo_lt_vilnius_forecast",
+      "serviceId": "meteo-lt-api",
+      "name": "Meteo.lt Vilnius forecast temperature",
+      "category": "Weather",
+      "label": "Vilnius forecast (LHMT)",
+      "url": "https://api.meteo.lt/v1/places/vilnius/forecasts/long-term",
+      "field": "forecastTimestamps.0.airTemperature",
+      "unit": "°C",
+      "interval": 10800,
+      "hint": "First hourly temperature in the latest published Vilnius forecast, not an observed current temperature or your saved city. Source: Lithuanian Hydrometeorological Service (LHMT); CC BY-SA 4.0.",
+      "docs": "https://api.meteo.lt/",
+      "provider": "Lithuanian Hydrometeorological Service",
+      "locationBased": false,
+      "verification": {
+        "httpStatus": 200,
+        "bytes": 21918,
+        "scalarType": "number",
+        "scalarBytes": 4,
+        "checkedAt": "2026-10-04T08:27:20+00:00",
+        "timezone": "Europe/Bucharest",
+        "tlsVerified": true,
+        "redirectsFollowed": false,
+        "authenticationUsed": false,
+        "responseSha256": "e946006371b73d866844a011a545522a45e93169e74c34fe1443038c15b41b09",
+        "scalarPathValidated": true,
+        "checkedAtLocal": "2026-10-04T11:27:20+03:00"
+      },
+      "deviceTested": false
+    },
+    {
+      "id": "svc_jolpica_f1_leader",
+      "serviceId": "f1-data-api",
+      "name": "F1 championship leader · Jolpica",
+      "category": "Sports & Fitness",
+      "label": "F1 championship leader",
+      "url": "https://api.jolpi.ca/ergast/f1/current/driverStandings.json?limit=1",
+      "field": "MRData.StandingsTable.StandingsLists.0.DriverStandings.0.Driver.familyName",
+      "unit": "",
+      "interval": 1800,
+      "hint": "Family name of the first reported driver in the current-season championship standings. Published race standings, not live timing. A season with no standings can return an empty list.",
+      "docs": "https://github.com/jolpica/jolpica-f1/blob/main/docs/endpoints/driverStandings.md",
+      "provider": "jolpica-f1 contributors",
+      "locationBased": false,
+      "verification": {
+        "httpStatus": 200,
+        "bytes": 709,
+        "scalarType": "string",
+        "scalarBytes": 9,
+        "checkedAt": "2026-10-04T08:28:35+00:00",
+        "timezone": "Europe/Bucharest",
+        "tlsVerified": true,
+        "redirectsFollowed": false,
+        "authenticationUsed": false,
+        "responseSha256": "491b9f0b3dd4a1976d701a11f8f60dc66fcd864b93e3f44d34d824d6cbf30b05",
+        "scalarPathValidated": true,
+        "checkedAtLocal": "2026-10-04T11:28:35+03:00"
+      },
+      "deviceTested": false
     }
   ],
   "excluded_samples": [
@@ -655,5 +715,7 @@
       "service": "Free Dictionary",
       "reason": "Sample HTTP 522."
     }
-  ]
+  ],
+  "last_added_on": "2026-10-04",
+  "last_added_timezone": "Europe/Bucharest"
 }

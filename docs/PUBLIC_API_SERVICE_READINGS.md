@@ -1,8 +1,8 @@
 # Additional scalar reading examples
 
-These 22 profiles extend the original 100 examples with 22 additional services. Each selects a real scalar from a successfully parsed public HTTPS JSON response, within the current firmware URL/body/path/text limits. They retain exact request URLs, dot paths, units, refresh intervals and SHA-256 response digests in [PUBLIC_API_SERVICE_READINGS.json](PUBLIC_API_SERVICE_READINGS.json). Raw response bodies and current values are not published.
+These 24 profiles extend the original 100 examples with 24 additional services. The original 22 profiles retain their 3 October 2026 evidence; two profiles were added on 4 October 2026 (Europe/Bucharest). Each selects a real scalar from a successfully parsed public HTTPS JSON response, within the current firmware URL/body/path/text limits. They retain exact request URLs, dot paths, units, refresh intervals and SHA-256 response digests in [PUBLIC_API_SERVICE_READINGS.json](PUBLIC_API_SERVICE_READINGS.json). Raw response bodies and current values are not published.
 
-This original profile evidence is a desktop snapshot. Fresh desktop checks and actual ESP32 results belong in the [release validation report](RELEASE_VALIDATION.md). A provider response can change later; the firmware continues to enforce limits and report failures while retaining the last verified value.
+Each profile records its own desktop check timestamp. The 4 October additions were checked with normal TLS, no credentials and no redirects; body and scalar limits passed. This profile evidence is a desktop snapshot. Actual ESP32 results for the original 22 profiles are in the [1.0.5 baseline](RELEASE_VALIDATION.md); the two additions and browser flow are checked in the [1.0.7 autocomplete report](BROWSER_AUTOCOMPLETE_1.0.7.md). A provider response can change later; the firmware continues to enforce limits and report failures while retaining the last verified value.
 
 | Reading | Service | Exact JSON field | Unit | Refresh | Response bytes | Scalar type / bytes |
 |---|---|---|---|---:|---:|---|
@@ -28,6 +28,8 @@ This original profile evidence is a desktop snapshot. Fresh desktop checks and a
 | London Victoria line status | [Transport for London Unified API](https://api-portal.tfl.gov.uk/) | `0.lineStatuses.0.statusSeverityDescription` | — | 1800 s | 2898 | string / 12 |
 | UK Parliament registry count | [UK Parliament Members API](https://members-api.parliament.uk/index.html) | `totalResults` | records | 86400 s | 1471 | number / 4 |
 | Banana nutrition reference | [Fruityvice](https://www.fruityvice.com/) | `nutritions.calories` | kcal | 86400 s | 169 | number / 2 |
+| Meteo.lt Vilnius forecast temperature | [Meteo.lt API](https://api.meteo.lt/) | `forecastTimestamps.0.airTemperature` | °C | 10800 s | 21918 | number / 4 |
+| F1 championship leader · Jolpica | [F1 Data API · Jolpica](https://github.com/jolpica/jolpica-f1/blob/main/docs/endpoints/driverStandings.md) | `MRData.StandingsTable.StandingsLists.0.DriverStandings.0.Driver.familyName` | — | 1800 s | 709 | string / 9 |
 
 ## Reading context
 
@@ -53,6 +55,13 @@ This original profile evidence is a desktop snapshot. Fresh desktop checks and a
 - **London Victoria line status** — First reported service-status category for the Victoria line. Multiple disruptions can exist; the full provider response contains more detail.
 - **UK Parliament registry count** — Total records returned by the public members search, including historical records; not the number of currently serving MPs.
 - **Banana nutrition reference** — Fruityvice nutrition reference for banana. This is a reference value, not a measurement of the user’s portion.
+
+- **Meteo.lt Vilnius forecast temperature** — First hourly temperature in the newest published Vilnius forecast, not a measured current temperature or the device’s saved city. Data source: Lithuanian Hydrometeorological Service (LHMT), under CC BY-SA 4.0; the visible default label includes LHMT attribution.
+- **F1 championship leader · Jolpica** — Family name of the first driver in the current-season published championship standings, with a one-result query. This is race standings rather than live lap timing; a season without standings may return no scalar. The current AURA transport already supplies the app/version User-Agent required by Jolpica.
+
+## F1 provider replacement
+
+The original F1 Data API discovery pointed to Jacobbrewer1’s project. Its documented `https://api.bthree.uk/f1/v1/drivers?limit=1` endpoint returned HTTP 404 on 4 October 2026. The `f1-data-api` catalog slot now explicitly names **F1 Data API · Jolpica**, a different provider, and links to its own documentation. The previous provider details and observed failure are retained in `superseded_discovery` and `replacement` metadata; no endpoint from another provider is presented as Jacobbrewer1’s.
 
 ## Excluded research samples
 

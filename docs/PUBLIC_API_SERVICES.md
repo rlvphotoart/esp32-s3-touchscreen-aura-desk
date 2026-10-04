@@ -2,13 +2,13 @@
 
 AURA Desk includes a searchable catalogue of **500 distinct API services in 50 categories**. The service selector gives each entry a description, provider documentation, access requirements and firmware-fit notes. Services can offer several kinds of data; currency pairs, coins, weather fields and duplicate country feeds are not counted as separate services.
 
-The catalogue preserves all 500 entries from the reviewed source set. Their evidence is retained: **126 provider-documentation reviews and 374 directory discoveries**. There are **92 documented anonymous read scopes**, **404 reported scopes requiring confirmation**, **three optional-key or mixed scopes**, and **one unresolved authentication case**. Public or keyless access does not imply unlimited requests, commercial rights or a perpetual free plan.
+The catalogue retains 500 stable service slots from the reviewed source set. On 4 October 2026, the unavailable Jacobbrewer1 F1 Data API slot was explicitly replaced with **F1 Data API · Jolpica**, with the former discovery and failure retained in its metadata. Current evidence includes **127 provider-documentation reviews and 373 directory discoveries**. There are **93 documented anonymous read scopes**, **403 reported scopes requiring confirmation**, **three optional-key or mixed scopes**, and **one unresolved authentication case**. Public or keyless access does not imply unlimited requests, commercial rights or a perpetual free plan.
 
-For configuration, the Browser retains the original **100 reading templates** and adds **22 bounded scalar examples from 22 additional services**, giving **122 reading choices**. Of these, 115 are associated with 39 catalogue services; seven existing TimeAPI.io/GitHub readings remain available independently. The remaining 461 services provide discovery and setup information rather than a fabricated URL/field combination.
+For configuration, the Browser retains the original **100 reading templates** and adds **24 bounded scalar examples from 24 additional services**, giving **124 reading choices**. Of these, 117 are associated with 41 catalogue services; seven existing TimeAPI.io/GitHub readings remain available independently. The remaining 459 services provide discovery and setup information rather than a fabricated URL/field combination.
 
-Choose a service to read its setup details. Available reading templates provide a known request and JSON field. Custom configurations still need a public HTTPS JSON endpoint and a short scalar field. Saving the widget applies its configuration and starts a request. A service catalogue entry alone does not assert that the current firmware can use every endpoint the provider offers.
+Selecting a service with an available reading template populates its known request URL and JSON field. Use the reading selector to choose another installed reading for that service. Custom configurations still need a public HTTPS JSON endpoint and a short scalar field. Saving the widget applies its configuration and starts a request. A service catalogue entry alone does not assert that the current firmware can use every endpoint the provider offers.
 
-The source-set fit assessment contains 88 scalar candidates, 32 entries needing adapters or policy work, and 380 requiring further review. Its `ready_preset=false` and `device_tested=false` flags describe the original research evidence; separate reading profiles and the release validation report describe actual configuration and test coverage.
+The maintained fit assessment contains 89 scalar candidates, 32 entries needing adapters or policy work, and 379 requiring further review. Its `ready_preset=false` and `device_tested=false` flags describe the original research evidence; separate reading profiles and the release validation report describe actual configuration and test coverage.
 
 - [Complete service metadata](PUBLIC_API_SERVICES.json)
 - [Additional reading profiles and exact evidence](PUBLIC_API_SERVICE_READINGS.json)
@@ -22,7 +22,7 @@ Current widgets accept direct HTTPS 200 GET JSON without credentials or auth hea
 
 OpenAlex is limited to casual anonymous discovery until production policy is resolved; its provider documentation has different casual and production scopes. Socrata public v2 and authenticated v3 endpoints differ. openFDA has contradictory authentication wording and remains unresolved. Nominatim restricts periodic polling. Nager.Date and Datamuse carry dated hosting/access-policy changes. Attribution and usage terms must be observed wherever applicable.
 
-Services and responses can change after the 3 October 2026 research date. Historical successful requests are evidence for a specific URL and field, not a guarantee that every catalogue service is currently operational.
+The original source review is dated 3 October 2026; the Meteo.lt reading and explicit F1 provider replacement were checked on 4 October 2026 (Europe/Bucharest). Services and responses can change after those checks. Historical successful requests are evidence for a specific URL and field, not a guarantee that every catalogue service is currently operational.
 
 ## Categories
 
@@ -507,7 +507,7 @@ Reading counts below include the original and additional profile sets. “Report
 | 420 | [Cartola FC](https://github.com/wgenial/cartrolandofc) | Sports & Fitness | Reported; confirm access · Directory discovery | Review required | 0 | Show a selected fixture, result or published sport statistic from Cartola FC. |
 | 421 | [City Bikes](https://api.citybik.es/v2/) | Sports & Fitness | Reported; confirm access · Directory discovery | Review required | 0 | Track available bicycles or docks at a chosen station. |
 | 422 | [F1 API](https://f1api.dev) | Sports & Fitness | Reported; confirm access · Directory discovery | Review required | 0 | Show a selected fixture, result or published sport statistic from F1 API. |
-| 423 | [F1 Data API](https://github.com/Jacobbrewer1/f1-data) | Sports & Fitness | Reported; confirm access · Directory discovery | Review required | 0 | Show a selected fixture, result or published sport statistic from F1 Data API. |
+| 423 | [F1 Data API · Jolpica](https://github.com/jolpica/jolpica-f1/blob/main/docs/README.md) | Sports & Fitness | Documented public scope · Provider docs reviewed | Scalar candidate | 1 | Show the published current-season Formula 1 driver championship leader. |
 | 424 | [FanLine Wire](https://fanlinewire.com/docs) | Sports & Fitness | Reported; confirm access · Directory discovery | Review required | 0 | Show a selected fixture, result or published sport statistic from FanLine Wire. |
 | 425 | [Football (Soccer) Videos](https://www.scorebat.com/video-api/) | Sports & Fitness | Reported; confirm access · Directory discovery | Review required | 0 | Show a selected fixture, result or published sport statistic from Football (Soccer) Videos. |
 | 426 | [Football Standings](https://github.com/azharimm/football-standings-api) | Sports & Fitness | Reported; confirm access · Directory discovery | Review required | 0 | Show a selected fixture, result or published sport statistic from Football Standings. |
@@ -574,7 +574,7 @@ Reading counts below include the original and additional profile sets. “Report
 | 487 | [Hong Kong Obervatory](https://www.hko.gov.hk/en/abouthko/opendata_intro.htm) | Weather | Reported; confirm access · Directory discovery | Review required | 0 | Show the current Hong Kong weather or an official warning. |
 | 488 | [IPMA Open Data API](https://api.ipma.pt/) | Weather | Documented public scope · Provider docs reviewed | Scalar candidate | 0 | Portugal forecasts and environmental observations |
 | 489 | [MET Norway Weather API](https://api.met.no/doc/TermsOfService) | Weather | Documented public scope · Provider docs reviewed | Adapter / policy work | 0 | Location forecasts and astronomical data |
-| 490 | [Meteo.lt API](https://api.meteo.lt/) | Weather | Documented public scope · Provider docs reviewed | Scalar candidate | 0 | Lithuanian weather and hydrological observations |
+| 490 | [Meteo.lt API](https://api.meteo.lt/) | Weather | Documented public scope · Provider docs reviewed | Scalar candidate | 1 | Lithuanian weather and hydrological observations |
 | 491 | [MSC GeoMet API](https://eccc-msc.github.io/open-data/msc-geomet/readme_en/) | Weather | Documented public scope · Provider docs reviewed | Scalar candidate | 0 | Canadian meteorological/geospatial observations |
 | 492 | [NASA POWER API](https://power.larc.nasa.gov/docs/services/api/) | Weather | Documented public scope · Provider docs reviewed | Scalar candidate | 0 | Solar irradiance and meteorological historical data |
 | 493 | [NOAA CO-OPS Data API](https://api.tidesandcurrents.noaa.gov/api/prod/) | Weather | Documented public scope · Provider docs reviewed | Scalar candidate | 0 | Tide levels, tide predictions and coastal conditions |
