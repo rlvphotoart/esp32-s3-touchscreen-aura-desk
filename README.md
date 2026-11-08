@@ -163,3 +163,7 @@ Native USB pins overlap this board's display/touch wiring. Other boards need a r
 - **Maintain:** [Build](docs/FIRMWARE_BUILD.md), [dependency lock](docs/TOOLCHAIN_LOCK.json), [hardware](docs/HARDWARE.md), [GPIO](docs/GPIO_MAP.md), [backup](docs/BACKUP.md), [security](docs/SECURITY.md), [recovery](docs/RECOVERY.md).
 
 Original source/UX rights are recorded in [ORIGINAL_CODE_RIGHTS.md](ORIGINAL_CODE_RIGHTS.md), with upstream dependency licenses in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Public history contains clearly identified recovered source snapshots and subsequent changes. Provider data retains its own terms.
+
+## Project case study
+
+[Read the project case study](https://radulucavictor.ro/projects/aura-desk/) for the workflow problem, my contribution and verification context. See [Radu Luca Victor's professional portfolio](https://radulucavictor.ro/) for engineering delivery, automotive validation, independent digital projects and the full CV.
